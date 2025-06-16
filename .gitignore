@@ -1,0 +1,85 @@
+target/__pycache__/calculations.cpython-311.pyc
+target/__pycache__/correrelation_analysis.cpython-311.pyc
+target/__pycache__/CPDyAna.cpython-311.pyc
+target/__pycache__/data_processing.cpython-311.pyc
+target/__pycache__/input_reader.cpython-311.pyc
+target/__pycache__/Plotting.cpython-311.pyc
+target/__pycache__/serializable.cpython-311.pyc
+output.json
+van_hove_plot.png
+target/__pycache__/__init__.cpython-311.pyc
+msd_plot.png
+Plots/vh_slope 5-100_0-160ps_Al_800_self.png
+Plots/vh_slope 5-100_0-160ps_Li_600_self.png
+Plots/vh_slope 5-100_0-160ps_Li_800_self.png
+Plots/vh_slope 5-100_0-160ps_P_800_self.png
+Plots/vh_slope 5-100_0-160ps_S_800_self.png
+target/__pycache__/__init__.cpython-313.pyc
+target/__pycache__/calculations.cpython-313.pyc
+target/__pycache__/correrelation_analysis.cpython-313.pyc
+target/__pycache__/CPDyAna.cpython-313.pyc
+target/__pycache__/data_processing.cpython-313.pyc
+target/__pycache__/input_reader.cpython-313.pyc
+target/__pycache__/Plotting.cpython-313.pyc
+target/__pycache__/serializable.cpython-313.pyc
+LiAlPS.cel
+LiAlPS.evp
+LiAlPS.in
+LiAlPS.pos
+Plots/msd_slope 0-10_0-10ps_Li_800_Charged.png
+Plots/msd_slope 5-70_0-100ps_Al_800_Tracer.png
+Plots/msd_slope 5-100_0-150ps_Li_800_Tracer.png
+Plots/vh_0-10ps_Li_800_Distinct.png
+Plots/vh_10-15ps_Li_800_Distinct.png
+1.vc-cp_600K_tLGPS_ndw_82.in
+cptotraj.py
+final_RDF_LiSiPS_800.ipynb
+Li_density.xsf
+Li11AlP2S12_dojo.cif
+Li22Al2P4S24_structure.cif
+LiAlPS_ase1.traj
+LiAlPS_li_density.xsf
+LiAlPS_rigid_density.xsf
+LiAlPSase1.traj
+MSD_250_tracer.jpg
+MSD_500_tracer.jpg
+MSD_800.jpg
+msd_plot_tracer_block_grok1.jpg
+msd_plot_tracer_slope_5to100_upto160ps.jpg
+msd_plot_tracer_slope5-100_time2-160.png
+msd_results_FFT.json
+output_msd_data_block_grok1.json
+probdensity.py
+rdf_plot_LiAlPS_600_Al_time60.0ps_variable_cell.png
+rdf_plot_LiAlPS_600_Li_time60.0ps_variable_cell.png
+rdf_plot_LiAlPS_600_P_time60.0ps_variable_cell.png
+rdf_plot_LiAlPS_600_S_time60.0ps_variable_cell.png
+rdf_plot_LiAlPS_LiAlPS_600_Al_time60ps_variable_cell.png
+rdf_plot_LiAlPS_LiAlPS_600_Li_time60ps_variable_cell.png
+rdf_plot_LiAlPS_LiAlPS_600_P_time60ps_variable_cell.png
+rdf_plot_LiAlPS_LiAlPS_600_S_time60ps_variable_cell.png
+rdf-plot1.png
+rdf-plot2.png
+reference_msd.jpg
+results.json
+run_result.py
+TP_slope_5to100_upto160_block_grok.py
+TP_slope_5to100_upto160_VHD.py
+TP_slope_5to100_upto160_VHS.py
+build/lib/target/test.py
+CPDyAna.egg-info/SOURCES.txt
+samos-master/examples/ex4-compute-ionic-density/example.ipynb
+samos-master/examples/ex4-compute-ionic-density/out_li_all_test_2.xsf
+samos-master/samos/lib/gaussian_density.py
+samos-master/samos/lib/mdutils.py
+samos-master/samos/lib/rdf.py
+target/ionic_density.py
+target/Plotting.py
+target/serializable.py
+target/__pycache__/compute_rdf.cpython-313.pyc
+target/__pycache__/ionic_density.cpython-313.pyc
+target/__pycache__/json_serializable.cpython-313.pyc
+target/__pycache__/probability_density.cpython-313.pyc
+Vesta datas/Li22Al2P4S24_100 frames.vesta
+Vesta datas/Li22Al2P4S24_500 frames.cif
+Vesta datas/Li22Al2P4S24_500 frames.vesta

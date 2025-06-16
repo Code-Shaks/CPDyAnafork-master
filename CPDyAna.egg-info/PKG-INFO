@@ -1,0 +1,30 @@
+Metadata-Version: 2.4
+Name: CPDyAna
+Version: 0.1.0
+Summary: Unified analysis & plotting tool for CPDyAna
+Home-page: https://github.com/mantha123/CPDyAnafork
+Author: CNL Lab
+Author-email: abc1@gmail.com
+License: MIT
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Requires-Python: >=3.7
+Requires-Dist: numpy>=1.23.5
+Requires-Dist: matplotlib>=3.5.0
+Requires-Dist: scipy>=1.8.0
+Requires-Dist: pandas>=1.3.0
+Dynamic: author
+Dynamic: author-email
+Dynamic: classifier
+Dynamic: home-page
+Dynamic: license
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary

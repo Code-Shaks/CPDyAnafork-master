@@ -1,0 +1,2 @@
+[console_scripts]
+cpdyana = target.CPDyAna:main
