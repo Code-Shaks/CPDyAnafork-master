@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-Ultimate Probability Density Calculator
+Ultimate Probability Density Calculator (Extensible Version)
 Integrates CPDyAna and SAMOS methodologies for direct use with .in, .pos, .cel, .evp files.
+Now supports advanced options: frame stride, atom masking, recentering, and custom bounding box.
 """
 
 import numpy as np
@@ -9,9 +10,6 @@ import argparse
 from ase import Atoms
 from samos.trajectory import Trajectory
 from samos.analysis.get_gaussian_density import get_gaussian_density
-
-# Import your input_reader (update the import path as needed)
-import sys
 from target import input_reader as inp
 
 def divide_chunks(l, n):
@@ -44,10 +42,13 @@ def convert_symbols_to_atomic_numbers(element_symbols):
             raise ValueError(f"Unknown element symbol: {symbol}")
     return atomic_numbers
 
-def build_trajectory(in_file, pos_file, cel_file, time_after_start=0.0, num_frames=None, time_interval=0.00193511):
+def build_trajectory(
+    in_file, pos_file, cel_file, time_after_start=0.0, num_frames=None, time_interval=0.00193511, stride=1
+):
     """
     Build an in-memory trajectory from .in, .pos, .cel files.
     Returns a list of ASE Atoms objects.
+    Supports frame stride for subsampling.
     """
     ang = 0.529177249  # Bohr to Angstrom conversion factor
 
@@ -69,19 +70,38 @@ def build_trajectory(in_file, pos_file, cel_file, time_after_start=0.0, num_fram
         end_frame = min(start_frame + num_frames, total_frames)
 
     atoms_list = []
-    for i in range(start_frame, end_frame):
+    for i in range(start_frame, end_frame, stride):
         tlat = np.loadtxt(lats[i], skiprows=1).transpose() * ang
         tpos = np.loadtxt(coords[i], skiprows=1) * ang
         atoms = Atoms(cell=tlat, numbers=sp, positions=tpos, pbc=True)
         atoms_list.append(atoms)
-    print(f"Trajectory built: {len(atoms_list)} frames from {start_frame} to {end_frame-1}")
+    print(f"Trajectory built: {len(atoms_list)} frames from {start_frame} to {end_frame-1} (stride={stride})")
     return atoms_list
 
+def parse_mask(mask_str, total_atoms):
+    """
+    Parse a mask string like '0,1,2,5-10' into a list of atom indices.
+    """
+    if not mask_str:
+        return None
+    indices = set()
+    for part in mask_str.split(','):
+        if '-' in part:
+            start, end = map(int, part.split('-'))
+            indices.update(range(start, end+1))
+        else:
+            indices.add(int(part))
+    # Ensure indices are within bounds
+    indices = [i for i in indices if 0 <= i < total_atoms]
+    return indices
+
 def calculate_probability_density(
-    atoms_list, element='Li', sigma=0.3, n_sigma=3.0, density=0.1, outputfile=None
+    atoms_list, element='Li', sigma=0.3, n_sigma=3.0, density=0.1, outputfile=None,
+    mask=None, recenter=False, bbox=None
 ):
     """
     Calculate the Gaussian probability density for a given element in the trajectory.
+    Supports atom masking, recentering, and custom bounding box.
     """
     traj = Trajectory.from_atoms(atoms_list)
     params = {
@@ -91,13 +111,25 @@ def calculate_probability_density(
         'density': density,
         'outputfile': outputfile if outputfile else f'{element}_Density.xsf'
     }
+    if mask is not None:
+        params['mask'] = mask
+    if recenter:
+        params['recenter'] = True
+    if bbox is not None:
+        params['bbox'] = bbox
     print(f"Calculating probability density for {element} (sigma={sigma}, n_sigma={n_sigma}, density={density})")
+    if mask is not None:
+        print(f"  Using atom mask: {mask}")
+    if recenter:
+        print("  Recentering trajectory before density calculation.")
+    if bbox is not None:
+        print(f"  Using custom bounding box: {bbox}")
     get_gaussian_density(traj, **params)
     print(f"Density written to {params['outputfile']}")
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Ultimate Probability Density Calculator (CPDyAna + SAMOS)"
+        description="Ultimate Probability Density Calculator (Extensible CPDyAna + SAMOS)"
     )
     parser.add_argument('--in_file', required=True, help='Input .in file')
     parser.add_argument('--pos_file', required=True, help='Input .pos file')
@@ -111,6 +143,11 @@ def main():
     parser.add_argument('--time_after_start', type=float, default=0.0, help='Start time (ps)')
     parser.add_argument('--num_frames', type=int, default=0, help='Number of frames (0 for all)')
     parser.add_argument('--time_interval', type=float, default=0.00193511, help='Time interval between frames (ps)')
+    parser.add_argument('--stride', type=int, default=1, help='Frame stride (default: 1, use 2 for every other frame)')
+    parser.add_argument('--mask', default=None, help="Atom mask (e.g. '0,1,2,5-10') for density calculation")
+    parser.add_argument('--recenter', action='store_true', help="Recenter trajectory before density calculation")
+    parser.add_argument('--bbox', default=None, help="Bounding box for grid as 'xmin,xmax,ymin,ymax,zmin,zmax' (comma-separated)")
+
     args = parser.parse_args()
 
     # Build trajectory
@@ -118,8 +155,25 @@ def main():
         args.in_file, args.pos_file, args.cel_file,
         time_after_start=args.time_after_start,
         num_frames=args.num_frames,
-        time_interval=args.time_interval
+        time_interval=args.time_interval,
+        stride=args.stride
     )
+
+    # Parse mask and bounding box if provided
+    mask = None
+    if args.mask:
+        mask = parse_mask(args.mask, len(atoms_list[0]))
+
+    bbox = None
+    if args.bbox:
+        try:
+            bbox_vals = [float(x) for x in args.bbox.split(',')]
+            if len(bbox_vals) == 6:
+                bbox = np.array(bbox_vals).reshape((3,2))
+            else:
+                print("Bounding box must have 6 comma-separated values (xmin,xmax,ymin,ymax,zmin,zmax)")
+        except Exception as e:
+            print(f"Error parsing bounding box: {e}")
 
     # Calculate probability density
     calculate_probability_density(
@@ -128,7 +182,10 @@ def main():
         sigma=args.sigma,
         n_sigma=args.n_sigma,
         density=args.density,
-        outputfile=args.output
+        outputfile=args.output,
+        mask=mask,
+        recenter=args.recenter,
+        bbox=bbox
     )
 
 if __name__ == '__main__':
