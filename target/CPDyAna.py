@@ -299,12 +299,12 @@ def parser():
         help="Directory containing .pos, .in, and .cel files"
     )
     ionic_density.add_argument(
-        "--time-after-start", type=float, default=60.0,
-        help="Time (ps) after which to start extracting frames (default: 60.0)"
+        "--time-after-start", type=float, default=0.0,
+        help="Time (ps) after which to start extracting frames (default: 0.0)"
     )
     ionic_density.add_argument(
-        "--num-frames", type=int, default=100,
-        help="Number of frames to extract (default: 100)"
+        "--num-frames", type=int, default=0,
+        help="Number of frames to extract (default: 0 = all frames)"
     )
     ionic_density.add_argument(
         "--time-interval", type=float, default=0.00193511,
@@ -315,8 +315,8 @@ def parser():
         help="Element to analyze (default: Li)"
     )
     ionic_density.add_argument(
-        "--sigma", type=float, default=0.2,
-        help="Gaussian sigma for density calculation (default: 0.2)"
+        "--sigma", type=float, default=0.3,
+        help="Gaussian sigma for density calculation (default: 0.3)"
     )
     ionic_density.add_argument(
         "--n-sigma", type=float, default=4.0,
@@ -330,7 +330,22 @@ def parser():
         "--output", default="density.xsf",
         help="Output file name (default: density.xsf)"
     )
-    
+    ionic_density.add_argument(
+        "--step-skip", type=int, default=1,
+        help="Number of steps to skip between frames (default: 1)"
+    )
+    ionic_density.add_argument(
+        "--mask", default=None,
+        help="Atom mask for density calculation (e.g. '0,1,2,5-10')"
+    )
+    ionic_density.add_argument(
+        "--recenter", action="store_true",
+        help="Recenter trajectory before density calculation"
+    )
+    ionic_density.add_argument(
+        "--bbox", default=None,
+        help="Bounding box for grid as 'xmin,xmax,ymin,ymax,zmin,zmax' (comma-separated)"
+    )
     # RDF specific arguments
     rdf.add_argument(
         "--data-dir", required=True,
@@ -466,18 +481,30 @@ def main():
             try:
                 cmd = [
                     sys.executable, "-m", "target.probability_density",
-                    "--in_file", ion_file,
-                    "--pos_file", pos_file,
-                    "--cel_file", cel_file,
+                    "--in-file", ion_file,
+                    "--pos-file", pos_file,
+                    "--cel-file", cel_file,
                     "--output", output_file,
-                    "--time_after_start", str(a.time_after_start),
-                    "--num_frames", str(a.num_frames),
-                    "--time_interval", str(a.time_interval),
+                    "--time-after-start", str(a.time_after_start),
+                    "--num-frames", str(a.num_frames),
+                    "--time-interval", str(a.time_interval),
                     "--element", a.element,
                     "--sigma", str(a.sigma),
-                    "--n_sigma", str(a.n_sigma),
-                    "--density", str(a.density)
+                    "--n-sigma", str(a.n_sigma),
+                    "--density", str(a.density),
+                    "--step-skip", str(getattr(a, "step_skip", 1))
                 ]
+                # Optional arguments
+                if hasattr(a, "mask") and a.mask:
+                    cmd += ["--mask", a.mask]
+                if hasattr(a, "recenter") and a.recenter:
+                    cmd += ["--recenter"]
+                if hasattr(a, "bbox") and a.bbox:
+                    cmd += ["--bbox", a.bbox]
+                # EVP file is optional and not present in your CLI, but add if needed:
+                # if hasattr(a, "evp_file") and a.evp_file:
+                #     cmd += ["--evp-file", a.evp_file]
+
                 print(f"Running command: {' '.join(cmd)}")
                 result = subprocess.run(cmd, check=True, capture_output=True, text=True,
                                         cwd=os.path.dirname(os.path.abspath(__file__)))
