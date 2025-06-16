@@ -1,0 +1,135 @@
+#!/usr/bin/env python3
+"""
+Ultimate Probability Density Calculator
+Integrates CPDyAna and SAMOS methodologies for direct use with .in, .pos, .cel, .evp files.
+"""
+
+import numpy as np
+import argparse
+from ase import Atoms
+from samos.trajectory import Trajectory
+from samos.analysis.get_gaussian_density import get_gaussian_density
+
+# Import your input_reader (update the import path as needed)
+import sys
+from target import input_reader as inp
+
+def divide_chunks(l, n):
+    """Yield successive n-sized chunks from l."""
+    for i in range(0, len(l), n):
+        yield l[i:i + n]
+
+def convert_symbols_to_atomic_numbers(element_symbols):
+    """Convert element symbols to atomic numbers."""
+    element_to_atomic_number = {
+        'H': 1, 'He': 2, 'Li': 3, 'Be': 4, 'B': 5, 'C': 6, 'N': 7, 'O': 8, 'F': 9, 'Ne': 10,
+        'Na': 11, 'Mg': 12, 'Al': 13, 'Si': 14, 'P': 15, 'S': 16, 'Cl': 17, 'Ar': 18,
+        'K': 19, 'Ca': 20, 'Sc': 21, 'Ti': 22, 'V': 23, 'Cr': 24, 'Mn': 25, 'Fe': 26,
+        'Co': 27, 'Ni': 28, 'Cu': 29, 'Zn': 30, 'Ga': 31, 'Ge': 32, 'As': 33, 'Se': 34,
+        'Br': 35, 'Kr': 36, 'Rb': 37, 'Sr': 38, 'Y': 39, 'Zr': 40, 'Nb': 41, 'Mo': 42,
+        'Tc': 43, 'Ru': 44, 'Rh': 45, 'Pd': 46, 'Ag': 47, 'Cd': 48, 'In': 49, 'Sn': 50,
+        'Sb': 51, 'Te': 52, 'I': 53, 'Xe': 54, 'Cs': 55, 'Ba': 56, 'La': 57, 'Ce': 58,
+        'Pr': 59, 'Nd': 60, 'Pm': 61, 'Sm': 62, 'Eu': 63, 'Gd': 64, 'Tb': 65, 'Dy': 66,
+        'Ho': 67, 'Er': 68, 'Tm': 69, 'Yb': 70, 'Lu': 71, 'Hf': 72, 'Ta': 73, 'W': 74,
+        'Re': 75, 'Os': 76, 'Ir': 77, 'Pt': 78, 'Au': 79, 'Hg': 80, 'Tl': 81, 'Pb': 82,
+        'Bi': 83, 'Po': 84, 'At': 85, 'Rn': 86, 'Fr': 87, 'Ra': 88, 'Ac': 89, 'Th': 90,
+        'Pa': 91, 'U': 92, 'Np': 93, 'Pu': 94, 'Am': 95, 'Cm': 96, 'Bk': 97, 'Cf': 98,
+        'Es': 99, 'Fm': 100, 'Md': 101, 'No': 102, 'Lr': 103
+    }
+    atomic_numbers = []
+    for symbol in element_symbols:
+        if symbol in element_to_atomic_number:
+            atomic_numbers.append(element_to_atomic_number[symbol])
+        else:
+            raise ValueError(f"Unknown element symbol: {symbol}")
+    return atomic_numbers
+
+def build_trajectory(in_file, pos_file, cel_file, time_after_start=0.0, num_frames=None, time_interval=0.00193511):
+    """
+    Build an in-memory trajectory from .in, .pos, .cel files.
+    Returns a list of ASE Atoms objects.
+    """
+    ang = 0.529177249  # Bohr to Angstrom conversion factor
+
+    # 1. Read atomic species from .in file
+    element_symbols = inp.read_ion_file(in_file)
+    sp = convert_symbols_to_atomic_numbers(element_symbols)
+
+    # 2. Read cell and position files
+    cellfile = open(cel_file).read().splitlines()
+    posfile = open(pos_file).read().splitlines()
+    lats = list(divide_chunks(cellfile, 4))
+    coords = list(divide_chunks(posfile, len(sp)+1))
+
+    total_frames = min(len(lats), len(coords))
+    start_frame = int(time_after_start / time_interval)
+    if num_frames is None or num_frames == 0:
+        end_frame = total_frames
+    else:
+        end_frame = min(start_frame + num_frames, total_frames)
+
+    atoms_list = []
+    for i in range(start_frame, end_frame):
+        tlat = np.loadtxt(lats[i], skiprows=1).transpose() * ang
+        tpos = np.loadtxt(coords[i], skiprows=1) * ang
+        atoms = Atoms(cell=tlat, numbers=sp, positions=tpos, pbc=True)
+        atoms_list.append(atoms)
+    print(f"Trajectory built: {len(atoms_list)} frames from {start_frame} to {end_frame-1}")
+    return atoms_list
+
+def calculate_probability_density(
+    atoms_list, element='Li', sigma=0.3, n_sigma=3.0, density=0.1, outputfile=None
+):
+    """
+    Calculate the Gaussian probability density for a given element in the trajectory.
+    """
+    traj = Trajectory.from_atoms(atoms_list)
+    params = {
+        'element': element,
+        'sigma': sigma,
+        'n_sigma': n_sigma,
+        'density': density,
+        'outputfile': outputfile if outputfile else f'{element}_Density.xsf'
+    }
+    print(f"Calculating probability density for {element} (sigma={sigma}, n_sigma={n_sigma}, density={density})")
+    get_gaussian_density(traj, **params)
+    print(f"Density written to {params['outputfile']}")
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Ultimate Probability Density Calculator (CPDyAna + SAMOS)"
+    )
+    parser.add_argument('--in_file', required=True, help='Input .in file')
+    parser.add_argument('--pos_file', required=True, help='Input .pos file')
+    parser.add_argument('--cel_file', required=True, help='Input .cel file')
+    parser.add_argument('--evp_file', required=False, help='Input .evp file (optional)')
+    parser.add_argument('--element', default='Li', help='Element for density calculation')
+    parser.add_argument('--sigma', type=float, default=0.3, help='Gaussian sigma (Å)')
+    parser.add_argument('--n_sigma', type=float, default=3.0, help='Cutoff in units of sigma')
+    parser.add_argument('--density', type=float, default=0.1, help='Grid density (points/Å)')
+    parser.add_argument('--output', default=None, help='Output XSF filename')
+    parser.add_argument('--time_after_start', type=float, default=0.0, help='Start time (ps)')
+    parser.add_argument('--num_frames', type=int, default=0, help='Number of frames (0 for all)')
+    parser.add_argument('--time_interval', type=float, default=0.00193511, help='Time interval between frames (ps)')
+    args = parser.parse_args()
+
+    # Build trajectory
+    atoms_list = build_trajectory(
+        args.in_file, args.pos_file, args.cel_file,
+        time_after_start=args.time_after_start,
+        num_frames=args.num_frames,
+        time_interval=args.time_interval
+    )
+
+    # Calculate probability density
+    calculate_probability_density(
+        atoms_list,
+        element=args.element,
+        sigma=args.sigma,
+        n_sigma=args.n_sigma,
+        density=args.density,
+        outputfile=args.output
+    )
+
+if __name__ == '__main__':
+    main()
