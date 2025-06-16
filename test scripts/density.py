@@ -109,7 +109,7 @@ def calculate_probability_density(
         'sigma': sigma,
         'n_sigma': n_sigma,
         'density': density,
-        'outputfile': outputfile if outputfile else f'{element}_Density.xsf'
+        'outputfile': outputfile if outputfile else f'{element}_Density_samos.xsf'
     }
     if mask is not None:
         params['mask'] = mask
