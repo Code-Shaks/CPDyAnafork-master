@@ -148,6 +148,7 @@ def parser():
     vh = sub.add_parser("vh")
     ionic_density = sub.add_parser("ionic-density")
     rdf = sub.add_parser("rdf")
+    vaf = sub.add_parser("vaf")
 
     for sp in (msd, vh):
         sp.add_argument(
@@ -293,7 +294,6 @@ def parser():
     )
 
     # ionic_density specific arguments
-        # ionic_density specific arguments
     ionic_density.add_argument(
         "--data-dir", required=True,
         help="Directory containing .pos, .in, and .cel files"
@@ -367,6 +367,56 @@ def parser():
     rdf.add_argument(
         "--num-frames", type=int, default=100,
         help="Number of frames to analyze (default: 100)"
+    )
+
+    # VAF specific arguments
+    vaf.add_argument(
+        "--data-dir", required=True,
+        help="Directory containing .pos, .in, .cel files (and optionally .evp)"
+    )
+    vaf.add_argument(
+        "--element", nargs="+", required=True,
+        help="Atom symbol(s) for VAF (e.g. Li Na)"
+    )
+    vaf.add_argument(
+        "--start", type=float, default=0.0,
+        help="Time (ps) to start analysis"
+    )
+    vaf.add_argument(
+        "--nframes", type=int, default=0,
+        help="Number of frames (0=all)"
+    )
+    vaf.add_argument(
+        "--stride", type=int, default=1,
+        help="Stride for frames (1=all, 2=every other, etc.)"
+    )
+    vaf.add_argument(
+        "--blocks", type=int, default=1,
+        help="Number of blocks for error estimates"
+    )
+    vaf.add_argument(
+        "--out-prefix", default="vaf",
+        help="Prefix for output files"
+    )
+    vaf.add_argument(
+        "--time-interval", type=float, default=0.00193511,
+        help="Default time between frames (ps) if no .evp file"
+    )
+    vaf.add_argument(
+        "--t-start-dt", type=int, default=0,
+        help="Start frame index for VAF"
+    )
+    vaf.add_argument(
+        "--stepsize-t", type=int, default=1,
+        help="Stride for t in VAF"
+    )
+    vaf.add_argument(
+        "--stepsize-tau", type=int, default=1,
+        help="Stride for tau in VAF"
+    )
+    vaf.add_argument(
+        "--t-end-fit-ps", type=float, default=10,
+        help="End of the fit in ps (required by SAMOS)"
     )
 
     return p.parse_args()
@@ -570,6 +620,67 @@ def main():
                 continue
 
         print("\nRDF analysis completed!")
+        print("Results:", results)
+        return
+    
+    if a.mode == "vaf":
+        import subprocess
+
+        pos_files = sorted(glob.glob(os.path.join(a.data_dir, "*.pos")))
+        ion_files = sorted(glob.glob(os.path.join(a.data_dir, "*.in")))
+        cel_files = sorted(glob.glob(os.path.join(a.data_dir, "*.cel")))
+        evp_files = sorted(glob.glob(os.path.join(a.data_dir, "*.evp")))
+
+        if not pos_files or not ion_files or not cel_files:
+            sys.exit("Missing .pos, .in, or .cel files in data directory")
+        if not (len(pos_files) == len(ion_files) == len(cel_files)):
+            sys.exit("Mismatch in number of .pos, .in, .cel files")
+
+        results = {}
+        for i, (pos_file, ion_file, cel_file) in enumerate(zip(pos_files, ion_files, cel_files)):
+            base_name = os.path.splitext(os.path.basename(pos_file))[0]
+            evp_file = evp_files[i] if i < len(evp_files) else None
+
+            cmd = [
+                sys.executable, os.path.join(os.path.dirname(__file__), "vaf.py"),
+                "--in_file", ion_file,
+                "--pos_file", pos_file,
+                "--cel_file", cel_file,
+                "--element"
+            ] + a.element
+
+            if evp_file:
+                cmd += ["--evp_file", evp_file]
+            cmd += [
+                "--start", str(a.start),
+                "--nframes", str(a.nframes),
+                "--stride", str(a.stride),
+                "--blocks", str(a.blocks),
+                "--out_prefix", f"{a.out_prefix}_{base_name}",
+                "--time_interval", str(a.time_interval),
+                "--t_start_dt", str(a.t_start_dt),
+                "--stepsize_t", str(a.stepsize_t),
+                "--stepsize_tau", str(a.stepsize_tau),
+                "--t_end_fit_ps", str(a.t_end_fit_ps)
+            ]
+
+            print(f"Running VAF for {base_name}: {' '.join(cmd)}")
+            try:
+                result = subprocess.run(cmd, check=True, capture_output=True, text=True)
+                print(result.stdout)
+                if result.stderr:
+                    print("Warnings:", result.stderr)
+                results[base_name] = {"vaf_output_prefix": f"{a.out_prefix}_{base_name}"}
+            except subprocess.CalledProcessError as e:
+                print(f"VAF command failed for {base_name} with return code {e.returncode}")
+                print(f"Stdout: {e.stdout}")
+                print(f"Stderr: {e.stderr}")
+                continue
+            except Exception as e:
+                print(f"Error processing VAF for {base_name}: {e}")
+                continue
+
+        print("\nVAF analysis completed!")
         print("Results:", results)
         return
 
