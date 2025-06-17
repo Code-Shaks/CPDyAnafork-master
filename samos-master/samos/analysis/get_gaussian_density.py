@@ -64,7 +64,7 @@ DATAGRID_3D_UNKNOWN
 def get_gaussian_density(trajectory, element=None, outputfile='out.xsf',
                          sigma=0.3, n_sigma=3.0, density=0.1,
                          istart=1, istop=None, stepsize=1,
-                         indices_i_care=None, indices_exclude_from_plot=None):
+                         indices=None, indices_exclude_from_plot=None):
     """
     :param str positionsf: Where to read the positions from.
     :param str pos_units:
@@ -102,19 +102,19 @@ def get_gaussian_density(trajectory, element=None, outputfile='out.xsf',
         outputfile += '.xsf'
 
     # indices_i_care are used to calculate the density
-    if indices_i_care is None:
+    if indices is None:
         if element:
-            indices_i_care = trajectory.get_indices_of_species(
+            indices = trajectory.get_indices_of_species(
                 element, start=1)
         else:
-            indices_i_care = np.array(list(range(1, nat+1)))
+            indices = np.array(list(range(1, nat+1)))
 
-    print('(get_gaussian_density) indices_i_care:', indices_i_care)
-    if not len(indices_i_care):
+    print('(get_gaussian_density) indices:', indices)
+    if not len(indices):
         raise Exception(
             'Element {} not found in symbols {}'.format(element, symbols))
 
-    nat_this_species = len(indices_i_care)
+    nat_this_species = len(indices)
 
     if istop is None:
         istop = nstep
@@ -130,11 +130,11 @@ def get_gaussian_density(trajectory, element=None, outputfile='out.xsf',
     a, b, c = [np.linalg.norm(cell[i]) for i in range(3)]
     n1, n2, n3 = [int(celldim/density)+1 for celldim in (a, b, c)]
 
-    print('Grid is {} x {} x {}'.format(n1, n2, n3))
-    print('Box is  {} x {} x {}'.format(a, b, c))
-    print('Writing xsf file to', format(outputfile))
+    print('Grid dimensions {} x {} x {}'.format(n1, n2, n3))
+    print('Box dimensions  {} x {} x {}'.format(a, b, c))
+    print('xsf file: ', format(outputfile))
     if indices_exclude_from_plot is None:
-        indices_exclude_from_plot = indices_i_care
+        indices_exclude_from_plot = indices
     print(
         '(get_gaussian_density) We do not show these atoms in the xsf file: '
         f'{indices_exclude_from_plot}')
@@ -187,7 +187,7 @@ def get_gaussian_density(trajectory, element=None, outputfile='out.xsf',
 
     make_gaussian_density(
         positions, outputfile, n1, n2, n3, b1, b2, b3, istart, istop, stepsize,
-        sigma, cell, cellTI, indices_i_care, pbar_frequency, nstep, nat,
+        sigma, cell, cellTI, indices, pbar_frequency, nstep, nat,
         nat_this_species
     )
 

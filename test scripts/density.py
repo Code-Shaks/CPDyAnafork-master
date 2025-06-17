@@ -10,7 +10,7 @@ from ase import Atoms
 from ase.io.trajectory import Trajectory as ASE_Trajectory
 from samos.trajectory import Trajectory
 from samos.analysis.get_gaussian_density import get_gaussian_density
-from . import input_reader as inp
+from target import input_reader as inp
 
 def divide_chunks(l, n):
     """
