@@ -449,7 +449,7 @@ def parser():
     )
     vaf.add_argument(
         "--t-end-fit-ps", type=float, default=10,
-        help="End of the fit in ps (required by SAMOS)"
+        help="End of the fit in ps"
     )
      
     # VDOS specific arguments

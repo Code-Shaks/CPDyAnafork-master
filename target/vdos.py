@@ -1,7 +1,14 @@
 #!/usr/bin/env python3
 """
 Compute and plot VDOS from .in/.pos/.cel[/.evp] using SAMOS.
+
+This script reads Quantum ESPRESSO trajectory files, constructs ASE Atoms objects with velocities,
+computes the vibrational density of states (VDOS) using the SAMOS library, and plots/saves the results.
+
+Usage example:
+    python vdos.py --in_file LiAlPS.in --pos_file LiAlPS.pos --cel_file LiAlPS.cel --elements Li Al P S
 """
+
 import os
 import sys
 import argparse
@@ -16,6 +23,7 @@ from samos.plotting.plot_dynamics import plot_power_spectrum
 sys.path.append(os.path.abspath(os.path.join(__file__, '..')))
 from target import input_reader as inp
 
+# Mapping from element symbol to atomic number
 element_to_atomic_number = {
     'H':1,'He':2,'Li':3,'Be':4,'B':5,'C':6,'N':7,'O':8,
     'F':9,'Ne':10,'Na':11,'Mg':12,'Al':13,'Si':14,'P':15,'S':16,
@@ -33,17 +41,54 @@ element_to_atomic_number = {
 }
 
 def convert_symbols_to_atomic_numbers(symbols):
+    """
+    Convert a list of element symbols to atomic numbers.
+
+    Args:
+        symbols (list): List of element symbols (str).
+
+    Returns:
+        list: List of atomic numbers (int).
+    """
     return [element_to_atomic_number[s] for s in symbols]
 
 def read_cel(cel_file):
+    """
+    Read cell parameters from a .cel file.
+
+    Args:
+        cel_file (str): Path to .cel file.
+
+    Returns:
+        list: List of 4-line blocks (cell info per frame).
+    """
     lines = open(cel_file).read().splitlines()
     return [lines[i:i+4] for i in range(0, len(lines), 4)]
 
 def read_pos(pos_file, natoms):
+    """
+    Read atomic positions from a .pos file.
+
+    Args:
+        pos_file (str): Path to .pos file.
+        natoms (int): Number of atoms.
+
+    Returns:
+        list: List of (natoms+1)-line blocks (positions per frame).
+    """
     lines = open(pos_file).read().splitlines()
     return [lines[i:i+natoms+1] for i in range(0, len(lines), natoms+1)]
 
 def read_evp(evp_file):
+    """
+    Read time steps from a .evp file.
+
+    Args:
+        evp_file (str): Path to .evp file.
+
+    Returns:
+        list: List of times (float).
+    """
     times = []
     try:
         for L in open(evp_file):
@@ -55,6 +100,16 @@ def read_evp(evp_file):
     return times
 
 def finite_diff_velocities(pos_arr, times):
+    """
+    Compute velocities using finite differences from positions and times.
+
+    Args:
+        pos_arr (np.ndarray): Array of shape (Nframes, natoms, 3) with positions.
+        times (list): List of time values (ps), length Nframes.
+
+    Returns:
+        np.ndarray: Array of velocities, same shape as pos_arr.
+    """
     N, M, _ = pos_arr.shape
     v = np.zeros_like(pos_arr)
     if len(times) >= 2:
@@ -71,6 +126,22 @@ def build_trajectory(in_file, pos_file, cel_file,
                      evp_file=None,
                      start=0.0, nframes=0, stride=1,
                      time_interval=0.00193511):
+    """
+    Build a trajectory as a list of ASE Atoms objects with velocities.
+
+    Args:
+        in_file (str): Path to .in file (species).
+        pos_file (str): Path to .pos file (positions).
+        cel_file (str): Path to .cel file (cell parameters).
+        evp_file (str, optional): Path to .evp file (timing).
+        start (float): Start time in ps.
+        nframes (int): Number of frames to use (0=all).
+        stride (int): Stride for frames.
+        time_interval (float): Default time between frames (ps) if no .evp.
+
+    Returns:
+        list: List of ASE Atoms objects with velocities.
+    """
     BOHR2ANG = 0.529177249
     syms = inp.read_ion_file(in_file)
     sp   = convert_symbols_to_atomic_numbers(syms)
@@ -107,9 +178,23 @@ def build_trajectory(in_file, pos_file, cel_file,
     return frames
 
 def compute_plot_vdos(frames, prefix, elements=None, time_interval=0.00193511):
+    """
+    Compute and plot the vibrational density of states (VDOS) for the trajectory.
+
+    Args:
+        frames (list): List of ASE Atoms objects with velocities.
+        prefix (str): Output file prefix for plots.
+        elements (list or None): List of elements to plot VDOS for (default: Li, Al, P, S).
+        time_interval (float): Time interval between frames in ps.
+
+    Returns:
+        None
+    """
     traj = Trajectory.from_atoms(frames)
+    # Set the timestep in femtoseconds for SAMOS
     traj._attrs['timestep_fs'] = time_interval * 1000
     da = DynamicsAnalyzer(trajectories=[traj])
+    # Plot total VDOS using SAMOS's built-in plot
     res = da.get_power_spectrum()
     plot_power_spectrum(res)
     save_path1 = f'{prefix}_1.png'
@@ -145,6 +230,10 @@ def compute_plot_vdos(frames, prefix, elements=None, time_interval=0.00193511):
     plt.close()
 
 def main():
+    """
+    Main function for VDOS computation and plotting.
+    Parses command-line arguments, builds trajectory, and generates VDOS plots.
+    """
     parser = argparse.ArgumentParser(description="Compute and plot VDOS using SAMOS")
     parser.add_argument('--in_file', required=True)
     parser.add_argument('--pos_file', required=True)

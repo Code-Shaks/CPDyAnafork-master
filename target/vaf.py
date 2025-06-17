@@ -3,8 +3,17 @@
 compute_vaf.py
 
 Read QE .in/.pos/.cel[/.evp], build ASE+Velocities, compute VAF with SAMOS, and plot.
+
+This script reads Quantum ESPRESSO trajectory files, constructs ASE Atoms objects with velocities,
+computes the velocity autocorrelation function (VAF) for specified elements using the SAMOS library,
+and plots/saves the results.
+
+Usage example:
+    python vaf.py --in_file LiAlPS.in --pos_file LiAlPS.pos --cel_file LiAlPS.cel --element Li Na
 """
-import os, sys
+
+import os
+import sys
 import numpy as np
 import argparse
 import matplotlib.pyplot as plt
@@ -13,10 +22,11 @@ from samos.trajectory import Trajectory
 from samos.analysis.dynamics import DynamicsAnalyzer
 from samos.plotting.plot_dynamics import plot_vaf_isotropic
 
-# point at your input_reader
+# Add target directory to sys.path for input_reader import
 sys.path.append(os.path.abspath(os.path.join(__file__, '..', '..', 'target')))
 from target import input_reader as inp
 
+# Mapping from element symbol to atomic number
 element_to_atomic_number = {
     'H':1,'He':2,'Li':3,'Be':4,'B':5,'C':6,'N':7,'O':8,
     'F':9,'Ne':10,'Na':11,'Mg':12,'Al':13,'Si':14,'P':15,'S':16,
@@ -34,21 +44,57 @@ element_to_atomic_number = {
 }
 
 def convert_symbols_to_atomic_numbers(symbols):
-    """Map element symbols to atomic numbers."""
+    """
+    Convert a list of element symbols to atomic numbers.
+
+    Args:
+        symbols (list): List of element symbols (str).
+
+    Returns:
+        list: List of atomic numbers (int).
+    """
     try:
         return [element_to_atomic_number[s] for s in symbols]
     except KeyError as e:
         raise ValueError(f"Unknown element symbol: {e}") from e
 
 def read_cel(cel_file):
+    """
+    Read cell parameters from a .cel file.
+
+    Args:
+        cel_file (str): Path to .cel file.
+
+    Returns:
+        list: List of 4-line blocks (cell info per frame).
+    """
     lines = open(cel_file).read().splitlines()
     return [lines[i:i+4] for i in range(0, len(lines), 4)]
 
 def read_pos(pos_file, natoms):
+    """
+    Read atomic positions from a .pos file.
+
+    Args:
+        pos_file (str): Path to .pos file.
+        natoms (int): Number of atoms.
+
+    Returns:
+        list: List of (natoms+1)-line blocks (positions per frame).
+    """
     lines = open(pos_file).read().splitlines()
     return [lines[i:i+natoms+1] for i in range(0, len(lines), natoms+1)]
 
 def read_evp(evp_file):
+    """
+    Read time steps from a .evp file.
+
+    Args:
+        evp_file (str): Path to .evp file.
+
+    Returns:
+        list: List of times (float).
+    """
     times = []
     try:
         for L in open(evp_file):
@@ -61,23 +107,28 @@ def read_evp(evp_file):
 
 def finite_diff_velocities(pos_arr, times):
     """
-    pos_arr: (Nframes, natoms, 3)
-    times:   list of length Nframes (ps)
-    returns velocities array same shape
+    Compute velocities using finite differences from positions and times.
+
+    Args:
+        pos_arr (np.ndarray): Array of shape (Nframes, natoms, 3) with positions.
+        times (list): List of time values (ps), length Nframes.
+
+    Returns:
+        np.ndarray: Array of velocities, same shape as pos_arr.
     """
     N, M, _ = pos_arr.shape
     v = np.zeros_like(pos_arr)
-    # assume uniform timesteps, compute dt0 from first two entries
+    # Use uniform timestep if possible
     if len(times) >= 2:
-        dt0 = (times[1] - times[0])*1000
+        dt0 = (times[1] - times[0]) * 1000  # convert ps to fs
     else:
         dt0 = 1.0
-    # central differences
+    # Central differences for interior points
     for i in range(1, N-1):
-        v[i] = (pos_arr[i+1] - pos_arr[i-1])/(2*dt0)
-    # endpoints: forward/backward
+        v[i] = (pos_arr[i+1] - pos_arr[i-1]) / (2 * dt0)
+    # Forward/backward for endpoints
     v[0]   = (pos_arr[1] - pos_arr[0])  / dt0
-    v[-1]  = (pos_arr[-1] - pos_arr[-2])/dt0
+    v[-1]  = (pos_arr[-1] - pos_arr[-2]) / dt0
     return v
 
 def build_trajectory(in_file, pos_file, cel_file,
@@ -85,38 +136,51 @@ def build_trajectory(in_file, pos_file, cel_file,
                      start=0.0, nframes=0, stride=1,
                      time_interval=0.00193511):
     """
-    Returns list of ASE.Atoms with velocities set.
+    Build a trajectory as a list of ASE Atoms objects with velocities.
+
+    Args:
+        in_file (str): Path to .in file (species).
+        pos_file (str): Path to .pos file (positions).
+        cel_file (str): Path to .cel file (cell parameters).
+        evp_file (str, optional): Path to .evp file (timing).
+        start (float): Start time in ps.
+        nframes (int): Number of frames to use (0=all).
+        stride (int): Stride for frames.
+        time_interval (float): Default time between frames (ps) if no .evp.
+
+    Returns:
+        tuple: (frames, dt)
+            frames: list of ASE Atoms objects with velocities.
+            dt: time step in ps.
     """
     BOHR2ANG = 0.529177249
-    # 1) read species symbols
+    # 1) Read species symbols
     syms = inp.read_ion_file(in_file)
-    # 2) convert to atomic numbers locally
-    sp   = convert_symbols_to_atomic_numbers(syms)
-
-    # 3) read cell & pos chunks
+    # 2) Convert to atomic numbers
+    sp = convert_symbols_to_atomic_numbers(syms)
+    # 3) Read cell and position blocks
     cel_chunks = read_cel(cel_file)
     pos_chunks = read_pos(pos_file, len(syms))
-    # 4) optional times from .evp, else use uniform spacing
+    # 4) Read times from .evp if available, else use uniform spacing
     times_full = read_evp(evp_file) if evp_file else []
     total = min(len(cel_chunks), len(pos_chunks))
 
-    # determine start/end indices
+    # Determine start/end indices
     if len(times_full) >= 2:
-        # slice out only the frames we will use
         dt = times_full[1] - times_full[0]
-        # find start_idx based on time
-        start_idx = int(start/dt)
+        start_idx = int(start / dt)
         time_list = times_full[start_idx:total:stride]
     else:
         dt = time_interval
-        start_idx = int(start/dt)
+        start_idx = int(start / dt)
         time_list = [i * dt for i in range(start_idx, total, stride)]
 
     start_idx = max(0, min(start_idx, total-1))
-    end_idx   = total if nframes<=0 else min(start_idx+nframes, total)
+    end_idx = total if nframes <= 0 else min(start_idx + nframes, total)
 
-    # collect positions & cells first
-    pos_list = []; cell_list = []
+    # Collect positions and cells
+    pos_list = []
+    cell_list = []
     for i in range(start_idx, end_idx, stride):
         block_c = cel_chunks[i]
         cell = np.loadtxt(block_c[1:], dtype=float).T * BOHR2ANG
@@ -125,9 +189,10 @@ def build_trajectory(in_file, pos_file, cel_file,
         pos_list.append(coords)
         cell_list.append(cell)
     pos_arr = np.array(pos_list)  # (Nf, nat, 3)
-    # build velocity array with a valid time_list (no None)
+    # Compute velocities
     vel_arr = finite_diff_velocities(pos_arr, time_list)
 
+    # Build ASE Atoms objects with velocities
     frames = []
     for i, (coords, cell) in enumerate(zip(pos_arr, cell_list)):
         a = Atoms(numbers=sp, positions=coords, cell=cell, pbc=True)
@@ -139,17 +204,34 @@ def build_trajectory(in_file, pos_file, cel_file,
 def compute_vaf(frames, dt, element, blocks, prefix, in_file,
                 t_start_dt=0, stepsize_t=1, stepsize_tau=1, t_end_fit_ps=10):
     """
-    element: symbol (e.g. 'Li')  → pick indices in trajectory
-    blocks:  number of statistical blocks
+    Compute the velocity autocorrelation function (VAF) for a given element.
+
+    Args:
+        frames (list): List of ASE Atoms objects with velocities.
+        dt (float): Time step in ps.
+        element (str): Element symbol (e.g. 'Li').
+        blocks (int): Number of statistical blocks.
+        prefix (str): Output file prefix.
+        in_file (str): Path to .in file (for species).
+        t_start_dt (int): Start index for VAF calculation.
+        stepsize_t (int): Stride for t in VAF.
+        stepsize_tau (int): Stride for tau in VAF.
+        t_end_fit_ps (float): End of fit in ps.
+
+    Returns:
+        tuple: (t, vaf, vint)
+            t: time array (ps)
+            vaf: VAF array
+            vint: VAF integral array
     """
     traj = Trajectory.from_atoms(frames)
     traj.set_attr('timestep_fs', dt * 1000.0)
     da = DynamicsAnalyzer()
     da.set_trajectories(traj)
-    # map species→indices
+    # Map species to indices
     all_syms = inp.read_ion_file(in_file)
     indices = [i for i, s in enumerate(all_syms) if s == element]
-    # get vaf
+    # Compute VAF
     ts = da.get_vaf(
         integration='trapezoid',
         species_of_interest=[element],
@@ -159,13 +241,13 @@ def compute_vaf(frames, dt, element, blocks, prefix, in_file,
         stepsize_tau=stepsize_tau,
         t_end_fit_ps=t_end_fit_ps
     )
-    # extract mean arrays
+    # Extract mean arrays
     key_mean = f"vaf_isotropic_{element}_mean"
     key_int  = f"vaf_integral_isotropic_{element}_mean"
     vaf  = ts.get_array(key_mean)
     vint = ts.get_array(key_int)
     t = np.arange(len(vaf)) * dt
-    # write to disk
+    # Write VAF and integral to disk
     out_vaf = f"{prefix}_{element}_vaf.dat"
     out_int = f"{prefix}_{element}_vint.dat"
     np.savetxt(out_vaf,  np.column_stack((t, vaf)),  header="t(ps)  VAF")
@@ -180,11 +262,12 @@ def compute_vaf(frames, dt, element, blocks, prefix, in_file,
     return t, vaf, vint
 
 if __name__ == '__main__':
-    p = argparse.ArgumentParser()
-    p.add_argument('--in_file',   required=True)
-    p.add_argument('--pos_file',  required=True)
-    p.add_argument('--cel_file',  required=True)
-    p.add_argument('--evp_file',  default=None)
+    # Argument parsing for CLI usage
+    p = argparse.ArgumentParser(description="Compute and plot VAF from QE trajectory files.")
+    p.add_argument('--in_file',   required=True, help="Path to .in file (species)")
+    p.add_argument('--pos_file',  required=True, help="Path to .pos file (positions)")
+    p.add_argument('--cel_file',  required=True, help="Path to .cel file (cell parameters)")
+    p.add_argument('--evp_file',  default=None, help="Path to .evp file (timing, optional)")
     p.add_argument('--element',   nargs='+', required=True,
                    help="Atom symbol(s) for VAF (e.g. Li Na)")
     p.add_argument('--start',   type=float, default=0.0,
@@ -193,7 +276,7 @@ if __name__ == '__main__':
                    help="Number of frames (0=all)")
     p.add_argument('--stride',  type=int,   default=1,
                    help = "Stride for frames (1=all, 2=every other, etc.)")
-    p.add_argument('--blocks',  type=int,   default=1,   # changed from 4 to 1
+    p.add_argument('--blocks',  type=int,   default=1,
                    help="Number of blocks for error estimates")
     p.add_argument('--out_prefix', default='vaf',
                    help="Prefix for output files")
@@ -202,9 +285,10 @@ if __name__ == '__main__':
     p.add_argument('--t_start_fit_ps', type=float, default=0, help="Start of the fit in ps (for SAMOS, default: 0)")
     p.add_argument('--stepsize_t', type=int, default=1, help="Stride for t in VAF")
     p.add_argument('--stepsize_tau', type=int, default=1, help="Stride for tau in VAF")
-    p.add_argument('--t_end_fit_ps', type=float, default=50, help="End of the fit in ps (required by SAMOS)")  # changed from 10 to 50
+    p.add_argument('--t_end_fit_ps', type=float, default=50, help="End of the fit in ps (required by SAMOS)")
     args = p.parse_args()
 
+    # Build trajectory with velocities
     frames, dt = build_trajectory(
         args.in_file, args.pos_file, args.cel_file,
         evp_file=args.evp_file,
@@ -214,6 +298,7 @@ if __name__ == '__main__':
         time_interval=args.time_interval
     )
 
+    # Compute and plot VAF for each requested element
     for elem in args.element:
         traj = Trajectory.from_atoms(frames)
         traj.set_attr('timestep_fs', dt * 1000.0)
@@ -229,10 +314,11 @@ if __name__ == '__main__':
             t_end_fit_ps=args.t_end_fit_ps
         )
 
+        # Plot VAF for this element
         plot_vaf_isotropic(ts)
         plt.xlim(0, args.t_end_fit_ps * 1000)  # fs, matches process file
         save_path = f'{args.out_prefix}_{elem}_vaf_upto_{int(args.t_end_fit_ps)}psframes.png'
         print(f"Saving VAF plot to: {os.path.abspath(save_path)}")
         plt.savefig(save_path)
         plt.show()
-        plt.close()   
+        plt.close()
