@@ -16,132 +16,11 @@ from ase.io import read, write
 from ase.io.trajectory import Trajectory
 from pymatgen.io.ase import AseAtomsAdaptor
 from pymatgen.analysis.diffusion.aimd.rdf import RadialDistributionFunctionFast
+from . import input_reader as inp
 import math
 import os
 import argparse
 import sys
-
-def read_ion_file(filename):
-    """
-    Read atomic species from Quantum ESPRESSO .in file using input_reader method.
-    
-    This function parses the ATOMIC_POSITIONS section of a Quantum ESPRESSO
-    input file to extract the list of atomic species in the system.
-    
-    Args:
-        filename (str): Path to the Quantum ESPRESSO .in input file
-        
-    Returns:
-        list: List of element symbols (strings) representing the atomic species
-    """
-    total_ions = []
-    with open(filename, 'r') as file:
-        lines = file.readlines()
-        
-        # Find the ATOMIC_POSITIONS section
-        line_number = None
-        for i, line in enumerate(lines):
-            elements = line.split()
-            if len(elements) == 0:
-                continue
-            if 'ATOMIC_POSITIONS' in elements:
-                line_number = i
-                break
-                
-        # Extract atomic species from subsequent lines
-        for line in lines[line_number + 1:]:
-            if len(line.strip()) == 0:
-                if len(total_ions) == 0:
-                    continue  # Skip empty lines before data
-                else:
-                    break  # Stop at empty line after data
-            elements = line.split()
-            element = elements[0]  # First column contains element symbol
-            total_ions.append(element)
-            
-    print(f"Read {len(total_ions)} atoms from {filename}")
-    print(f"Atomic species: {set(total_ions)}")
-    return total_ions
-
-def read_cel_file(filename, length_conversion_factor=1.0):
-    """
-    Read cell parameters from Quantum ESPRESSO .cel file using input_reader method.
-    
-    This function reads lattice vectors from a .cel file where every 4 lines
-    represent one time step (header + 3 lattice vectors).
-    
-    Args:
-        filename (str): Path to the .cel file containing cell parameter data
-        length_conversion_factor (float): Factor to convert length units (default: 1.0)
-        
-    Returns:
-        numpy.ndarray: Array of shape (n_timesteps, 9) containing flattened
-                      lattice vectors for each time step
-    """
-    cell_data = []
-    with open(filename, 'r') as file:
-        lines = file.readlines()
-        
-        # Process every 4 lines (skip header, read 3 lattice vectors)
-        for i in range(0, len(lines), 4):
-            # Read and convert the three lattice vectors
-            values = [float(val)*length_conversion_factor for val in lines[i + 1].split()]
-            values += [float(val)*length_conversion_factor for val in lines[i + 2].split()]
-            values += [float(val)*length_conversion_factor for val in lines[i + 3].split()]
-            cell_data.append(values)
-            
-    print(f"Read {len(cell_data)//9} cell matrices from {filename}")
-    return np.array(cell_data)
-
-def read_pos_file(filename, symbols, length_conversion_factor=1.0, n_frames=None, time_interval=0.00193511):
-    """
-    Read atomic positions from Quantum ESPRESSO .pos file using input_reader method.
-    
-    This function processes position data where each time step contains positions
-    for all atoms, separated by header lines.
-    
-    Args:
-        filename (str): Path to the .pos file containing atomic position data
-        symbols (list): List of atomic symbols
-        length_conversion_factor (float): Factor to convert length units (default: 1.0)
-        n_frames (int, optional): Number of frames to read (not used in current implementation)
-        time_interval (float): Time interval between frames in ps (default: 0.00193511)
-        
-    Returns:
-        tuple: Contains:
-            - ion_disp (numpy.ndarray): Array of shape (n_atoms, n_timesteps, 3)
-            - n_steps (int): Total number of time steps
-            - dt (numpy.ndarray): Array of time differences
-            - time (numpy.ndarray): Array of absolute time values
-    """
-    import pandas as pd
-    
-    # Read position data using pandas fixed-width format
-    pos_data = pd.read_fwf(filename, header=None)
-    
-    # Extract time step headers (every (n_atoms + 1) lines)
-    data_steps = pos_data[0: len(pos_data): len(symbols) + 1]
-    
-    # Create time arrays
-    d_idx = np.arange(1, len(data_steps), 1)
-    t_ind = np.arange(0, len(data_steps), 1)
-    time = t_ind * time_interval + np.ones(len(t_ind))*time_interval
-    dt = d_idx * time_interval
-    
-    print(f"Read {len(data_steps)} position frames from {filename}")
-    
-    # Initialize position array: (n_atoms, n_timesteps, 3_coordinates)
-    ion_disp = np.zeros((len(symbols), len(data_steps), 3))
-    
-    # Extract position data for each atom
-    for i in range(len(symbols)):
-        # Get positions for atom i at all time steps (skip headers)
-        ion_data = pos_data[i + 1:len(pos_data):len(symbols) + 1]
-        # Convert to numpy array and apply length conversion
-        ion_pos = ion_data.to_numpy().astype('float')*length_conversion_factor
-        ion_disp[i] = ion_pos
-        
-    return ion_disp, len(data_steps), dt, time
 
 def build_ase_trajectory(in_file, pos_file, cel_file, time_after_start=60, num_frames=100, time_interval=0.00193511):
     """
@@ -165,7 +44,7 @@ def build_ase_trajectory(in_file, pos_file, cel_file, time_after_start=60, num_f
     ang = 0.529177249  # Bohr to Angstrom conversion factor
     
     # Read atomic species from input file
-    symbols = read_ion_file(in_file)
+    symbols = inp.read_ion_file(in_file)
     
     # Dictionary for converting element symbols to atomic numbers
     symbol_to_number = {
@@ -178,10 +57,10 @@ def build_ase_trajectory(in_file, pos_file, cel_file, time_after_start=60, num_f
     atomic_numbers = [symbol_to_number.get(symbol, 1) for symbol in symbols]
     
     # Read cell parameters and positions with unit conversion
-    cell_data = read_cel_file(cel_file, ang)
+    cell_data = inp.read_cel_file(cel_file, ang)
     cell_matrices = cell_data.reshape(-1, 3, 3)  # Reshape to (n_steps, 3, 3)
     
-    pos_data, n_steps, dt, time_array = read_pos_file(pos_file, symbols, ang, len(cell_matrices), time_interval)
+    pos_data, n_steps, dt, time_array = inp.read_pos_file(pos_file, symbols, ang, len(cell_matrices), time_interval)
     
     # Determine frame range to extract
     min_frames = min(len(cell_matrices), pos_data.shape[1])
