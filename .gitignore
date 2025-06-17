@@ -83,3 +83,52 @@ target/__pycache__/probability_density.cpython-313.pyc
 Vesta datas/Li22Al2P4S24_100 frames.vesta
 Vesta datas/Li22Al2P4S24_500 frames.cif
 Vesta datas/Li22Al2P4S24_500 frames.vesta
+outputs/MSD_slope 5-20_0-25ps_tracer_block 500.jpg
+LiAlPS.traj
+process_LiAlPS.py
+outputs/LiAlPS_density.xsf
+outputs/LiAlPS_vaf_upto_100psframes_reference.png
+outputs/LiAlPS_vdos_mine_reference.png
+outputs/LiAlPS_vdos_reference.png
+outputs/msd_plot_charged_block_grok1_slope 5-20_0-20ps_charged_block 500_600K.jpg
+outputs/msd_plot_tracer_block_grok1_slope 5-100ps_2-200ps_tracer_block 250_600K.jpg
+outputs/msd_plot_tracer_block_grok1_slope 5-100ps_2-200ps_tracer_block 500_600K.jpg
+outputs/MSD_slope 5-20_0-25ps_charged_block 500_600K.jpg
+outputs/MSD_slope 5-100_2-200ps_tracer_block 250_600K.jpg
+outputs/MSD_slope 5-100_2-200ps_tracer_block 500_600K.jpg
+outputs/rdf_plot_LiAlPS_LiAlPS_Al_time60ps_variable_cell.png
+outputs/rdf_plot_LiAlPS_LiAlPS_Li_time60ps_variable_cell.png
+outputs/rdf_plot_LiAlPS_LiAlPS_P_time60ps_variable_cell.png
+outputs/rdf_plot_LiAlPS_LiAlPS_S_time60ps_variable_cell.png
+outputs/vaf_Al_vaf.dat
+outputs/vaf_Al_vaf.png
+outputs/vaf_Al_vint.dat
+outputs/vaf_Li_vaf.dat
+outputs/vaf_Li_vaf.png
+outputs/vaf_Li_vint.dat
+outputs/vaf_LiAlPS_Al_vaf_upto_100psframes.png
+outputs/vaf_LiAlPS_Al_vaf.dat
+outputs/vaf_LiAlPS_Al_vint.dat
+outputs/vaf_LiAlPS_Li_vaf_upto_100psframes.png
+outputs/vaf_LiAlPS_Li_vaf.dat
+outputs/vaf_LiAlPS_Li_vaf.png
+outputs/vaf_LiAlPS_Li_vint.dat
+outputs/vaf_LiAlPS_multi_vaf.png
+outputs/vaf_LiAlPS_P_vaf_upto_100psframes.png
+outputs/vaf_LiAlPS_P_vaf.dat
+outputs/vaf_LiAlPS_P_vint.dat
+outputs/vaf_LiAlPS_S_vaf_upto_100psframes.png
+outputs/vaf_LiAlPS_S_vaf.dat
+outputs/vaf_LiAlPS_S_vint.dat
+outputs/vaf_P_vaf.dat
+outputs/vaf_P_vaf.png
+outputs/vaf_P_vint.dat
+outputs/vaf_S_vaf.dat
+outputs/vaf_S_vaf.png
+outputs/vaf_S_vint.dat
+outputs/vdos_1.png
+outputs/vdos_2.png
+outputs/vdos_vdos_mine.png
+outputs/vdos_vdos.png
+test scripts/Li_Density_samos.xsf
+test scripts/vaf.py
