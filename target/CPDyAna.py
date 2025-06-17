@@ -2,19 +2,19 @@
 """
 CPDyAna – Combined version
 =========================
-This single‑file variant merges the original **CPDyAna.py** driver with the helper
-functions that used to live in **data_processing.py** so that the whole workflow
+This single‑file variant merges the original CPDyAna.py driver with the helper
+functions that used to live in data_processing.py so that the whole workflow
 can be imported or executed without relying on a separate local package.
 
 Usage remains identical to the two‑file setup:
     python CPDyAna.py msd -T 800 --data-dir . ...
     python CPDyAna.py vh -T 800 ...
 """
+
 import argparse
 import json
 import glob
 import os
-# from statistics import mode
 import sys
 import subprocess
 
@@ -23,22 +23,40 @@ import matplotlib.pyplot as plt
 from scipy.stats import linregress, norm
 
 # --- internal imports (external to this file) ---------------------------------
-from . import correrelation_analysis as corr  # noqa: E402
-from . import input_reader as inp             # noqa: E402
-from . import calculations as cal             # noqa: E402
-from . import json_serializable as js         # noqa: E402
-from . import plotting as p                   # noqa: E402
-from . import data_processing as dp           # noqa: E402
-from . import probability_density as prob     # noqa: E402
-from . import compute_rdf as rdf              # noqa: E402
-
-# -----------------------------------------------------------------------------
-#                                   Core job
-# -----------------------------------------------------------------------------
+from . import correrelation_analysis as corr
+from . import input_reader as inp
+from . import calculations as cal
+from . import json_serializable as js
+from . import plotting as p
+from . import data_processing as dp
+from . import probability_density as prob
+from . import compute_rdf as rdf
 
 def Job(temperature, diffusing_elements, diffusivity_direction_choices, diffusivity_choices, correlation, 
         pos_file, cel_file, evp_file, ion_file, Conv_factor, initial_time, final_time, 
         initial_slope_time, final_slope_time, block, rmax, step_skip, sigma, ngrid, mode=None):
+    """
+    Main job function for MSD, VH, and related analyses.
+
+    Args:
+        temperature (list): List of temperatures.
+        diffusing_elements (list): Elements to analyze.
+        diffusivity_direction_choices (list): Directions for diffusivity.
+        diffusivity_choices (list): Types of diffusivity.
+        correlation (list): Correlation types.
+        pos_file, cel_file, evp_file, ion_file (list): File paths.
+        Conv_factor (float): Conversion factor.
+        initial_time, final_time, initial_slope_time, final_slope_time (float): Time windows.
+        block (int): Block size.
+        rmax (float): Maximum radius.
+        step_skip (int): Step skip.
+        sigma (float): Sigma for Gaussian.
+        ngrid (int): Number of grid points.
+        mode (str): Analysis mode.
+
+    Returns:
+        tuple: (input_dict, output_dict) with analysis results.
+    """
     temp_input_dict, temp_output_dict = {}, {}
     for temp_count, temp in enumerate(temperature):
         inp_array = inp.read_ion_file(ion_file[temp_count])
@@ -124,8 +142,7 @@ def Job(temperature, diffusing_elements, diffusivity_direction_choices, diffusiv
                                 'dist_interval': dist_interval.tolist(),
                                 'reduced_nt': reduced_nt
                             }
-                        except Exception as e:
-                            print(f"Warning: Could not calculate Distinct Van Hove correlation: {e}")
+                        except Exception:
                             evaluated_corr_dict[correlation_type] = {
                                 'grt': [],
                                 'dist_interval': [],
@@ -136,11 +153,12 @@ def Job(temperature, diffusing_elements, diffusivity_direction_choices, diffusiv
             temp_output_dict[(temp, ele)] = {'dt_dict': dt, 'msd_data': msd_data_dict, 'evaluated_corr': evaluated_corr_dict}
     return temp_input_dict, temp_output_dict
 
-# -----------------------------------------------------------------------------
-#                                CLI interface
-# -----------------------------------------------------------------------------
-
 def parser():
+    """
+    Argument parser for CPDyAna CLI.
+    Returns:
+        argparse.Namespace: Parsed arguments.
+    """
     p = argparse.ArgumentParser(description="CPDyAna CLI – combined version")
     sub = p.add_subparsers(dest="mode", required=True)
 
@@ -149,6 +167,7 @@ def parser():
     ionic_density = sub.add_parser("ionic-density")
     rdf = sub.add_parser("rdf")
     vaf = sub.add_parser("vaf")
+    vdos = sub.add_parser("vdos")
 
     for sp in (msd, vh):
         sp.add_argument(
@@ -349,12 +368,7 @@ def parser():
     # RDF specific arguments
     rdf.add_argument(
         "--data-dir", required=True,
-        help="Directory containing .pos and .in files"
-    )
-    rdf.add_argument(
-        "--cel-files",
-        action="store_true",
-        help="If set, use .cel files for cell information"
+        help="Directory containing .pos, .in, .cel files"
     )
     rdf.add_argument(
         "--time-after-start", type=float, default=60,
@@ -368,6 +382,25 @@ def parser():
         "--num-frames", type=int, default=100,
         help="Number of frames to analyze (default: 100)"
     )
+    rdf.add_argument(
+        "--central-atom", nargs="+", default=['Li','Al','P','S'],
+        help="Central atom(s) for RDF analysis (default: ['Li', 'Al', 'P', 'S'])"
+    )
+    rdf.add_argument('--pair-atoms', nargs='+', default=None,
+                        help='List of pair atom types for RDF (default: same as central-atoms)'
+    )
+    rdf.add_argument('--ngrid', type=int, default=1001,
+                        help='Number of radial grid points for RDF'
+                        ' (default: 1001)')
+    rdf.add_argument('--rmax', type=float, default=10.0,
+                        help='Maximum distance for RDF calculation (Å)'
+                        ' (default: 10.0)')
+    rdf.add_argument('--sigma', type=float, default=0.2,
+                        help='Gaussian broadening parameter for RDF'
+                        ' (default: 0.2)')
+    rdf.add_argument('--xlim', nargs=2, type=float, default=[1.5, 8.0],
+                        help='x-axis limits for RDF plot (default: 1.5 8.0)'
+                        ' (in Å)')
 
     # VAF specific arguments
     vaf.add_argument(
@@ -402,31 +435,63 @@ def parser():
         "--time-interval", type=float, default=0.00193511,
         help="Default time between frames (ps) if no .evp file"
     )
-    # vaf.add_argument(
-    #     "--t-start-dt", type=int, default=0,
-    #     help="Start frame index for VAF"
-    # )
-    # vaf.add_argument(
-    #     "--stepsize-t", type=int, default=1,
-    #     help="Stride for t in VAF"
-    # )
-    # vaf.add_argument(
-    #     "--stepsize-tau", type=int, default=1,
-    #     help="Stride for tau in VAF"
-    # )
+    vaf.add_argument(
+        "--t-start-fit-ps", type=int, default=0,
+        help="Start frame index for VAF"
+    )
+    vaf.add_argument(
+        "--stepsize-t", type=int, default=1,
+        help="Stride for t in VAF"
+    )
+    vaf.add_argument(
+        "--stepsize-tau", type=int, default=1,
+        help="Stride for tau in VAF"
+    )
     vaf.add_argument(
         "--t-end-fit-ps", type=float, default=10,
         help="End of the fit in ps (required by SAMOS)"
     )
-
+     
+    # VDOS specific arguments
+    vdos.add_argument(
+        "--data-dir", required=True,
+        help="Directory containing .pos, .in, .cel files (and optionally .evp)"
+    )
+    vdos.add_argument(
+        "--elements", nargs="+", default=["Li", "Al", "P", "S"],
+        help="Elements to plot (default: Li Al P S)"
+    )
+    vdos.add_argument(
+        "--out-prefix", default="vdos",
+        help="Prefix for output files"
+    )
+    vdos.add_argument(
+        "--start", type=float, default=0.0,
+        help="Time (ps) to start analysis"
+    )
+    vdos.add_argument(
+        "--nframes", type=int, default=0,
+        help="Number of frames (set 0 for all frames)"
+    )
+    vdos.add_argument(
+        "--stride", type=int, default=1,
+        help="Stride for frames (1=all, 2=every other, etc.)"
+    )
+    vdos.add_argument(
+        "--time-interval", type=float, default=0.00193511,
+        help="Default time between frames (ps) if no .evp file"
+    )
     return p.parse_args()
 
-
 def main():
+    """
+    Main entry point for CPDyAna CLI.
+    Handles dispatching to the correct analysis mode and manages file I/O.
+    """
     a = parser()
 
     if a.mode in ("msd", "vh"):
-        # Find files in data-dir - EXACT same logic as original
+        # Find files in data-dir
         pos_files = sorted(glob.glob(os.path.join(a.data_dir, "*.pos")))
         cel_files = sorted(glob.glob(os.path.join(a.data_dir, "*.cel")))
         evp_files = sorted(glob.glob(os.path.join(a.data_dir, "*.evp")))
@@ -437,7 +502,6 @@ def main():
         if not (len(pos_files) == len(cel_files) == len(evp_files) == len(ion_files)):
             sys.exit("Mismatch in number of .pos, .cel, .evp, .in files")
 
-        # Run the EXACT same Job function with EXACT same parameters
         Temp_inp_data, Temp_out_data = Job(
             a.temperature, a.diffusing_elements, a.diffusivity_direction_choices,
             a.diffusivity_choices, a.correlation, pos_files, cel_files, evp_files, ion_files,
@@ -446,7 +510,6 @@ def main():
         )
 
         if a.json_output:
-            # Save output to JSON - EXACT same logic
             Temp_out_data_serializable = js.convert_to_serializable(Temp_out_data)
             with open(a.json_output, 'w') as output_file:
                 json.dump(Temp_out_data_serializable, output_file)
@@ -465,7 +528,6 @@ def main():
         else:
             pdata = [[float(x[0]), x[1], x[2], x[3]] for x in a.plot_data]
         
-        # Generate plots - EXACT same call
         p.msd_plot(data_source, pdata, a.first_time, a.last_time, save_path=a.save_path)
 
     elif a.mode == "vh":
@@ -496,24 +558,12 @@ def main():
         if len(pos_files) != len(ion_files) or len(pos_files) != len(cel_files):
             sys.exit("Number of .pos, .in, and .cel files must match")
 
-        print(f"Found files:")
-        print(f"  .pos files: {pos_files}")
-        print(f"  .in files: {ion_files}")
-        print(f"  .cel files: {cel_files}")
-
         results = {}
         for i, (pos_file, ion_file, cel_file) in enumerate(zip(pos_files, ion_files, cel_files)):
-            # Convert to absolute paths
             pos_file = os.path.abspath(pos_file)
             ion_file = os.path.abspath(ion_file)
             cel_file = os.path.abspath(cel_file)
 
-            print(f"\nProcessing file set {i+1}:")
-            print(f"  .pos: {pos_file}")
-            print(f"  .in: {ion_file}")
-            print(f"  .cel: {cel_file}")
-
-            # Verify files exist
             missing_files = []
             if not os.path.exists(pos_file):
                 missing_files.append(pos_file)
@@ -522,7 +572,6 @@ def main():
             if not os.path.exists(cel_file):
                 missing_files.append(cel_file)
             if missing_files:
-                print(f"Skipping: Missing files {missing_files}")
                 continue
 
             base_name = os.path.splitext(os.path.basename(pos_file))[0]
@@ -544,32 +593,19 @@ def main():
                     "--density", str(a.density),
                     "--step-skip", str(getattr(a, "step_skip", 1))
                 ]
-                # Optional arguments
                 if hasattr(a, "mask") and a.mask:
                     cmd += ["--mask", a.mask]
                 if hasattr(a, "recenter") and a.recenter:
                     cmd += ["--recenter"]
                 if hasattr(a, "bbox") and a.bbox:
                     cmd += ["--bbox", a.bbox]
-                # EVP file is optional and not present in your CLI, but add if needed:
-                # if hasattr(a, "evp_file") and a.evp_file:
-                #     cmd += ["--evp-file", a.evp_file]
 
-                print(f"Running command: {' '.join(cmd)}")
-                result = subprocess.run(cmd, check=True, capture_output=True, text=True,
-                                        cwd=os.path.dirname(os.path.abspath(__file__)))
-                print("Output:", result.stdout)
-                if result.stderr:
-                    print("Warnings:", result.stderr)
+                subprocess.run(cmd, check=True, capture_output=True, text=True,
+                               cwd=os.path.dirname(os.path.abspath(__file__)))
                 results[base_name] = {"density_file": output_file}
-                print(f"Successfully processed {base_name}")
-            except Exception as e:
-                print(f"Error processing {base_name}: {e}")
+            except Exception:
                 continue
 
-        print("\nIonic density analysis completed!")
-        print("Results:", results)
-    
     elif a.mode == "rdf":
         pos_files = sorted(glob.glob(os.path.join(a.data_dir, "*.pos")))
         ion_files = sorted(glob.glob(os.path.join(a.data_dir, "*.in")))
@@ -586,40 +622,35 @@ def main():
 
         results = {}
         for i, (pos_file, ion_file, cel_file) in enumerate(zip(pos_files, ion_files, cel_files)):
-            print(f"\nProcessing file set {i+1}: {pos_file}, {ion_file}, {cel_file}")
-
             try:
                 base_name = os.path.splitext(os.path.basename(pos_file))[0]
                 output_prefix = f"rdf_plot_{base_name}"
-                
-                # Call the RDF functions directly instead of main()
-                print("Building ASE trajectory frames...")
+
+                # Pass all user CLI options to build_ase_trajectory and compute_rdf
                 extracted_frames = rdf.build_ase_trajectory(
                     ion_file, pos_file, cel_file,
-                    time_after_start=a.time_after_start,
-                    num_frames=a.num_frames,
-                    time_interval=a.time_interval
+                    time_after_start=getattr(a, "time_after_start", 60),
+                    num_frames=getattr(a, "num_frames", 100),
+                    time_interval=getattr(a, "time_interval", 0.00193511),
                 )
-                
-                print("Computing RDF...")
-                r, rdf_li, rdf_al, rdf_p, rdf_s = rdf.compute_rdf(
+
+                rdf.compute_rdf(
                     extracted_frames,
                     output_prefix=output_prefix,
-                    time_after_start=a.time_after_start
+                    time_after_start=getattr(a, "time_after_start", 60),
+                    central_atoms=getattr(a, "central_atoms", ['Li', 'Al', 'P', 'S']),
+                    pair_atoms=getattr(a, "pair_atoms", None),
+                    ngrid=getattr(a, "ngrid", 1001),
+                    rmax=getattr(a, "rmax", 10.0),
+                    sigma=getattr(a, "sigma", 0.2),
+                    xlim=tuple(getattr(a, "xlim", [1.5, 8.0]))
                 )
-                
+
                 results[base_name] = {"rdf_plots": f"{output_prefix}_*.png"}
-                print(f"Successfully processed {base_name}")
-            except Exception as e:
-                print(f"Error processing {base_name}: {e}")
+            except Exception:
                 continue
 
-        print("\nRDF analysis completed!")
-        print("Results:", results)
-        return
-    
     if a.mode == "vaf":
-
         pos_files = sorted(glob.glob(os.path.join(a.data_dir, "*.pos")))
         ion_files = sorted(glob.glob(os.path.join(a.data_dir, "*.in")))
         cel_files = sorted(glob.glob(os.path.join(a.data_dir, "*.cel")))
@@ -653,31 +684,49 @@ def main():
                 "--out_prefix", f"{a.out_prefix}_{base_name}",
                 "--t_end_fit_ps", str(a.t_end_fit_ps),
                 "--time_interval", str(a.time_interval),
-                # "--t_start_dt", str(a.t_start_dt),
-                # "--stepsize_t", str(a.stepsize_t),
-                # "--stepsize_tau", str(a.stepsize_tau)
+                "--t_start_fit_ps", str(a.t_start_fit_ps),
+                "--stepsize_t", str(a.stepsize_t),
+                "--stepsize_tau", str(a.stepsize_tau)
             ]
 
-            print(f"Running VAF for {base_name}: {' '.join(cmd)}")
             try:
-                result = subprocess.run(cmd, check=True, capture_output=True, text=True)
-                print(result.stdout)
-                if result.stderr:
-                    print("Warnings:", result.stderr)
+                subprocess.run(cmd, check=True, capture_output=True, text=True)
                 results[base_name] = {"vaf_output_prefix": f"{a.out_prefix}_{base_name}"}
-            except subprocess.CalledProcessError as e:
-                print(f"VAF command failed for {base_name} with return code {e.returncode}")
-                print(f"Stdout: {e.stdout}")
-                print(f"Stderr: {e.stderr}")
+            except subprocess.CalledProcessError:
                 continue
-            except Exception as e:
-                print(f"Error processing VAF for {base_name}: {e}")
+            except Exception:
                 continue
 
-        print("\nVAF analysis completed!")
-        print("Results:", results)
+    if a.mode == "vdos":
+        pos_files = sorted(glob.glob(os.path.join(a.data_dir, "*.pos")))
+        ion_files = sorted(glob.glob(os.path.join(a.data_dir, "*.in")))
+        cel_files = sorted(glob.glob(os.path.join(a.data_dir, "*.cel")))
+        evp_files = sorted(glob.glob(os.path.join(a.data_dir, "*.evp")))
+
+        if not pos_files or not ion_files or not cel_files:
+            return
+        if not (len(pos_files) == len(ion_files) == len(cel_files)):
+            return
+
+        # For each set of files, call vdos.py
+        for i, (pos_file, ion_file, cel_file) in enumerate(zip(pos_files, ion_files, cel_files)):
+            evp_file = evp_files[i] if i < len(evp_files) else None
+            cmd = [
+                sys.executable, os.path.join(os.path.dirname(__file__), "vdos.py"),
+                "--in_file", ion_file,
+                "--pos_file", pos_file,
+                "--cel_file", cel_file,
+                "--out_prefix", a.out_prefix,
+                "--start", str(a.start),
+                "--nframes", str(a.nframes),
+                "--stride", str(a.stride),
+                "--time_interval", str(a.time_interval),
+                "--elements"
+            ] + a.elements
+            if evp_file:
+                cmd += ["--evp_file", evp_file]
+            subprocess.run(cmd, check=True)
         return
-
 
 if __name__ == "__main__":
     main()

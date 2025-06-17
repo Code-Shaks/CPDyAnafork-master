@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 from ase import Atoms
 from samos.trajectory import Trajectory
 from samos.analysis.dynamics import DynamicsAnalyzer
+from samos.plotting.plot_dynamics import plot_vaf_isotropic
 
 # point at your input_reader
 sys.path.append(os.path.abspath(os.path.join(__file__, '..', '..', 'target')))
@@ -68,7 +69,7 @@ def finite_diff_velocities(pos_arr, times):
     v = np.zeros_like(pos_arr)
     # assume uniform timesteps, compute dt0 from first two entries
     if len(times) >= 2:
-        dt0 = times[1] - times[0]
+        dt0 = (times[1] - times[0])*1000
     else:
         dt0 = 1.0
     # central differences
@@ -178,38 +179,6 @@ def compute_vaf(frames, dt, element, blocks, prefix, in_file,
         print("Diffusion coefficient not found in VAF results. Available keys:", list(attrs.keys()))
     return t, vaf, vint
 
-def plot_vaf(t, vaf, vint, element, prefix):
-    """
-    Plot VAF and integrated VAF vs time, with units in cm²/s² and cm²/s.
-    """
-    # Convert units
-    t_s = t * 1e-12  # ps to s
-    vaf_cms2 = vaf * 1e8  # Å²/ps² to cm²/s²
-    vint_cms = vint * 1e4  # Å²/ps to cm²/s
-
-    fig, ax1 = plt.subplots(figsize=(6, 4))
-    ax1.plot(t_s, vaf_cms2, '-', color='C0', label='VAF')
-    ax1.set_xlabel('Time (s)')
-    ax1.set_ylabel('VAF (cm²/s²)', color='C0')
-    ax1.tick_params(axis='y', labelcolor='C0')
-
-    ax2 = ax1.twinx()
-    ax2.plot(t_s, vint_cms, '--', color='C1', label='∫VAF')
-    ax2.set_ylabel('Integrated VAF (cm²/s)', color='C1')
-    ax2.tick_params(axis='y', labelcolor='C1')
-
-    plt.title(f'{element} VAF and ∫VAF')
-    lines, labels = ax1.get_legend_handles_labels()
-    lines2, labels2 = ax2.get_legend_handles_labels()
-    ax1.legend(lines + lines2, labels + labels2, loc='upper right')
-
-    out_png = f'{prefix}_{element}_vaf.png'
-    plt.tight_layout()
-    plt.savefig(out_png, dpi=200)
-    print(f'Plot saved to {out_png}')
-    plt.show()
-    plt.close(fig)
-
 if __name__ == '__main__':
     p = argparse.ArgumentParser()
     p.add_argument('--in_file',   required=True)
@@ -230,7 +199,7 @@ if __name__ == '__main__':
                    help="Prefix for output files")
     p.add_argument('--time_interval', type=float, default=0.00193511,
                    help='Default time between frames (ps) if no .evp file')
-    p.add_argument('--t_start_dt', type=int, default=0, help="Start frame index for VAF")
+    p.add_argument('--t_start_fit_ps', type=float, default=0, help="Start of the fit in ps (for SAMOS, default: 0)")
     p.add_argument('--stepsize_t', type=int, default=1, help="Stride for t in VAF")
     p.add_argument('--stepsize_tau', type=int, default=1, help="Stride for tau in VAF")
     p.add_argument('--t_end_fit_ps', type=float, default=50, help="End of the fit in ps (required by SAMOS)")  # changed from 10 to 50
@@ -246,11 +215,24 @@ if __name__ == '__main__':
     )
 
     for elem in args.element:
-        t, vaf, vint = compute_vaf(
-            frames, dt, elem, args.blocks, args.out_prefix, args.in_file,
-            t_start_dt=args.t_start_dt,
+        traj = Trajectory.from_atoms(frames)
+        traj.set_attr('timestep_fs', dt * 1000.0)
+        da = DynamicsAnalyzer()
+        da.set_trajectories(traj)
+        ts = da.get_vaf(
+            integration='trapezoid',
+            species_of_interest=[elem],
+            nr_of_blocks=args.blocks,
             stepsize_t=args.stepsize_t,
             stepsize_tau=args.stepsize_tau,
+            t_start_fit_ps=args.t_start_fit_ps,            
             t_end_fit_ps=args.t_end_fit_ps
         )
-        plot_vaf(t, vaf, vint, elem, args.out_prefix)
+
+        plot_vaf_isotropic(ts)
+        plt.xlim(0, args.t_end_fit_ps * 1000)  # fs, matches process file
+        save_path = f'{args.out_prefix}_{elem}_vaf_upto_{int(args.t_end_fit_ps)}psframes.png'
+        print(f"Saving VAF plot to: {os.path.abspath(save_path)}")
+        plt.savefig(save_path)
+        plt.show()
+        plt.close()   
