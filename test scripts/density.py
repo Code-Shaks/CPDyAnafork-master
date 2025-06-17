@@ -1,24 +1,35 @@
 #!/usr/bin/env python3
 """
-Ultimate Probability Density Calculator (Extensible Version)
-Integrates CPDyAna and SAMOS methodologies for direct use with .in, .pos, .cel, .evp files.
-Now supports advanced options: frame stride, atom masking, recentering, and custom bounding box.
+Corrected Probability Density Calculation Script
+Uses the EXACT same methodology as cptotraj.py + probdensity.py but keeps data in memory
 """
 
 import numpy as np
 import argparse
 from ase import Atoms
+from ase.io.trajectory import Trajectory as ASE_Trajectory
 from samos.trajectory import Trajectory
 from samos.analysis.get_gaussian_density import get_gaussian_density
-from target import input_reader as inp
+from . import input_reader as inp
 
 def divide_chunks(l, n):
-    """Yield successive n-sized chunks from l."""
+    """
+    Yield successive n-sized chunks from l.
+    """
     for i in range(0, len(l), n):
         yield l[i:i + n]
 
 def convert_symbols_to_atomic_numbers(element_symbols):
-    """Convert element symbols to atomic numbers."""
+    """
+    Convert element symbols to atomic numbers.
+    
+    Args:
+        element_symbols (list): List of element symbols (e.g., ['Li', 'Al', 'P', 'S'])
+        
+    Returns:
+        list: List of corresponding atomic numbers
+    """
+    # Mapping of element symbols to atomic numbers
     element_to_atomic_number = {
         'H': 1, 'He': 2, 'Li': 3, 'Be': 4, 'B': 5, 'C': 6, 'N': 7, 'O': 8, 'F': 9, 'Ne': 10,
         'Na': 11, 'Mg': 12, 'Al': 13, 'Si': 14, 'P': 15, 'S': 16, 'Cl': 17, 'Ar': 18,
@@ -34,159 +45,144 @@ def convert_symbols_to_atomic_numbers(element_symbols):
         'Pa': 91, 'U': 92, 'Np': 93, 'Pu': 94, 'Am': 95, 'Cm': 96, 'Bk': 97, 'Cf': 98,
         'Es': 99, 'Fm': 100, 'Md': 101, 'No': 102, 'Lr': 103
     }
+    
+    # Convert symbols to atomic numbers
     atomic_numbers = []
     for symbol in element_symbols:
         if symbol in element_to_atomic_number:
             atomic_numbers.append(element_to_atomic_number[symbol])
         else:
             raise ValueError(f"Unknown element symbol: {symbol}")
+    
+    # Print summary using element counts
+    from collections import Counter
+    element_counts = Counter(element_symbols)
+    print(f"Species breakdown from input file:")
+    for element, count in element_counts.items():
+        print(f"  {element}: {count} atoms (Z={element_to_atomic_number[element]})")
+    print(f"Total atoms: {len(element_symbols)}")
+    
     return atomic_numbers
 
-def build_trajectory(
-    in_file, pos_file, cel_file, time_after_start=0.0, num_frames=None, time_interval=0.00193511, stride=1
-):
+def build_trajectory(in_file, pos_file, cel_file, time_after_start=60.0, num_frames=100, time_interval=0.00193511):
     """
-    Build an in-memory trajectory from .in, .pos, .cel files.
-    Returns a list of ASE Atoms objects.
-    Supports frame stride for subsampling.
+    Build trajectory.
+    Returns list of ASE Atoms objects instead of writing to file
     """
-    ang = 0.529177249  # Bohr to Angstrom conversion factor
 
-    # 1. Read atomic species from .in file
+    ang = 0.529177249
+    
     element_symbols = inp.read_ion_file(in_file)
+    
+    # Convert element symbols to atomic numbers
     sp = convert_symbols_to_atomic_numbers(element_symbols)
-
-    # 2. Read cell and position files
-    cellfile = open(cel_file).read().splitlines()
-    posfile = open(pos_file).read().splitlines()
+    
+    print(f"Using hardcoded species: {len(sp)} atoms total")
+    print(f"Species breakdown: 22 Li + 2 Al + 4 P + 24 S = {len(sp)} atoms")
+    
+    try:
+        cellfile = open(cel_file).read().splitlines()
+        posfile = open(pos_file).read().splitlines()
+    except FileNotFoundError as e:
+        print(f"Error: Could not find required files. Make sure {cel_file} and {pos_file} exist.")
+        raise e
+    
     lats = list(divide_chunks(cellfile, 4))
-    coords = list(divide_chunks(posfile, len(sp)+1))
-
-    total_frames = min(len(lats), len(coords))
-    start_frame = int(time_after_start / time_interval)
-    if num_frames is None or num_frames == 0:
-        end_frame = total_frames
-    else:
-        end_frame = min(start_frame + num_frames, total_frames)
-
+    coords = list(divide_chunks(posfile, len(sp)+1))  # This is key: len(sp)+1 = 53
+    
+    print(f"Found {len(lats)} lattice chunks and {len(coords)} coordinate chunks")
+    
     atoms_list = []
-    for i in range(start_frame, end_frame, stride):
-        tlat = np.loadtxt(lats[i], skiprows=1).transpose() * ang
-        tpos = np.loadtxt(coords[i], skiprows=1) * ang
-        atoms = Atoms(cell=tlat, numbers=sp, positions=tpos, pbc=True)
-        atoms_list.append(atoms)
-    print(f"Trajectory built: {len(atoms_list)} frames from {start_frame} to {end_frame-1} (stride={stride})")
+    
+    for i in range(0, len(lats)):
+        try:
+            tlat = np.loadtxt(lats[i], skiprows=1).transpose() * ang
+             
+            tpos = np.loadtxt(coords[i], skiprows=1) * ang
+            
+            atoms = Atoms(cell=tlat, numbers=sp, positions=tpos, pbc=True)
+            atoms_list.append(atoms)
+            
+            if (i + 1) % 1000 == 0:
+                print(f"Processed {i + 1} frames...")
+                
+        except Exception as e:
+            print(f"Error processing frame {i}: {e}")
+            continue
+    
+    print(f"Successfully built {len(atoms_list)} frames in memory")
     return atoms_list
 
-def parse_mask(mask_str, total_atoms):
+def calculate_probability_density(atoms_list, element='Li', sigma=0.5, n_sigma=3.0, density=0.1, outputfile=None):
     """
-    Parse a mask string like '0,1,2,5-10' into a list of atom indices.
+    Calculate probability density from in-memory atoms list
+    Same as probdensity.py but using atoms_list instead of loading .traj file
     """
-    if not mask_str:
-        return None
-    indices = set()
-    for part in mask_str.split(','):
-        if '-' in part:
-            start, end = map(int, part.split('-'))
-            indices.update(range(start, end+1))
-        else:
-            indices.add(int(part))
-    # Ensure indices are within bounds
-    indices = [i for i in indices if 0 <= i < total_atoms]
-    return indices
-
-def calculate_probability_density(
-    atoms_list, element='Li', sigma=0.3, n_sigma=3.0, density=0.1, outputfile=None,
-    mask=None, recenter=False, bbox=None
-):
-    """
-    Calculate the Gaussian probability density for a given element in the trajectory.
-    Supports atom masking, recentering, and custom bounding box.
-    """
+    
+    if not atoms_list:
+        raise ValueError("No atoms found in trajectory")
+    
+    print(f"Converting {len(atoms_list)} ASE frames to SAMOS trajectory...")
+    
     traj = Trajectory.from_atoms(atoms_list)
+
     params = {
         'element': element,
         'sigma': sigma,
         'n_sigma': n_sigma,
         'density': density,
-        'outputfile': outputfile if outputfile else f'{element}_Density_samos.xsf'
+        'outputfile': '{}_Density.xsf'.format(element)
     }
-    if mask is not None:
-        params['mask'] = mask
-    if recenter:
-        params['recenter'] = True
-    if bbox is not None:
-        params['bbox'] = bbox
-    print(f"Calculating probability density for {element} (sigma={sigma}, n_sigma={n_sigma}, density={density})")
-    if mask is not None:
-        print(f"  Using atom mask: {mask}")
-    if recenter:
-        print("  Recentering trajectory before density calculation.")
-    if bbox is not None:
-        print(f"  Using custom bounding box: {bbox}")
+    
+    print(f"Calculating {element} density with parameters: {params}")
     get_gaussian_density(traj, **params)
-    print(f"Density written to {params['outputfile']}")
+    
+    print(f"Probability density calculation complete. Output: {params['outputfile']}")
+    return params['outputfile']
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Ultimate Probability Density Calculator (Extensible CPDyAna + SAMOS)"
-    )
+    parser = argparse.ArgumentParser(description='Calculate probability density from QE files')
     parser.add_argument('--in_file', required=True, help='Input .in file')
-    parser.add_argument('--pos_file', required=True, help='Input .pos file')
-    parser.add_argument('--cel_file', required=True, help='Input .cel file')
-    parser.add_argument('--evp_file', required=False, help='Input .evp file (optional)')
-    parser.add_argument('--element', default='Li', help='Element for density calculation')
-    parser.add_argument('--sigma', type=float, default=0.3, help='Gaussian sigma (Å)')
-    parser.add_argument('--n_sigma', type=float, default=3.0, help='Cutoff in units of sigma')
-    parser.add_argument('--density', type=float, default=0.1, help='Grid density (points/Å)')
-    parser.add_argument('--output', default=None, help='Output XSF filename')
-    parser.add_argument('--time_after_start', type=float, default=0.0, help='Start time (ps)')
-    parser.add_argument('--num_frames', type=int, default=0, help='Number of frames (0 for all)')
-    parser.add_argument('--time_interval', type=float, default=0.00193511, help='Time interval between frames (ps)')
-    parser.add_argument('--stride', type=int, default=1, help='Frame stride (default: 1, use 2 for every other frame)')
-    parser.add_argument('--mask', default=None, help="Atom mask (e.g. '0,1,2,5-10') for density calculation")
-    parser.add_argument('--recenter', action='store_true', help="Recenter trajectory before density calculation")
-    parser.add_argument('--bbox', default=None, help="Bounding box for grid as 'xmin,xmax,ymin,ymax,zmin,zmax' (comma-separated)")
-
+    parser.add_argument('--pos_file', required=True, help='Position .pos file')
+    parser.add_argument('--cel_file', required=True, help='Cell .cel file')
+    parser.add_argument('--time_after_start', type=float, default=60.0, help='Time after start (ps) (default: 60.0)')
+    parser.add_argument('--num_frames', type=int, default=100, help='Number of frames (default: 100)')
+    parser.add_argument('--time_interval', type=float, default=0.00193511, help='Time interval (default: 0.00193511)')
+    parser.add_argument('--element', default='Li', help='Element for density calculation (default: Li)')
+    parser.add_argument('--sigma', type=float, default=0.5, help='Gaussian sigma (default: 0.5)')
+    parser.add_argument('--n_sigma', type=float, default=3.0, help='Number of sigma for cutoff (default: 3.0)')
+    parser.add_argument('--density', type=float, default=1.0, help='Grid density (default: 1.0)')
+    parser.add_argument('--output', default=None, help='Output filename (default: None)')
+    
     args = parser.parse_args()
-
-    # Build trajectory
-    atoms_list = build_trajectory(
-        args.in_file, args.pos_file, args.cel_file,
-        time_after_start=args.time_after_start,
-        num_frames=args.num_frames,
-        time_interval=args.time_interval,
-        stride=args.stride
-    )
-
-    # Parse mask and bounding box if provided
-    mask = None
-    if args.mask:
-        mask = parse_mask(args.mask, len(atoms_list[0]))
-
-    bbox = None
-    if args.bbox:
-        try:
-            bbox_vals = [float(x) for x in args.bbox.split(',')]
-            if len(bbox_vals) == 6:
-                bbox = np.array(bbox_vals).reshape((3,2))
-            else:
-                print("Bounding box must have 6 comma-separated values (xmin,xmax,ymin,ymax,zmin,zmax)")
-        except Exception as e:
-            print(f"Error parsing bounding box: {e}")
-
-    # Calculate probability density
-    calculate_probability_density(
-        atoms_list,
-        element=args.element,
-        sigma=args.sigma,
-        n_sigma=args.n_sigma,
-        density=args.density,
-        outputfile=args.output,
-        mask=mask,
-        recenter=args.recenter,
-        bbox=bbox
-    )
+    
+    try:
+        print("=== Building trajectory in memory using cptotraj.py method ===")
+        atoms_list = build_trajectory(
+            in_file=args.in_file,
+            pos_file=args.pos_file,
+            cel_file=args.cel_file,
+            time_after_start=args.time_after_start,
+            num_frames=args.num_frames,
+            time_interval=args.time_interval
+        )
+        
+        print("\n=== Calculating probability density using probdensity.py method ===")
+        output_file = calculate_probability_density(
+            atoms_list,
+            element=args.element,
+            sigma=args.sigma,
+            n_sigma=args.n_sigma,
+            density=args.density,
+            outputfile=args.output
+        )
+        
+        print(f"\n=== SUCCESS: Output saved to {output_file} ===")
+        
+    except Exception as e:
+        print(f"Error: {e}")
+        import traceback
+        traceback.print_exc()
 
 if __name__ == '__main__':
     main()

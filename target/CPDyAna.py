@@ -384,14 +384,14 @@ def parser():
     )
     vaf.add_argument(
         "--nframes", type=int, default=0,
-        help="Number of frames (0=all)"
+        help="Number of frames (set 0 for all frames)"
     )
     vaf.add_argument(
         "--stride", type=int, default=1,
         help="Stride for frames (1=all, 2=every other, etc.)"
     )
     vaf.add_argument(
-        "--blocks", type=int, default=1,
+        "--blocks", type=int, default=4,
         help="Number of blocks for error estimates"
     )
     vaf.add_argument(
@@ -402,18 +402,18 @@ def parser():
         "--time-interval", type=float, default=0.00193511,
         help="Default time between frames (ps) if no .evp file"
     )
-    vaf.add_argument(
-        "--t-start-dt", type=int, default=0,
-        help="Start frame index for VAF"
-    )
-    vaf.add_argument(
-        "--stepsize-t", type=int, default=1,
-        help="Stride for t in VAF"
-    )
-    vaf.add_argument(
-        "--stepsize-tau", type=int, default=1,
-        help="Stride for tau in VAF"
-    )
+    # vaf.add_argument(
+    #     "--t-start-dt", type=int, default=0,
+    #     help="Start frame index for VAF"
+    # )
+    # vaf.add_argument(
+    #     "--stepsize-t", type=int, default=1,
+    #     help="Stride for t in VAF"
+    # )
+    # vaf.add_argument(
+    #     "--stepsize-tau", type=int, default=1,
+    #     help="Stride for tau in VAF"
+    # )
     vaf.add_argument(
         "--t-end-fit-ps", type=float, default=10,
         help="End of the fit in ps (required by SAMOS)"
@@ -563,11 +563,6 @@ def main():
                     print("Warnings:", result.stderr)
                 results[base_name] = {"density_file": output_file}
                 print(f"Successfully processed {base_name}")
-            except subprocess.CalledProcessError as e:
-                print(f"Command failed with return code {e.returncode}")
-                print(f"Stdout: {e.stdout}")
-                print(f"Stderr: {e.stderr}")
-                continue
             except Exception as e:
                 print(f"Error processing {base_name}: {e}")
                 continue
@@ -624,7 +619,6 @@ def main():
         return
     
     if a.mode == "vaf":
-        import subprocess
 
         pos_files = sorted(glob.glob(os.path.join(a.data_dir, "*.pos")))
         ion_files = sorted(glob.glob(os.path.join(a.data_dir, "*.in")))
@@ -657,11 +651,11 @@ def main():
                 "--stride", str(a.stride),
                 "--blocks", str(a.blocks),
                 "--out_prefix", f"{a.out_prefix}_{base_name}",
+                "--t_end_fit_ps", str(a.t_end_fit_ps),
                 "--time_interval", str(a.time_interval),
-                "--t_start_dt", str(a.t_start_dt),
-                "--stepsize_t", str(a.stepsize_t),
-                "--stepsize_tau", str(a.stepsize_tau),
-                "--t_end_fit_ps", str(a.t_end_fit_ps)
+                # "--t_start_dt", str(a.t_start_dt),
+                # "--stepsize_t", str(a.stepsize_t),
+                # "--stepsize_tau", str(a.stepsize_tau)
             ]
 
             print(f"Running VAF for {base_name}: {' '.join(cmd)}")
