@@ -196,38 +196,47 @@ def compute_plot_vdos(frames, prefix, elements=None, time_interval=0.00193511):
     da = DynamicsAnalyzer(trajectories=[traj])
     # Plot total VDOS using SAMOS's built-in plot
     res = da.get_power_spectrum()
-    plot_power_spectrum(res)
+    fig1, ax1 = plt.subplots(figsize=(6, 4))
+    plot_power_spectrum(res, ax=ax1)
+    ax1.set_xlabel('Frequency (THz)', fontsize=12)
+    ax1.set_ylabel('Signal (A$^2$ fs$^{-1}$)', fontsize=12)
+    ax1.tick_params(axis='both', which='major', labelsize=11)
+    ax1.set_xlim(-2, 22)
+    ax1.legend(fontsize=10)
+    fig1.tight_layout()
     save_path1 = f'{prefix}_1.png'
     print(f"Saving VDOS plot to: {os.path.abspath(save_path1)}")
     plt.savefig(save_path1, dpi=300)
     plt.show()
-    plt.close()
+    plt.close(fig1)
 
     # Custom plot for each element
-    fig = plt.figure(figsize=(4, 3))
-    ax = fig.add_subplot(
+    fig2 = plt.figure(figsize=(6, 4))
+    ax2 = fig2.add_subplot(
         plt.GridSpec(1, 1, left=0.15, top=0.95, bottom=0.2, right=0.95)[0]
     )
+    color_cycle = plt.cm.tab10.colors
     for smoothing in [100]:
         res = da.get_power_spectrum(smothening=smoothing)
         freq_THz = res.get_array('frequency_0')
         if elements is None:
             elements = ['Li', 'Al', 'P', 'S']
-        for el in elements:
+        for idx, el in enumerate(elements):
             key = f'periodogram_{el}_mean'
             vdos = res.get_array(key)
             if vdos is not None:
-                ax.plot(freq_THz, vdos, label=f'{el}_{smoothing}')
-    ax.legend()
-    ax.set_yticks([])
-    ax.set_ylabel('Signal')
-    ax.set_xlabel('Frequency (THz)')
-    ax.set_xlim(-2, 22)
+                ax2.plot(freq_THz, vdos, label=f'{el} (smooth={smoothing})', color=color_cycle[idx % len(color_cycle)], linewidth=2)
+    ax2.legend(fontsize=11, loc='upper right', frameon=True)
+    ax2.set_yticks([])
+    ax2.set_ylabel('Signal (A$^2$ fs$^{-1}$)', fontsize=12)
+    ax2.set_xlabel('Frequency (THz)', fontsize=12)
+    ax2.set_xlim(-2, 22)
+    ax2.tick_params(axis='both', which='major', labelsize=11)
     save_path2 = f'{prefix}_2.png'
     print(f"Saving custom VDOS plot to: {os.path.abspath(save_path2)}")
     plt.savefig(save_path2, dpi=300)
     plt.show()
-    plt.close()
+    plt.close(fig2)
 
 def main():
     """
