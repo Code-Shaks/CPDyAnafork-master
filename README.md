@@ -44,8 +44,41 @@ All options are run via the main driver
 ```shell
 CPDyAna <mode> [options]
 ```
+Modes:
+msd – Mean Squared Displacement
+vh – Van Hove correlation
+rdf – Radial Distribution Function
+vaf – Velocity Autocorrelation Function
+vdos – Vibrational Density of States
+ionic-density – Ionic density maps
 
+Example: Compute MSD
+```shell
+CPDyAna msd --data-dir ./data -T 800 -e Li
+```
 
-# Install using the following command:
-# ```shell
-# pip install .
+Example: Van Hove correlation
+```shell
+CPDyAna vh --data-dir ./data -T 800 -e Li --correlation Self
+```
+
+Example: Compute RDF
+```shell
+CPDyAna rdf --data-dir ./data -T 800 --num-frames 100 --central-atom Li --pair-atoms Al P
+```
+
+Example: Velocity Autocorrelation Function
+```shell
+CPDyAna vaf --data-dir ./data --element Li Al
+```
+
+Example: Vibrational Density of States
+```Shell
+CPDyAna vaf --data-dir ./data --elements Li Al P S
+```
+
+Example: Ionic Density
+```shell
+CPDyAna ionic-density --data-dir ./data --element Li --sigma 0.2
+```
+
