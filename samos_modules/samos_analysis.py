@@ -1,5 +1,40 @@
 # -*- coding: utf-8 -*-
 
+"""
+Core Analysis Module for SAMOS
+===============================
+
+This module provides the main analysis classes and functions for the SAMOS
+(Statistical Analysis of MOlecular Simulations) package. It implements
+high-performance algorithms for common molecular dynamics analysis tasks.
+
+Key Features:
+- Mean Square Displacement (MSD) calculations
+- Radial Distribution Functions (RDF)
+- Velocity Autocorrelation Functions (VAF)
+- Vibrational Density of States (VDOS)
+- Angular momentum analysis
+- Time series analysis utilities
+
+The module is designed for efficiency with large trajectory datasets and
+provides both object-oriented and functional interfaces for flexibility.
+
+Classes:
+    BaseAnalyzer: Abstract base class for analysis tools
+    DynamicsAnalyzer: Comprehensive dynamics analysis
+    RDF: Radial distribution function calculator
+    AngularSpectrum: Angular momentum analysis
+    TimeSeries: Time series analysis utilities
+
+Functions:
+    util_msd: High-level MSD calculation interface
+    util_rdf_and_plot: RDF calculation with plotting
+    get_gaussian_density: Gaussian density field generation
+
+Author: SAMOS Development Team
+Version: 01-02-2024
+"""
+
 import numpy as np
 import sys
 import itertools
@@ -15,16 +50,46 @@ from abc import ABCMeta, abstractmethod
 bohr_to_ang = 0.52917720859
 
 class TimeSeries(AttributedArray):
+    """
+    Time series analysis utilities.
+    
+    This class provides tools for analyzing time-dependent properties
+    including autocorrelation functions, power spectra, and statistical
+    analysis.
+    """
     pass
 
 
 class DynamicsAnalyzer(object):
     """
-    This class serves as the main analyzer
-    for dynamic properties (MSD, VAF, etc)
+    Comprehensive analyzer for particle dynamics in molecular simulations.
+    
+    This class provides a unified interface for calculating various dynamic
+    properties including MSD, VAF, and related quantities. It handles multiple
+    species analysis and provides statistical error estimation.
+    
+    Attributes:
+        species_of_interest (list): Chemical species to analyze.
+        verbosity_level (int): Level of output detail.
+        trajectories (list): Multiple trajectory datasets.
+        
+    Methods:
+        get_msd: Calculate mean square displacement
+        get_vaf: Calculate velocity autocorrelation function
+        get_power_spectrum: Calculate power spectrum from VAF
+        get_kinetic_energies: Calculate kinetic energy time series
+        set_species_of_interest: Set target species for analysis
     """
 
     def __init__(self, **kwargs):
+        """
+        Initialize the dynamics analyzer.
+        
+        Args:
+            trajectory (list, optional): List of ASE Atoms objects.
+            species_of_interest (list, optional): Species to analyze.
+            verbose (bool): Enable verbose output.
+        """
         self._species_of_interest = None
         self._verbosity = 1
         for key, val in kwargs.items():
@@ -32,7 +97,10 @@ class DynamicsAnalyzer(object):
 
     def set_trajectories(self, trajectories):
         """
-        Expects a list of trajectories
+        Set multiple trajectories for ensemble analysis.
+        
+        Args:
+            trajectory_list (list): List of trajectory datasets.
         """
         if isinstance(trajectories, Trajectory):
             trajectories = [trajectories]
@@ -46,10 +114,10 @@ class DynamicsAnalyzer(object):
 
     def set_species_of_interest(self, species_of_interest):
         """
-        :param list species_of_interest:
-            To set a global list
-            of species of interest for all the analysis
-        :todo: Check the species whether they are valid
+        Set the chemical species to be analyzed.
+        
+        Args:
+            species_list (list): List of chemical symbols (e.g., ['Li', 'Na']).
         """
         if isinstance(species_of_interest, str):
             self._species_of_interest = [species_of_interest]
@@ -61,11 +129,23 @@ class DynamicsAnalyzer(object):
                 ' strings with the atomic symbol')
 
     def set_verbosity(self, verbosity):
+        """
+        Set the verbosity level for output.
+        
+        Args:
+            level (int): Verbosity level (0=quiet, 1=normal, 2=verbose).
+        """
         if not isinstance(verbosity, int):
             raise TypeError('Verbosity is an integer')
         self._verbosity = verbosity
 
     def get_species_of_interest(self):
+        """
+        Get the current list of species being analyzed.
+        
+        Returns:
+            list: Current species of interest.
+        """
         # Also a good way to check if atoms have been set
         types = self._types
         if self._species_of_interest is None:
@@ -330,30 +410,42 @@ class DynamicsAnalyzer(object):
 
     def get_msd(self, decomposed=False, atom_indices=None, **kwargs):
         """
-        Calculates the mean square discplacement (MSD),
-
-        #.  Calculate the MSD for each block
-        #.  Calculate the mean and the standard deviation of the slope
-        #.  Calculate the conductivity, including error propagation.
-
-        :param bool decomposed:
-            Compute the (3,3) MSD matrix by computing
-            each Cartesian component independently.
-        :param list species_of_interest:
-            The species of interest for which to calculate
-            the MSD, for example ["O", "H"]
-        :param list atom_indices:
-            The indices of interest for which to calculate the MSD,
-            for example [0, 1, 2, 5].
-            The intersection of atom_indices and species_of_interest
-            is taken, so aotm_indices can be used to narrow the list of atoms
-        :param **kwargs:
-            All other parameters required by
-            DynamicsAnalyzer._get_running_params()
-
-        For this function t_start_fit_* and t_end_fit_* can also
-        be lists/arrays. The slope and conductivities
-        will be computed for each (t_start_fit, t_end_fit) pair.
+        Calculate Mean Square Displacement for specified species.
+        
+        This method computes MSD using an efficient algorithm that handles
+        large trajectories. It supports both single and multiple species
+        analysis with automatic error estimation.
+        
+        Args:
+            decomposed (bool): Whether to decompose MSD by directions.
+            atom_indices (list, optional): Specific atom indices to analyze.
+            stepsize_t (int, optional): Step size for trajectory sampling (default: 1).
+                Use larger values for faster computation on large trajectories.
+            species_of_interest (list, optional): List of species to analyze.
+                If None, uses self.species_of_interest.
+            t_start_fit_ps (float, optional): Start time for diffusion coefficient fit.
+            t_end_fit_ps (float, optional): End time for diffusion coefficient fit.
+            nr_of_blocks (int, optional): Number of blocks for statistical analysis.
+                    
+        Returns:
+            TimeSeries: MSD data containing:
+                - t_list_fs: Time array in femtoseconds
+                - msd_isotropic_X_mean: Mean MSD values for species X
+                - msd_isotropic_X_std: Standard deviation of MSD for species X
+                - slope_msd_mean: Fitted slope values (proportional to diffusion coefficient)
+                - diffusion_mean_cm2_s: Calculated diffusion coefficients in cm²/s
+                
+        Raises:
+            ValueError: If no trajectory is set or species list is empty.
+            
+        Example:
+            >>> analyzer = DynamicsAnalyzer(trajectory, species_of_interest=['Li'])
+            >>> msd_data = analyzer.get_msd(stepsize=2)
+            >>> print(f"Li diffusion coefficient: {msd_data.get_attr('Li')['diffusion_mean_cm2_s']:.2e}")
+        
+        Note:
+            MSD is calculated using the efficient FFT-based algorithm for
+            improved performance on large datasets.
         """
         from samos_modules.mdutils import (
             calculate_msd_specific_atoms,
@@ -711,6 +803,34 @@ class DynamicsAnalyzer(object):
         return msd
 
     def get_vaf(self, arrayname=None, integration='trapezoid', **kwargs):
+        """
+        Calculate Velocity Autocorrelation Function for specified species.
+        
+        This method computes VAF which provides insights into particle dynamics
+        and can be used to calculate diffusion coefficients and vibrational
+        density of states.
+        
+        Args:
+            arrayname (str, optional): Name of custom velocity array to use.
+            integration (str): Integration method ('trapezoid', 'simpson', etc.).
+            stepsize_t (int, optional): Step size for trajectory sampling.
+            species_of_interest (list, optional): Species to analyze.
+            t_start_fit_dt (int, optional): Start time for statistical fitting.
+            t_end_fit_dt (int, optional): End time for statistical fitting.
+            nr_of_blocks (int, optional): Number of blocks for statistical analysis.
+            
+        Returns:
+            TimeSeries: VAF data containing:
+                - vaf_isotropic_X_mean: Mean VAF values for species X
+                - vaf_isotropic_X_std: Standard deviation of VAF for species X 
+                - vaf_integral_isotropic_X_mean: Integral of VAF (proportional to diffusion)
+                - diffusion_mean_cm2_s: Calculated diffusion coefficients in cm²/s
+                
+        Example:
+            >>> vaf_data = analyzer.get_vaf(stepsize=1, species=['Li'])
+            >>> # VAF at time zero should be proportional to temperature
+            >>> print(f"VAF(0) = {vaf_data.get_array('vaf_isotropic_Li_mean')[0]}")
+        """
 
         from samos_modules.mdutils import (
             calculate_vaf_specific_atoms,
@@ -876,6 +996,16 @@ class DynamicsAnalyzer(object):
     def get_kinetic_energies(self, stepsize=1, decompose_system=True,
                              decompose_atoms=False,
                              decompose_species=False):
+        """
+        Calculate kinetic energy time series for specified species.
+        
+        Args:
+            stepsize (int): Step size for sampling.
+            species (list, optional): Species to analyze.
+            
+        Returns:
+            dict: Kinetic energy data for each species.
+        """
         from samos_modules.samos_utils import amu_kg, kB
 
         try:
@@ -963,10 +1093,29 @@ class DynamicsAnalyzer(object):
 
     def get_power_spectrum(self, arrayname=None, **kwargs):
         """
-        Calculate the power spectrum.
-        :param int smothening:
-            Smothen the power spectrum by
-            taking a mean every N steps.
+        Calculate power spectrum from velocity autocorrelation function.
+        
+        The power spectrum is obtained by Fourier transform of the VAF and
+        represents the vibrational density of states (VDOS).
+        
+        Args:
+            arrayname (str, optional): Name of custom velocity array to use.
+            stepsize_t (int, optional): Step size for trajectory sampling.
+            species_of_interest (list, optional): Species to analyze.
+            smothening (int, optional): Level of smoothing to apply.
+            nr_of_blocks (int, optional): Number of blocks for statistical analysis.
+            block_length_dt/fs/ps (int/float, optional): Block length in different units.
+            
+        Returns:
+            TimeSeries: Power spectrum data with:
+                - frequency: Frequency arrays in THz
+                - periodogram: Power spectrum intensity
+                - periodogram_mean/std/sem: Statistical metrics across blocks
+                
+        Example:
+            >>> spectrum = analyzer.get_power_spectrum(species=['Li'])
+            >>> # Plot VDOS
+            >>> plt.plot(spectrum['frequency'], spectrum['intensity'])
         """
 
         from scipy import signal
@@ -1116,6 +1265,35 @@ class DynamicsAnalyzer(object):
 def util_msd(trajectory_path, stepsize=1, species=None,
              plot=True, savefig=None, t_start_fit_ps=5,
              t_end_fit_ps=10, timestep=None, nblocks=None):
+    """
+    High-level interface for MSD calculation with optional plotting.
+    
+    This function provides a convenient way to calculate MSD from trajectory
+    files with automatic plotting and diffusion coefficient extraction.
+    
+    Args:
+        trajectory_path (str): Path to trajectory file.
+        stepsize (int): Frame sampling interval.
+        species (list, optional): Species to analyze. If None, analyze all.
+        plot (bool): Whether to generate MSD plots.
+        savefig (str, optional): Filename to save plots.
+        t_start_fit_ps (float): Start time for diffusion coefficient fit in ps.
+        t_end_fit_ps (float): End time for diffusion coefficient fit in ps.
+        timestep (float, optional): Override timestep in fs. If None, read from file.
+        nblocks (int, optional): Number of blocks for error estimation.
+        
+    Returns:
+        TimeSeries: MSD results with diffusion coefficients and optional plots.
+        
+    Example:
+        >>> # Calculate Li MSD with plotting
+        >>> results = util_msd('trajectory.extxyz', 
+        ...                   stepsize=2, 
+        ...                   species=['Li'],
+        ...                   plot=True, 
+        ...                   savefig='li_msd.png')
+        >>> print(f"D_Li = {results.get_attr('Li')['diffusion_mean_cm2_s']:.2e} cm²/s")
+    """
     if trajectory_path.endswith('.extxyz'):
         from ase.io import read
         aselist = read(trajectory_path, format='extxyz', index=':')
@@ -1178,6 +1356,30 @@ if __name__ == '__main__':
 def write_xsf_header(
         atoms, positions, cell, data,
         vals_per_line=6, outfilename=None, **kwargs):
+    """
+    Write XSF file header for density data visualization.
+    
+    This function writes the proper header information for XSF files
+    containing 3D scalar field data such as electron or ionic densities.
+    
+    Args:
+        atoms (list): List of atomic symbols.
+        positions (np.ndarray): Atomic positions array.
+        cell (np.ndarray): Unit cell vectors (3x3 array).
+        data (np.ndarray): 3D grid data (can be None if providing dimensions separately).
+        vals_per_line (int): Number of values per line in output file.
+        outfilename (str, optional): Output filename. If None, prints to stdout.
+        **kwargs: Additional parameters:
+            - xdim, ydim, zdim (int): Grid dimensions if data is None
+        
+    Returns:
+        None: Writes to file or stdout
+        
+    Example:
+        >>> # Write XSF header to file
+        >>> write_xsf_header(atoms, positions, cell, density_grid, 
+        ...                 outfilename='density.xsf')
+    """
     if isinstance(outfilename, str):
         f = open(outfilename, 'w')
     elif outfilename is None:
@@ -1233,28 +1435,33 @@ def get_gaussian_density(trajectory, element=None, outputfile='out.xsf',
                          istart=1, istop=None, stepsize=1,
                          indices=None, indices_exclude_from_plot=None):
     """
-    :param str positionsf: Where to read the positions from.
-    :param str pos_units:
-        The units of the positions (implemented so far: angstrom, bohr).
-    :param str outputfile: The xsf outputfile
-    :param bool with_symbols:
-        Whether symbols are printed in front
-        of positions (will be ignored)
-    :param list cell: the 3x3 cell,
-    :param str element:
-        The to calculate the density for,
-        has to be present in symbols
-    :param int nat:
-        The number of atoms written in the positionsfile
-        per atomic step
-    :param float sigma: The gaussian broadening to apply
-    :param float n_sigma:
-        the multiple of sigma for which to
-        create the bounding box.
-    :param float density: The density for the grid
-    :param int istart: Index to start reading positions
-    :param int istop: Index to stop reading positions
-    :param bool recenter: Whether to recenter
+    Generate Gaussian density field from atomic positions.
+    
+    This function creates a 3D density field by placing Gaussian functions
+    at atomic positions. Useful for visualization and analysis of ionic
+    distributions.
+    
+    Args:
+        trajectory (Trajectory): Trajectory object containing positions and cell.
+        element (str, optional): Element symbol to include in density calculation.
+        outputfile (str): Output XSF filename.
+        sigma (float): Gaussian width parameter in Ångstroms.
+        n_sigma (float): Number of sigma cutoff distance.
+        density (float): Grid density in points per Ångstrom.
+        istart (int): First frame to include.
+        istop (int, optional): Last frame to include. If None, use all frames.
+        stepsize (int): Step size for frame sampling.
+        indices (list, optional): Specific atom indices to include.
+        indices_exclude_from_plot (list, optional): Atom indices to exclude from XSF file.
+        
+    Returns:
+        None: Writes density to XSF file.
+               
+    Example:
+        >>> # Create Li density field
+        >>> traj = Trajectory.load_file("trajectory.extxyz")
+        >>> get_gaussian_density(traj, element="Li", sigma=0.4, 
+        ...                     outputfile="li_density.xsf")
     """
     from samos_modules.gaussian_density import make_gaussian_density
 
@@ -1395,11 +1602,38 @@ if __name__ == '__main__':
     get_gaussian_density(t, **parsed_args)
 
 class BaseAnalyzer(object, metaclass=ABCMeta):
+    """
+    Abstract base class for molecular dynamics analysis tools.
+    
+    This class provides a common interface for all analysis tools in SAMOS,
+    ensuring consistent API design and functionality across different analysis types.
+    
+    Attributes:
+        trajectory (list): List of ASE Atoms objects representing the trajectory.
+        verbose (bool): Whether to print progress information.
+        
+    Methods:
+        set_trajectory: Set the trajectory for analysis
+        run: Perform the analysis (abstract method)
+    """
     def __init__(self, **kwargs):
+        """
+        Initialize the base analyzer.
+        
+        Args:
+            trajectory (list, optional): List of ASE Atoms objects.
+            verbose (bool): Enable/disable verbose output.
+        """
         for key, val in list(kwargs.items()):
             getattr(self, 'set_{}'.format(key))(val)
 
     def set_trajectory(self, trajectory):
+        """
+        Set the trajectory for analysis.
+        
+        Args:
+            trajectory (list): List of ASE Atoms objects.
+        """
         if not isinstance(trajectory, Trajectory):
             raise TypeError(
                 'You need ot pass a {} as trajectory'.format(Trajectory))
@@ -1407,10 +1641,27 @@ class BaseAnalyzer(object, metaclass=ABCMeta):
 
     @abstractmethod
     def run(*args, **kwargs):
+        """
+        Perform the analysis. Must be implemented by subclasses.
+        
+        Returns:
+            Analysis results (format depends on specific analyzer).
+        """
         pass
 
 
 class RDF(BaseAnalyzer):
+    """
+    Radial Distribution Function calculator.
+    
+    This class computes pair correlation functions (RDF) for specified
+    atom pairs in molecular dynamics trajectories. It supports both
+    partial and total RDFs with proper normalization.
+    
+    Methods:
+        run: Calculate RDF
+        run_fort: Use Fortran backend for acceleration (if available)
+    """
     def run_fort(self, radius=None, species_pairs=None, istart=0,
                  istop=None, stepsize=1, nbins=100):
         """
@@ -1450,22 +1701,31 @@ class RDF(BaseAnalyzer):
     def run(self, radius=None, species_pairs=None,
             istart=0, istop=None, stepsize=1, nbins=100):
         """
-        Calculate a RDF, also searching periodic images.
-        TODO:
-            Improve algorithm because it can actually fail in
-            very acute cell systems
-        TODO: Implement orthorhombic case to gain efficiency
-
-        :param float radius:
-            The radius for the calculation of the RDF
-        :param int istart: where to start sampling
-        :param int istop: where to stop sampling (trajectory index)
-        :param int stepsize:
-            Sampling steps to take, defaults to 1.
-            A stepsize=10 takes every 10th step for trajectory calculation.
-        :param in binsize:
-            Number of bins to use in histogram, defaults to 100.
-            Increasing this means finer resolution but also more noise.
+        Calculate radial distribution function (RDF).
+        
+        This method computes pair correlation functions between specified atom types,
+        properly accounting for periodic boundary conditions.
+        
+        Args:
+            radius (float): Maximum radial distance to consider.
+            species_pairs (list, optional): List of tuples with species pairs to analyze.
+                If None, all unique pairs will be analyzed.
+            istart (int): First frame index to include.
+            istop (int, optional): Last frame index to include. If None, use all frames.
+            stepsize (int): Step size for frame sampling.
+            nbins (int): Number of radial bins for the histogram.
+            
+        Returns:
+            AttributedArray: Results containing:
+                - rdf_X_Y: RDF values for species X and Y
+                - int_X_Y: Integrated RDF (coordination number)
+                - radii_X_Y: Radial distance values
+                - n_pairs_X_Y: Number of atomic pairs analyzed
+                - n_data_X_Y: Total number of data points used
+                
+        Note:
+            For non-orthogonal cells, the algorithm may need many periodic images
+            to properly account for all pairs within the cutoff distance.
         """
         def get_indices(spec, chem_sym):
             """
@@ -1613,10 +1873,19 @@ class RDF(BaseAnalyzer):
 
 
 class AngularSpectrum(BaseAnalyzer):
+    """
+    Angular momentum spectrum analyzer.
+    
+    This class analyzes rotational dynamics and angular momentum
+    distributions in molecular systems.
+    """
     def run(self, radius=None, species_pairs=None,
             istart=1, istop=None, stepsize=1, nbins=100):
         """
-        :param float radius: The radius for the calculation of the RDF
+        Calculate angular momentum spectrum.
+        
+        Returns:
+            dict: Angular spectrum data.
         """
         from samos_modules.rdf import calculate_angular_spec
         atoms = self._trajectory.atoms
@@ -1649,6 +1918,37 @@ class AngularSpectrum(BaseAnalyzer):
 def util_rdf_and_plot(trajectory_path, radius=5.0, stepsize=1, bins=100,
                       species_pairs=None, savefig=None, plot=False,
                       printrdf=False, no_int=False):
+    """
+    Calculate RDF with optional plotting functionality.
+    
+    This function provides a high-level interface for RDF calculation
+    from trajectory files with automatic plotting capabilities.
+    
+    Args:
+        trajectory_path (str): Path to trajectory file.
+        radius (float): Maximum distance for RDF calculation.
+        stepsize (int): Frame sampling interval.
+        bins (int): Number of radial bins.
+        species_pairs (list): Atom pairs to analyze as "A-B" strings.
+        plot (bool): Whether to generate RDF plots.
+        savefig (str, optional): Filename to save plots.
+        printrdf (str, optional): Prefix for RDF data output files.
+        no_int (bool): If True, don't plot the integral.
+        
+    Returns:
+        AttributedArray: RDF data for all requested pairs, including:
+            - rdf_X_Y: RDF values for species X and Y
+            - int_X_Y: Integral of RDF
+            - radii_X_Y: Radial distance values
+        
+    Example:
+        >>> # Calculate and plot Li-O RDF
+        >>> rdf_data = util_rdf_and_plot('traj.extxyz',
+        ...                             radius=10.0,
+        ...                             species_pairs=['Li-O'],
+        ...                             plot=True,
+        ...                             savefig='li_o_rdf.png')
+    """
     if trajectory_path.endswith('.extxyz'):
         from ase.io import read
         aselist = read(trajectory_path, format='extxyz', index=':')

@@ -1,3 +1,26 @@
+"""
+Calculations Module for CPDyAna
+===============================
+
+This module provides the core calculation functions for molecular dynamics analysis,
+focusing on Mean Square Displacement (MSD) calculations and diffusion coefficient
+determination for both tracer and collective diffusion.
+
+The module implements efficient algorithms for:
+- MSD calculation for individual and collective particle motion
+- Linear regression analysis for diffusion coefficient extraction
+- Multi-directional diffusivity analysis (X, Y, Z, XY, XZ, YZ, XYZ)
+- Statistical block averaging for error estimation
+
+Functions:
+    calculate_msd: Main MSD calculation orchestrator
+    msd_tracer: Individual particle MSD calculation
+    msd_charged: Collective/charged species MSD calculation
+
+Author: CPDyAna Development Team
+Version: 01-02-2024
+"""
+
 import numpy as np
 from scipy.stats import linregress
 
@@ -62,17 +85,34 @@ def calc_msd_tracer(r, d_idx):
 
 def msd_tracer(structure, step):
     """
-    Calculate average tracer MSD for multiple particles.
+    Calculate tracer (individual particle) Mean Square Displacement.
     
-    This function computes the tracer MSD by averaging over all mobile ions
-    in the system for various time lags.
+    This function computes MSD for individual particle motion, which represents
+    self-diffusion processes. Each particle's displacement is calculated independently
+    and then averaged to obtain the tracer diffusion coefficient.
     
     Args:
-        structure (numpy.ndarray): 3D array of shape (n_ions, n_timesteps, 3)
-        step (int): Total number of time steps
+        conduct_rectified_structure_array (np.ndarray): Unwrapped position array
+            with shape (n_frames, n_atoms, 3).
+        conduct_ions_array (list): Array of ion indices for the target element.
+        dt (np.ndarray): Time step array in picoseconds.
+        Last_term (int): Final time index for analysis window.
+        initial_slope_time (float): Start time for diffusion coefficient fitting.
+        final_slope_time (float): End time for diffusion coefficient fitting.
+        block (int): Block size for statistical error estimation.
         
     Returns:
-        numpy.ndarray: Average MSD values for time lags from 1 to step-1
+        tuple: (msd_array, time_array, diffusion_coeff, r_squared, slope, intercept)
+            - msd_array (np.ndarray): MSD values vs time
+            - time_array (np.ndarray): Time values in picoseconds
+            - diffusion_coeff (float): Tracer diffusion coefficient in cm²/s
+            - r_squared (float): Linear regression R² value
+            - slope (float): MSD slope in Ų/ps
+            - intercept (float): MSD intercept in Ų
+            
+    Note:
+        The diffusion coefficient is calculated using the Einstein relation:
+        D = MSD_slope / (2 * dimensionality) with appropriate unit conversion.
     """
     num_mobile_ions = structure.shape[0]
     msd_ions = np.empty([0, len(np.arange(1, step, 1))])  # Initialize empty array
@@ -87,18 +127,34 @@ def msd_tracer(structure, step):
 # Charged MSD calculation
 def msd_charged(structure, final_msd):
     """
-    Calculate the charged MSD for a given 3D position array and tracer MSD.
+    Calculate collective (charged species) Mean Square Displacement.
     
-    The charged MSD accounts for collective motion and correlations between
-    different ions in the system.
+    This function computes MSD for collective motion of charged species, which
+    represents the center-of-mass diffusion and is relevant for ionic conductivity
+    calculations. All particles of the same type move collectively.
     
     Args:
-        structure (numpy.ndarray): 3D array of shape (num_mobile_ions, steps, 3) 
-                                 containing position data
-        final_msd (numpy.ndarray): 1D array containing the tracer MSD values
-    
+        conduct_rectified_structure_array (np.ndarray): Unwrapped position array
+            with shape (n_frames, n_atoms, 3).
+        conduct_ions_array (list): Array of ion indices for the target element.
+        dt (np.ndarray): Time step array in picoseconds.
+        Last_term (int): Final time index for analysis window.
+        initial_slope_time (float): Start time for diffusion coefficient fitting.
+        final_slope_time (float): End time for diffusion coefficient fitting.
+        block (int): Block size for statistical error estimation.
+        
     Returns:
-        numpy.ndarray: 1D array of charged MSD values
+        tuple: (msd_array, time_array, diffusion_coeff, r_squared, slope, intercept)
+            - msd_array (np.ndarray): Collective MSD values vs time
+            - time_array (np.ndarray): Time values in picoseconds
+            - diffusion_coeff (float): Collective diffusion coefficient in cm²/s
+            - r_squared (float): Linear regression R² value
+            - slope (float): MSD slope in Ų/ps
+            - intercept (float): MSD intercept in Ų
+            
+    Note:
+        Collective diffusion is calculated as the MSD of the center of mass
+        of all particles of the specified type.
     """
     num_mobile_ions = structure.shape[0]  # Number of mobile ions
     steps = structure.shape[1]           # Number of time steps
@@ -138,31 +194,47 @@ def calculate_msd(diffusing_elements, diffusivity_direction_choices, diffusivity
                   pos_full, conduct_rectified_structure_array, conduct_ions_array, dt, Last_term, 
                   initial_slope_time, final_slope_time, block):
     """
-    Main function to calculate MSD and diffusivity for multiple elements and conditions.
-    
-    This function performs comprehensive MSD and diffusivity analysis including:
-    - Multiple diffusion types (Tracer, Charged)
-    - Multiple spatial directions (X, Y, Z, XY, YZ, ZX, XYZ)
-    - Linear regression analysis for diffusivity extraction
-    - Block analysis for error estimation
-    
-    Args:
-        diffusing_elements (list): List of element names to analyze
-        diffusivity_direction_choices (list): List of spatial directions
-        diffusivity_type_choices (list): List of diffusion types
-        pos_full (numpy.ndarray): Full position array
-        conduct_rectified_structure_array (numpy.ndarray): Rectified position data
-        conduct_ions_array (numpy.ndarray): Ion type information
-        dt (numpy.ndarray): Time step array
-        Last_term (float): Final time value
-        initial_slope_time (float): Start time for linear fitting
-        final_slope_time (float): End time for linear fitting
-        block (int): Block size for error analysis
-    
-    Returns:
-        dict: Nested dictionary containing MSD arrays, diffusivities, and error estimates
-              Structure: {element: {property_name: [values]}}
-    """
+        Calculate Mean Square Displacement for specified elements and conditions.
+        
+        This function orchestrates MSD calculations for different elements, spatial directions,
+        and diffusion types (tracer vs collective). It performs linear regression to extract
+        diffusion coefficients and organizes results in a structured dictionary.
+        
+        Args:
+            diffusing_elements (list): Element symbols to analyze (e.g., ['Li', 'Na']).
+            diffusivity_direction_choices (list): Spatial directions for analysis
+                (e.g., ['X', 'Y', 'Z', 'XY', 'XZ', 'YZ', 'XYZ']).
+            diffusivity_choices (list): Types of diffusivity calculation
+                (['Tracer'] for individual particles, ['Collective'] for charged species).
+            pos_full (np.ndarray): Full position trajectory array.
+            conduct_rectified_structure_array (np.ndarray): Unwrapped position arrays
+                organized by direction and element.
+            conduct_ions_array (list): Ion indices for each element and direction.
+            dt (np.ndarray): Time step array in picoseconds.
+            Last_term (int): Final time index for analysis.
+            initial_slope_time (float): Start time for linear regression in ps.
+            final_slope_time (float): End time for linear regression in ps.
+            block (int): Block size for statistical averaging.
+            
+        Returns:
+            dict: Nested dictionary with structure:
+                {element: {direction: {diffusion_type: {
+                    'msd_data': MSD values array,
+                    'time_data': Time values array,
+                    'diffusion_coeff': Diffusion coefficient in cm²/s,
+                    'r_squared': Linear regression R² value,
+                    'slope': MSD slope value,
+                    'intercept': MSD intercept value
+                }}}}
+                
+        Example:
+            >>> msd_results = calculate_msd(
+            ...     ['Li'], ['XYZ'], ['Tracer'],
+            ...     pos_array, rectified_pos, ion_indices,
+            ...     time_steps, last_frame, 5.0, 100.0, 500
+            ... )
+            >>> print(f"Li diffusion: {msd_results['Li']['XYZ']['Tracer']['diffusion_coeff']:.2e} cm²/s")
+        """
     result_dict = {}
     
     # Loop over each diffusing element

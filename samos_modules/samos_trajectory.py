@@ -5,14 +5,40 @@ from samos_modules.samos_utils import AttributedArray
 
 
 class IncompatibleTrajectoriesException(Exception):
+    """
+    Exception raised when attempting to combine incompatible trajectories.
+    
+    This exception indicates that trajectories cannot be combined due to
+    differences in atom types, array structure, or timestep values.
+    """
     pass
 
 
 def check_trajectory_compatibility(trajectories):
     """
-    Check whether the trajectories passed are compatible.
-    They are compatible if they have the same order of atoms,
-    and the same cell, and store the same arrays
+    Verify that multiple trajectories can be safely combined.
+    
+    This function checks whether trajectories are compatible by confirming
+    they have the same atomic composition, array structure, and timestep.
+    
+    Args:
+        trajectories (list): List of Trajectory objects to check
+        
+    Returns:
+        tuple: (types, timestep) containing the common atom types and timestep
+        
+    Raises:
+        IncompatibleTrajectoriesException: If trajectories differ in atom types,
+            array structure, or timestep
+        TypeError: If any element is not a Trajectory instance
+        AssertionError: If empty list is provided
+            
+    Example:
+        >>> try:
+        ...     types, dt = check_trajectory_compatibility([traj1, traj2])
+        ...     print(f"Compatible trajectories with {len(types)} atom types")
+        ... except IncompatibleTrajectoriesException as e:
+        ...     print(f"Incompatible trajectories: {e}")
     """
 
     assert len(trajectories) >= 1, 'No trajectories passed'
@@ -41,14 +67,38 @@ def check_trajectory_compatibility(trajectories):
 
 class Trajectory(AttributedArray):
     """
-    Class defining our trajectories.
-    A trajectory is a sequence of time-ordered points in phase space.
-    The internal units of a trajectory:
-    *   Femtoseconds for times
-    *   Angstrom for coordinates
-    *   eV for energies
-    *   Masses and cells are set via the _atoms member, an ase.Atoms
-        instance and units as in ase are used.
+    Molecular dynamics trajectory representation with analytical capabilities.
+    
+    The Trajectory class provides a comprehensive container for time-ordered
+    phase space data from molecular dynamics simulations. It manages positions,
+    velocities, forces, and structural information with consistent unit handling.
+    
+    Internal units:
+        - Time: Femtoseconds
+        - Distance: Angstroms
+        - Energy: eV
+        - Cell/Mass: As defined in the ASE Atoms object
+    
+    The class provides methods for trajectory manipulation, analysis, and
+    conversion to/from ASE Atoms objects. It handles periodic boundary
+    conditions and species-specific operations.
+    
+    Attributes:
+        atoms: ASE Atoms object representing the system structure
+        types: Chemical symbols of all atoms
+        nat: Number of atoms in the system
+        cell: Unit cell vectors
+        nstep: Number of time steps in the trajectory
+        
+    Example:
+        >>> # Create a trajectory from a list of ASE Atoms objects
+        >>> traj = Trajectory.from_atoms(atoms_list, timestep_fs=1.0)
+        >>> # Access positions for all atoms at all timesteps
+        >>> positions = traj.get_positions()
+        >>> # Get indices of specific elements
+        >>> li_indices = traj.get_indices_of_species('Li')
+        >>> # Export a specific timestep as an ASE Atoms object
+        >>> atoms_t100 = traj.get_step_atoms(100)
     """
     _TIMESTEP_KEY = 'timestep_fs'
     _POSITIONS_KEY = 'positions'
@@ -71,7 +121,28 @@ class Trajectory(AttributedArray):
     @classmethod
     def from_atoms(cls, atoms_list, timestep_fs=None):
         """
-        Instantiate a new class instance given a set of atoms
+        Create a Trajectory from a list of ASE Atoms objects.
+        
+        This is the primary constructor for creating trajectory objects from
+        existing atomic structure snapshots.
+        
+        Args:
+            atoms_list (list): List of ASE Atoms objects representing trajectory frames
+            timestep_fs (float, optional): Time step between frames in femtoseconds
+        
+        Returns:
+            Trajectory: New trajectory instance containing data from atoms_list
+            
+        Raises:
+            TypeError: If atoms_list items are not ASE Atoms objects
+            ValueError: If atoms_list is empty or has inconsistent chemical symbols
+                
+        Example:
+            >>> # Create trajectory from a series of Atoms objects
+            >>> from ase.io import read
+            >>> atoms_list = read('simulation.xyz', index=':')
+            >>> traj = Trajectory.from_atoms(atoms_list, timestep_fs=1.0)
+            >>> print(f"Created trajectory with {traj.nstep} frames and {traj.nat} atoms")
         """
         from ase import Atoms
         chem_sym_set = set()
@@ -193,17 +264,30 @@ class Trajectory(AttributedArray):
 
     def get_indices_of_species(self, species, start=0):
         """
-        Convenience function to get all indices of a species.
-        :param species:
-            The identifier of a species. If this is a string,
-            I assume the chemical symbol (abbreviation).
-            I.e. Li for lithium, H for hydrogen.
-            If it's an integer, I that only this integer is wanted.
-        :param int start:
-            The start of indexing, defaults to 0.
-            For fortran indexing, set to 1.
-        :return: A numpy array of indices
-        """
+            Get array indices for atoms of a specific element type.
+            
+            This convenience function identifies all atoms of a specified element
+            and returns their indices, with optional index offset.
+            
+            Args:
+                species (str or int): Element symbol (e.g., 'Li') or specific atom index
+                start (int): Starting index offset, defaults to 0 (Python indexing)
+                    Use start=1 for FORTRAN-style indexing
+            
+            Returns:
+                numpy.ndarray: Array of atom indices matching the specified species
+                
+            Raises:
+                TypeError: If species is neither a string nor an integer
+                
+            Example:
+                >>> # Find all lithium atoms
+                >>> li_indices = traj.get_indices_of_species('Li')
+                >>> print(f"Found {len(li_indices)} Li atoms at indices {li_indices}")
+                >>> 
+                >>> # Get FORTRAN-style indices (1-based) for oxygen atoms
+                >>> o_indices = traj.get_indices_of_species('O', start=1)
+            """
         assert isinstance(start, int), 'Start is not an integer'
         types = self.get_types()
         if isinstance(species, str):
@@ -219,13 +303,22 @@ class Trajectory(AttributedArray):
 
     def set_positions(self, array, check_existing=False):
         """
-        Set the positions of the trajectory.
-        :param array:
-            A numpy array with the positions in absolute
-            values in units of angstrom
-        :param bool check_exising:
-            Check if the positions have been set, and
-            raise in such case. Defaults to False.
+        Set atomic positions for the entire trajectory.
+        
+        Args:
+            array (numpy.ndarray): Positions array with shape (nsteps, natoms, 3)
+                Values should be in Angstroms
+            check_existing (bool): If True, raise error if positions already exist
+                Defaults to False (overwrite existing positions)
+                
+        Raises:
+            ValueError: If array shape doesn't match trajectory dimensions
+            ValueError: If check_existing=True and positions already exist
+            
+        Example:
+            >>> # Set positions from a numpy array
+            >>> positions = np.zeros((100, 50, 3))  # 100 steps, 50 atoms
+            >>> traj.set_positions(positions)
         """
         self.set_array(self._POSITIONS_KEY, array,
                        check_existing=check_existing,
@@ -251,8 +344,29 @@ class Trajectory(AttributedArray):
 
     def calculate_velocities_from_positions(self, overwrite=False):
         """
-        Using positions-verlet update formula to infer
-        velocities from positions
+        Calculate atomic velocities from position differences between frames.
+        
+        This method uses finite difference approximation to derive velocities
+        from position data, using the velocity Verlet update formula.
+        
+        Args:
+            overwrite (bool): Whether to replace existing velocity data
+                Defaults to False (raise exception if velocities exist)
+                
+        Returns:
+            numpy.ndarray: Calculated velocities array
+            
+        Raises:
+            Exception: If velocities already exist and overwrite=False
+            
+        Note:
+            The first and last frames use forward and backward differences,
+            while intermediate frames use central differences for better accuracy.
+            
+        Example:
+            >>> # Calculate velocities from positions
+            >>> velocities = traj.calculate_velocities_from_positions()
+            >>> print(f"Average velocity magnitude: {np.mean(np.linalg.norm(velocities, axis=2)):.4f} Å/fs")
         """
         if self._VELOCITIES_KEY in self.get_arraynames():
             if not overwrite:
@@ -311,12 +425,33 @@ class Trajectory(AttributedArray):
     def get_step_atoms(self, index, ignore_calculated=False,
                        warnings=True):
         """
-        For a set stepindex, returns an atoms instance with all
-        the settings from that step.
-        :param int index: The index of the step
-        :param bool ignore_calculated:
-            ignore the calculated values (forces, energies, stress)
-        :returns: an ase.Atoms instance from the trajectory at step
+        Extract a single timestep as an ASE Atoms object.
+        
+        This method creates an ASE Atoms object for a specific trajectory frame,
+        optionally including calculated properties like forces and energies.
+        
+        Args:
+            index (int): Trajectory frame index to extract
+            ignore_calculated (bool): If True, don't include calculated properties
+                like forces, energies, and stress
+            warnings (bool): Whether to show warnings for unavailable data
+                
+        Returns:
+            ase.Atoms: Atoms object representing the system at the specified timestep
+            
+        Raises:
+            AssertionError: If index is not an integer
+            
+        Example:
+            >>> # Extract frame 50 with all calculated properties
+            >>> atoms_50 = traj.get_step_atoms(50)
+            >>> 
+            >>> # Extract frame 100 without calculated properties
+            >>> atoms_100 = traj.get_step_atoms(100, ignore_calculated=True)
+            >>> 
+            >>> # Access properties of the extracted frame
+            >>> positions = atoms_50.get_positions()
+            >>> forces = atoms_50.get_forces()  # If available
         """
         assert isinstance(index, (int, np.int64)
                           ), "step index has to be an integer"
@@ -360,11 +495,34 @@ class Trajectory(AttributedArray):
 
     def get_ase_trajectory(self, start=0, end=None, stepsize=1):
         """
-        :param int stepsize: A step size, defaults to 1
-        :param int start: The start step, defaults to 0
-        :param int end: The last step defaults to length of trajectory
-
-        :returns: a list of atoms instances of this trajectory
+        Convert a portion of the trajectory to a list of ASE Atoms objects.
+        
+        This method extracts multiple frames as ASE Atoms objects, with options
+        for selecting a range and stride.
+        
+        Args:
+            start (int): First frame index to extract (default: 0)
+            end (int): Last frame index to extract (exclusive)
+                If None, uses the full trajectory length
+            stepsize (int): Frame stride for extraction (default: 1)
+                
+        Returns:
+            list: List of ASE Atoms objects for the requested frames
+            
+        Raises:
+            ValueError: If end exceeds trajectory length or no frames match criteria
+            AssertionError: If parameters are not valid integers
+            
+        Example:
+            >>> # Get the first 10 frames
+            >>> atoms_list = traj.get_ase_trajectory(end=10)
+            >>> 
+            >>> # Get every 10th frame of the entire trajectory
+            >>> atoms_list = traj.get_ase_trajectory(stepsize=10)
+            >>> 
+            >>> # Get frames 100-200 with stride 5
+            >>> atoms_list = traj.get_ase_trajectory(start=100, end=200, stepsize=5)
+            >>> print(f"Extracted {len(atoms_list)} frames")
         """
         if end is None:
             end = self.nstep
@@ -390,12 +548,33 @@ class Trajectory(AttributedArray):
 
     def recenter(self, sublattice=None, mode=None):
         """
-        Recenter positions and velocities in-place
-        :param tuple sublattice:
-            A tuple or list of element names or indices that
-            define a sublattice of the structure.
-            If given, the trajectory will be centered on the
-            center of mass of that sublattice.
+        Recenter the trajectory to remove system drift or center on specific atoms.
+        
+        This method modifies positions and velocities in-place to recenter the system.
+        Useful for removing center-of-mass drift or for centering on a specific
+        sublattice (e.g., a rigid framework or specific element).
+        
+        Args:
+            sublattice (list, optional): Element names or indices defining a sublattice
+                to center on. If None, centers on the entire system.
+            mode (str, optional): Centering mode:
+                - None: Center using atomic masses (default)
+                - 'geometric': Use geometric center (equal weights)
+        
+        Raises:
+            TypeError: If sublattice is not a list, tuple or set
+            IndexError: If sublattice contains invalid atom indices
+            TypeError: If sublattice contains items of invalid type
+            
+        Example:
+            >>> # Center on the entire system (remove drift)
+            >>> traj.recenter()
+            >>> 
+            >>> # Center on the Al-O framework
+            >>> traj.recenter(sublattice=['Al', 'O'])
+            >>> 
+            >>> # Center geometrically on Li atoms
+            >>> traj.recenter(sublattice=['Li'], mode='geometric')
         """
         from samos_modules.mdutils import recenter_positions, recenter_velocities
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 CPDyAna – Combined Molecular Dynamics Analysis Tool
-==================================================
+====================================================
 
 CPDyAna is a comprehensive command-line interface for analyzing molecular dynamics
 simulations. It provides unified access to multiple analysis types including:

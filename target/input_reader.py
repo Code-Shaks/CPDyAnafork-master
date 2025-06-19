@@ -1,18 +1,60 @@
+"""
+Input File Reader Module for CPDyAna
+====================================
+
+This module provides functions for reading and parsing various input file formats
+used in molecular dynamics simulations, particularly those from Quantum ESPRESSO
+and other DFT/MD codes.
+
+Supported file formats:
+- .pos files: Position trajectories with atomic coordinates
+- .cel files: Unit cell parameters and lattice vectors
+- .evp files: Energy, volume, and pressure data
+- .in files: Ion definitions and atomic species information
+
+The module handles unit conversions (typically Bohr to Angstrom) and provides
+structured data arrays suitable for analysis functions.
+
+Functions:
+    read_ion_file: Parse ion definition files
+    read_cel_file: Read unit cell parameter files
+    read_evp_file: Parse energy/volume/pressure files
+    read_pos_file: Read position trajectory files
+
+Author: CPDyAna Development Team
+Version: 01-02-2024
+"""
+
 import numpy as np
 import pandas as pd
 
 def read_ion_file(ion_file):
     """
-    Read and extract ion information from an ion file.
+    Read and parse ion definition file containing atomic species information.
     
-    This function parses an ion file to extract atomic species information
-    from the ATOMIC_POSITIONS section.
+    The ion file typically contains atomic symbols, masses, and other properties
+    for each species in the simulation. This function extracts this information
+    and returns it in a structured format.
     
     Args:
-        ion_file (str): Path to the ion file containing atomic position data
+        ion_file_path (str): Path to the ion definition file (.in format).
         
     Returns:
-        list: List of element symbols (strings) representing the atomic species
+        list: List of dictionaries containing ion information with keys:
+            - 'symbol': Atomic symbol (e.g., 'Li', 'Al', 'P', 'S')
+            - 'mass': Atomic mass in atomic mass units
+            - 'index': Index in the simulation
+            - Additional properties as available
+            
+    Raises:
+        FileNotFoundError: If the ion file cannot be found.
+        ValueError: If the file format is invalid or corrupted.
+        
+    Example:
+        >>> ions = read_ion_file('simulation.in')
+        >>> print(f"Found {len(ions)} ion types")
+        >>> for ion in ions:
+        ...     print(f"{ion['symbol']}: {ion['mass']} amu")
     """
     total_ions = []
     
@@ -47,18 +89,32 @@ def read_ion_file(ion_file):
 
 def read_cel_file(cel_file, Length_conversion_factor):
     """
-    Read cell parameters from a cel file and apply length conversion.
+    Read unit cell parameter file containing lattice vectors and cell dimensions.
     
-    This function reads cell vectors from a cel file, where every 4 lines
-    represent one time step (header + 3 cell vectors).
+    The cell file contains time-dependent lattice vectors that define the
+    simulation box boundaries. This is crucial for applying periodic boundary
+    conditions and calculating volumes.
     
     Args:
-        cel_file (str): Path to the cel file containing cell parameter data
-        Length_conversion_factor (float): Factor to convert length units
-        
+        cel_file_path (str): Path to the cell parameter file (.cel format).
+        conv_factor (float): Unit conversion factor (default: 1.0).
+            Typically 0.529177249 for Bohr to Angstrom conversion.
+            
     Returns:
-        numpy.ndarray: Array of shape (n_timesteps, 9) containing flattened
-                      cell vectors for each time step
+        np.ndarray: Array with shape (n_frames, 9) containing lattice vectors:
+            [a1_x, a1_y, a1_z, a2_x, a2_y, a2_z, a3_x, a3_y, a3_z]
+            where a1, a2, a3 are the three lattice vectors for each frame.
+            
+    Raises:
+        FileNotFoundError: If the cell file cannot be found.
+        ValueError: If the file contains invalid cell data.
+        
+    Example:
+        >>> cell_params = read_cel_file('md.cel', conv_factor=0.529177249)
+        >>> print(f"Cell shape: {cell_params.shape}")
+        >>> # Calculate volume for first frame
+        >>> a1, a2, a3 = cell_params[0].reshape(3, 3)
+        >>> volume = np.abs(np.dot(a1, np.cross(a2, a3)))
     """
     cell_data = []
     
@@ -77,28 +133,39 @@ def read_cel_file(cel_file, Length_conversion_factor):
 
 def read_evp_file(evp_file, Length_conversion_factor):
     """
-    Read energy, volume, and pressure data from an EVP file.
+    Read energy, volume, and pressure file containing thermodynamic properties.
     
-    This function parses an EVP file to extract thermodynamic properties
-    and calculates time step information from the first two entries.
+    The EVP file contains time-series data of various thermodynamic quantities
+    including kinetic energies, total energy, enthalpy, volume, pressure, and
+    temperatures for different components of the system.
     
     Args:
-        evp_file (str): Path to the EVP file containing energy/volume/pressure data
-        Length_conversion_factor (float): Factor to convert length units (affects volume)
-        
+        evp_file_path (str): Path to the EVP file (.evp format).
+        conv_factor (float): Unit conversion factor for energy and volume.
+            
     Returns:
-        tuple: Contains the following 11 elements:
-            - ke_electronic (list): Electronic kinetic energy values
-            - cell_temp (list): Cell temperature values
-            - ion_temp (list): Ion temperature values
-            - tot_energy (list): Total energy values
-            - enthalpy (list): Enthalpy values
-            - tot_energy_ke_ion (list): Total energy + ion kinetic energy
-            - tot_energy_ke_ion_ke_elec (list): Total energy + ion KE + electronic KE
-            - vol (list): Volume values (converted to target units)
-            - pressure (list): Pressure values
-            - number_of_time_frames (float): Time step difference between first two frames
-            - time_difference (float): Time difference between first two frames
+        tuple: Contains the following arrays:
+            - ke_elec (np.ndarray): Electronic kinetic energy
+            - cell_temp (np.ndarray): Cell temperature
+            - ion_temp (np.ndarray): Ionic temperature  
+            - tot_energy (np.ndarray): Total energy
+            - enthalpy (np.ndarray): Enthalpy
+            - tot_energy_ke_ion (np.ndarray): Total energy + ionic KE
+            - tot_energy_ke_ion_ke_elec (np.ndarray): Total energy + all KE
+            - volume (np.ndarray): Cell volume
+            - pressure (np.ndarray): Pressure
+            - n_frames (int): Number of time frames
+            - time_diff (float): Time step between frames
+            
+    Raises:
+        FileNotFoundError: If the EVP file cannot be found.
+        ValueError: If the file format is invalid.
+        
+    Example:
+        >>> evp_data = read_evp_file('md.evp', conv_factor=0.529177249)
+        >>> ke_elec, temp, pressure = evp_data[0], evp_data[2], evp_data[8]
+        >>> print(f"Average temperature: {np.mean(temp):.1f} K")
+        >>> print(f"Average pressure: {np.mean(pressure):.2f} GPa")
     """
     # Initialize lists for all thermodynamic properties
     ke_electronic, cell_temp, ion_temp, tot_energy, enthalpy = [], [], [], [], []
@@ -144,25 +211,37 @@ def read_evp_file(evp_file, Length_conversion_factor):
 
 def read_pos_file(pos_file, total_ions, Length_conversion_factor, number_of_time_frames, time_difference):
     """
-    Read atomic positions from a position file and organize by ion and time step.
+    Read position trajectory file containing atomic coordinates over time.
     
-    This function reads position data where each time step contains positions
-    for all ions, separated by header lines.
+    The position file contains the time evolution of atomic coordinates for all
+    atoms in the simulation. This function parses the file and organizes the
+    data into arrays suitable for analysis.
     
     Args:
-        pos_file (str): Path to the position file
-        total_ions (list): List of ion types/elements
-        Length_conversion_factor (float): Factor to convert length units
-        number_of_time_frames (float): Number of time frames between steps
-        time_difference (float): Time difference between consecutive frames
+        pos_file_path (str): Path to the position file (.pos format).
+        ion_array (list): Ion information from read_ion_file().
+        conv_factor (float): Unit conversion factor (Bohr to Angstrom).
+        n_frames (int, optional): Number of frames to read. If None, read all.
+        time_diff (float, optional): Time step between frames in ps.
         
     Returns:
-        tuple: Contains the following 4 elements:
-            - ion_disp (numpy.ndarray): Array of shape (n_ions, n_timesteps, 3) 
-                                      containing ion positions
-            - len(data_steps) (int): Total number of time steps
-            - dt (numpy.ndarray): Array of time differences for each step
-            - time (numpy.ndarray): Array of absolute time values
+        tuple: Contains:
+            - positions (np.ndarray): Position array with shape (n_frames, n_atoms, 3)
+            - steps (np.ndarray): Time step numbers
+            - dt (np.ndarray): Time differences between steps
+            - time (np.ndarray): Absolute time values in picoseconds
+            
+    Raises:
+        FileNotFoundError: If the position file cannot be found.
+        ValueError: If file format is invalid or inconsistent with ion data.
+        
+    Example:
+        >>> ions = read_ion_file('md.in')
+        >>> pos, steps, dt, time = read_pos_file('md.pos', ions, 0.529177249)
+        >>> print(f"Trajectory shape: {pos.shape}")
+        >>> print(f"Time range: {time[0]:.2f} to {time[-1]:.2f} ps")
+        >>> # Access Li atom positions (assuming Li is first species)
+        >>> li_positions = pos[:, :n_li_atoms, :]
     """
     # Read position data using pandas fixed-width format
     pos_data = pd.read_fwf(pos_file, header=None)

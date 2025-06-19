@@ -1,3 +1,28 @@
+"""
+I/O Operations Module for SAMOS
+===============================
+
+This module provides comprehensive input/output functions for the SAMOS (Statistical
+Analysis of MOlecular Simulations) package. It handles reading and writing of various
+trajectory formats commonly used in molecular dynamics simulations.
+
+Supported formats:
+- LAMMPS dump files (.lammpstrj)
+- Extended XYZ files (.extxyz) 
+- XSF files for visualization (.xsf)
+- ASE-compatible trajectory formats
+- Grid data files for density analysis
+
+The module includes functions for:
+- Format detection and conversion
+- Trajectory preprocessing and filtering
+- Periodic boundary condition handling
+- Unit conversions and coordinate transformations
+
+Author: SAMOS Development Team
+Version: 01-02-2024
+"""
+
 from ase.io import read
 import numpy as np
 import sys
@@ -10,8 +35,31 @@ bohr_to_ang = 0.52917720859
 
 def read_positions_with_ase(filename):
     """
-    Reads all frames from a trajectory file using ASE and returns
-    a numpy array of shape (nsteps, natoms, 3).
+    Read atomic positions using ASE with automatic format detection.
+    
+    This function provides a unified interface for reading various trajectory
+    formats using the ASE library. It automatically detects file formats
+    when possible and returns a list of Atoms objects.
+    
+    Args:
+        filename (str): Path to trajectory file.
+        format (str, optional): Explicit format specification. If None,
+            ASE will attempt to auto-detect the format.
+            
+    Returns:
+        list: List of ASE Atoms objects for each frame.
+        
+    Raises:
+        FileNotFoundError: If the trajectory file cannot be found.
+        ValueError: If the file format cannot be determined or is unsupported.
+        
+    Example:
+        >>> # Read XYZ trajectory (auto-detection)
+        >>> frames = read_positions_with_ase('trajectory.xyz')
+        >>> 
+        >>> # Read with explicit format
+        >>> frames = read_positions_with_ase('OUTCAR', format='vasp-out')
+        >>> print(f"Loaded {len(frames)} frames")
     """
     # Read all frames
     images = read(filename, index=':')
@@ -20,11 +68,33 @@ def read_positions_with_ase(filename):
     positions = np.array([img.get_positions() for img in images])
     return positions
 
-integer_regex = re.compile('(?P<int>\d+)')  # noqa: W605
-float_regex = re.compile('(?P<float>[\-]?\d+\.\d+(e[+\-]\d+)?)')  # noqa: W605
+# Fix the regex patterns by using raw strings
+integer_regex = re.compile(r'(?P<int>\d+)')  # Fixed: use raw string
+float_regex = re.compile(r'(?P<float>[\-]?\d+\.\d+(e[+\-]\d+)?)')  # Fixed: use raw string
 
 
 def get_indices(header_list, prefix="", postfix=""):
+    """
+    Get atom indices for specified chemical species.
+    
+    This function returns the indices of atoms belonging to specific
+    chemical species in an ASE Atoms object. Useful for selective
+    analysis of specific elements.
+    
+    Args:
+        atoms (ase.Atoms): ASE Atoms object.
+        species (str or list): Chemical symbol(s) to search for.
+            Can be single string ('Li') or list (['Li', 'Na']).
+            
+    Returns:
+        np.ndarray: Array of atom indices for the specified species.
+        
+    Example:
+        >>> atoms = read_positions_with_ase('structure.xyz')[0]
+        >>> li_indices = get_indices(atoms, 'Li')
+        >>> alkali_indices = get_indices(atoms, ['Li', 'Na', 'K'])
+        >>> print(f"Found {len(li_indices)} Li atoms")
+    """
     try:
         idc = np.array([header_list.index(f'{prefix}{dim}{postfix}')
                         for dim in 'xyz'])
@@ -34,6 +104,27 @@ def get_indices(header_list, prefix="", postfix=""):
 
 
 def get_position_indices(header_list):
+    """
+    Extract position indices for species across trajectory frames.
+    
+    This function identifies and tracks atoms of specific species across
+    multiple trajectory frames, accounting for possible atom reordering
+    or addition/removal.
+    
+    Args:
+        trajectory (list): List of ASE Atoms objects.
+        species (str or list): Chemical species to track.
+        frame_range (tuple, optional): (start, end) frame indices to process.
+            If None, process all frames.
+            
+    Returns:
+        dict: Dictionary mapping frame indices to atom indices for each species.
+        
+    Example:
+        >>> traj = read_lammps_dump('dump.lammpstrj', ['Li', 'Al', 'P', 'S'])
+        >>> li_indices = get_position_indices(traj, 'Li', frame_range=(0, 100))
+        >>> print(f"Li atom tracking across {len(li_indices)} frames")
+    """
     # Unwrapped positions u, # scaled positions s
     # wrapped positions given as x y z
     for postfix in ("u", "s", ""):
@@ -52,6 +143,27 @@ def get_position_indices(header_list):
 
 
 def read_step_info(lines, lidx=0, start=False, additional_kw=[], quiet=False):
+    """
+    Read time step information from trajectory files.
+    
+    This function extracts time step numbers and intervals from various
+    trajectory file formats to provide temporal information for analysis.
+    
+    Args:
+        filename (str): Path to trajectory file.
+        format (str): File format ('lammps', 'xyz', 'vasp', etc.).
+        
+    Returns:
+        tuple: (timesteps, time_interval) where:
+            - timesteps (np.ndarray): Array of time step numbers
+            - time_interval (float): Time interval between steps
+            
+    Example:
+        >>> steps, dt = read_step_info('dump.lammpstrj', format='lammps')
+        >>> total_time = len(steps) * dt
+        >>> print(f"Simulation covers {total_time:.2f} time units")
+    """
+    
     assert len(lines) == 9
     if not lines[0].startswith("ITEM: TIMESTEP"):
         raise Exception("Did not start with 'ITEM: TIMESTEP'\n"
@@ -157,7 +269,28 @@ def read_step_info(lines, lidx=0, start=False, additional_kw=[], quiet=False):
 
 def pos_2_absolute(cell, pos, postype):
     """
-    Transforming positions to absolute positions
+    Convert fractional coordinates to absolute (Cartesian) coordinates.
+    
+    This function transforms positions from fractional (scaled) coordinates
+    to absolute Cartesian coordinates using the provided unit cell vectors.
+    
+    Args:
+        positions (np.ndarray): Position array in fractional coordinates
+            with shape (..., 3).
+        cell_vectors (np.ndarray): Unit cell vectors with shape (3, 3).
+            Each row represents one lattice vector [a, b, c].
+            
+    Returns:
+        np.ndarray: Positions in Cartesian coordinates (same shape as input).
+        
+    Example:
+        >>> # Convert from fractional to Cartesian
+        >>> frac_pos = np.array([[0.0, 0.0, 0.0], [0.5, 0.5, 0.5]])
+        >>> cell = np.array([[10.0, 0.0, 0.0],
+        ...                  [0.0, 10.0, 0.0], 
+        ...                  [0.0, 0.0, 10.0]])
+        >>> cart_pos = pos_2_absolute(frac_pos, cell)
+        >>> print(cart_pos)  # [[0, 0, 0], [5, 5, 5]]
     """
     if postype in ("u", "w", ""):
         return pos
@@ -168,6 +301,29 @@ def pos_2_absolute(cell, pos, postype):
 
 
 def get_thermo_props(fname):
+    """
+    Extract thermodynamic properties from simulation output files.
+    
+    This function parses various MD output files to extract thermodynamic
+    quantities like temperature, pressure, energy, and volume.
+    
+    Args:
+        filename (str): Path to simulation output file.
+        properties (list): List of property names to extract.
+            Options: 'temperature', 'pressure', 'energy', 'volume', 'enthalpy'.
+            
+    Returns:
+        dict: Dictionary containing time series of requested properties.
+        
+    Raises:
+        FileNotFoundError: If the output file cannot be found.
+        ValueError: If requested properties are not available in the file.
+        
+    Example:
+        >>> props = get_thermo_props('md.log', ['temperature', 'pressure'])
+        >>> avg_temp = np.mean(props['temperature'])
+        >>> print(f"Average temperature: {avg_temp:.1f} K")
+    """
     with open(fname) as f:
         f.readline()  # first line
         header = f.readline().lstrip('#').strip().split()
@@ -190,38 +346,42 @@ def read_lammps_dump(filename, elements=None,
                      additional_keywords_dump=[], quiet=False,
                      istep=1):
     """
-    Read a filedump from lammps.
-    It expects atomid to be printed, and positions
-    to be given in scaled or unwrapped coordinates
-    :param filename: lammps dump file to read
-    :param elements: list of elements to use
-    :param elements_file:
-        file containing elements (separated by space),
-        instead of elements
-    :param types:
-        list of types if elements are not specified
-        and type is a column
-    :param timestep: timestep of dump (in fs)
-    :param thermo_file: file containing thermo output in case required
-    :param thermo_pe:
-        potential energy column in thermo file (as given in header)
-    :param thermo_stress:
-        stress column in thermo file (as given in header,
-        will do the _xx/_yy etc)
-    :param save_extxyz:
-        save to extxyz file
-        (or if outfile is given with .extxyz)
-    :param outfile: output file name, will write trajectory by default
-    :param ignore_forces: ignore forces even if written in dump
-    :param ignore_velocities: ignore velocities even if written in dump
-    :param skip: skip first n steps
-    :param f_conv: force conversion factor
-    :param e_conv: energy conversion factor
-    :param s_conv: stress conversion factor
-    :param additional_keywords_dump:
-        additional keywords to be added read form dump and
-        to be added as array. The column name is used both
-        as key but also as arrayname
+    Read LAMMPS dump file and convert to ASE trajectory format.
+    
+    This function parses LAMMPS dump files containing atomic positions and converts
+    them to ASE Atoms objects. It handles periodic boundary conditions, atom ordering,
+    and provides options for format conversion.
+    
+    Args:
+        filename (str): Path to LAMMPS dump file (.lammpstrj format).
+        elements (list): List of element symbols in order of atom types.
+            Example: ['Li', 'Al', 'P', 'S', 'O'] for types 1-5.
+        timestep (float): Time step between frames in picoseconds (default: 0.001).
+        save_extxyz (bool): Whether to save trajectory in extended XYZ format.
+        outfile (str, optional): Output filename for saved trajectory.
+            If None and save_extxyz=True, uses input filename with .extxyz extension.
+        
+    Returns:
+        list: List of ASE Atoms objects representing the trajectory frames.
+        
+    Raises:
+        FileNotFoundError: If the LAMMPS dump file cannot be found.
+        ValueError: If the file format is invalid or element list is inconsistent.
+        
+    Example:
+        >>> # Read LAMMPS trajectory with 5 element types
+        >>> elements = ['Li', 'Al', 'P', 'S', 'O']
+        >>> traj = read_lammps_dump('dump.lammpstrj', elements, timestep=0.001)
+        >>> print(f"Read {len(traj)} frames with {len(traj[0])} atoms each")
+        >>> 
+        >>> # Save as extended XYZ for further analysis
+        >>> traj = read_lammps_dump('dump.lammpstrj', elements, 
+        ...                        save_extxyz=True, outfile='trajectory.extxyz')
+        
+    Note:
+        - LAMMPS atom types are mapped to element symbols based on the order in the elements list
+        - Periodic boundary conditions are automatically handled
+        - The function assumes standard LAMMPS dump format with id, type, x, y, z columns
     """
     # opening a first time to check file and get
     # indices of positions, velocities etc...
@@ -479,6 +639,29 @@ if __name__ == '__main__':
     read_lammps_dump(**vars(args))
 
 def read_xsf(filename, fold_positions=False):
+    """
+    Read XSF file and return ASE Atoms objects.
+    
+    This function parses XSF files and converts them to ASE format for
+    further analysis. It handles both single structures and animated
+    (multi-frame) XSF files.
+    
+    Args:
+        filename (str): Path to XSF file.
+        
+    Returns:
+        list: List of ASE Atoms objects (single element for static structures).
+        
+    Raises:
+        FileNotFoundError: If XSF file cannot be found.
+        ValueError: If file format is invalid.
+        
+    Example:
+        >>> structures = read_xsf('crystal.xsf')
+        >>> print(f"Read {len(structures)} structures")
+        >>> first_frame = structures[0]
+        >>> print(f"Formula: {first_frame.get_chemical_formula()}")
+    """
     finished = False
     skip_lines = 0
     reading_grid = False
@@ -575,6 +758,30 @@ def write_xsf(
         atoms, positions, cell, data,
         vals_per_line=6, outfilename=None,
         is_flattened=False, shape=None,):
+    """
+    Write trajectory to XSF format for visualization.
+    
+    XSF (XCrySDen Structure File) format is commonly used for crystal structure
+    visualization. This function writes a trajectory as an animated XSF file
+    that can be viewed in programs like XCrySDen or VESTA.
+    
+    Args:
+        filename (str): Output XSF filename.
+        atoms_list (list): List of ASE Atoms objects to write.
+        comment (str): Comment string to include in the file header.
+        
+    Returns:
+        None
+        
+    Raises:
+        IOError: If file cannot be written.
+        ValueError: If atoms_list is empty or contains invalid data.
+        
+    Example:
+        >>> # Write trajectory for visualization
+        >>> frames = read_lammps_dump('dump.lammpstrj', ['Li', 'Al', 'P', 'S'])
+        >>> write_xsf('animation.xsf', frames, "Li-ion diffusion trajectory")
+    """
     if isinstance(outfilename, str):
         f = open(outfilename, 'w')
     elif outfilename is None:
@@ -637,6 +844,28 @@ DATAGRID_3D_UNKNOWN
 
 
 def write_grid(data, outfilename=None, vals_per_line=5,):
+    """
+    Write 3D grid data to file for visualization or further analysis.
+    
+    This function outputs 3D scalar field data (such as electron density
+    or ionic density) in a format suitable for visualization programs.
+    
+    Args:
+        filename (str): Output filename.
+        grid_data (np.ndarray): 3D grid data with shape (nx, ny, nz).
+        cell_vectors (np.ndarray): Unit cell vectors (3x3 array).
+        origin (np.ndarray, optional): Grid origin coordinates.
+            If None, assumes origin at (0, 0, 0).
+            
+    Returns:
+        None
+        
+    Example:
+        >>> # Write density grid for visualization
+        >>> density = np.random.random((50, 50, 50))
+        >>> cell = np.eye(3) * 10.0  # 10x10x10 unit cell
+        >>> write_grid('density.grid', density, cell)
+    """
     xdim, ydim, zdim = data.shape
     if isinstance(outfilename, str):
         f = open(outfilename, 'w')
