@@ -8,8 +8,8 @@ Now supports advanced options: frame stride, atom masking, recentering, and cust
 import numpy as np
 import argparse
 from ase import Atoms
-from samos.trajectory import Trajectory
-from samos.analysis.get_gaussian_density import get_gaussian_density
+from samos_modules.samos_trajectory import Trajectory
+from samos_modules.samos_analysis import get_gaussian_density
 from target import input_reader as inp
 
 def divide_chunks(l, n):
