@@ -31,6 +31,7 @@ from . import plotting as p
 from . import data_processing as dp
 from . import probability_density as prob
 from . import compute_rdf as rdf
+from . import compute_vaf
 
 def Job(temperature, diffusing_elements, diffusivity_direction_choices, diffusivity_choices, correlation, 
         pos_file, cel_file, evp_file, ion_file, Conv_factor, initial_time, final_time, 
@@ -600,7 +601,8 @@ def main():
                 if hasattr(a, "bbox") and a.bbox:
                     cmd += ["--bbox", a.bbox]
 
-                subprocess.run(cmd, check=True, capture_output=True, text=True,
+                print("Running subprocess:", " ".join(cmd))
+                subprocess.run(cmd, check=True, text=True,
                                cwd=os.path.dirname(os.path.abspath(__file__)))
                 results[base_name] = {"density_file": output_file}
             except Exception:
@@ -667,34 +669,37 @@ def main():
             evp_file = evp_files[i] if i < len(evp_files) else None
 
             cmd = [
-                sys.executable, os.path.join(os.path.dirname(__file__), "vaf.py"),
-                "--in_file", ion_file,
-                "--pos_file", pos_file,
-                "--cel_file", cel_file,
+                sys.executable, os.path.join(os.path.dirname(__file__), "compute_vaf.py"),
+                "--in-file", ion_file,
+                "--pos-file", pos_file,
+                "--cel-file", cel_file,
                 "--element"
             ] + a.element
 
             if evp_file:
-                cmd += ["--evp_file", evp_file]
+                cmd += ["--evp-file", evp_file]
             cmd += [
                 "--start", str(a.start),
                 "--nframes", str(a.nframes),
                 "--stride", str(a.stride),
                 "--blocks", str(a.blocks),
-                "--out_prefix", f"{a.out_prefix}_{base_name}",
-                "--t_end_fit_ps", str(a.t_end_fit_ps),
-                "--time_interval", str(a.time_interval),
-                "--t_start_fit_ps", str(a.t_start_fit_ps),
-                "--stepsize_t", str(a.stepsize_t),
-                "--stepsize_tau", str(a.stepsize_tau)
+                "--out-prefix", f"{a.out_prefix}_{base_name}",
+                "--t-end-fit-ps", str(a.t_end_fit_ps),
+                "--time-interval", str(a.time_interval),
+                "--t-start-fit-ps", str(a.t_start_fit_ps),
+                "--stepsize-t", str(a.stepsize_t),
+                "--stepsize-tau", str(a.stepsize_tau)
             ]
 
+            print("Running VAF subprocess:", " ".join(cmd))
             try:
-                subprocess.run(cmd, check=True, capture_output=True, text=True)
+                subprocess.run(cmd, check=True)
                 results[base_name] = {"vaf_output_prefix": f"{a.out_prefix}_{base_name}"}
-            except subprocess.CalledProcessError:
+            except subprocess.CalledProcessError as e:
+                print("VAF subprocess failed:", e)
                 continue
-            except Exception:
+            except Exception as e:
+                print("Unexpected error in VAF subprocess:", e)
                 continue
 
     if a.mode == "vdos":
