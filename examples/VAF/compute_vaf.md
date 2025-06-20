@@ -1,15 +1,13 @@
-#!/bin/bash
+# Velocity Autocorrelation Function
+## Sample command line arugument for computing vaf for Li Al P S
 
-Example of computing Velocity Autocorrelation Function
-----------------------------------------------------------------------
-
-CL Argument: 
-
+### CL Argument: 
+```sh
 CPDyAna vaf --data-dir . --element Li Al P S --t-start-fit-ps 5 --stepsize-t 1 --stepsize-tau 10 --t-end-fit-ps 100
+```
 
-Sample output
--------------
-
+### Sample output
+```terminal
 Starting VAF analysis for elements: Li, Al, P, S
 Processing 1 file sets...
 Processing file set 1/1: LiAlPS
@@ -34,3 +32,4 @@ Saving VAF plot to: ..\CPDyAnafork-master\vaf_LiAlPS_P_vaf_upto_100psframes.png
       Structure contains 24 atoms of type S
       I will calculate 4 block(s)
 Saving VAF plot to: ..\CPDyAnafork-master\vaf_LiAlPS_S_vaf_upto_100psframes.png
+```

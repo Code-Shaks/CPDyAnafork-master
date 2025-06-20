@@ -1,15 +1,13 @@
-#!/bin/bash
+# Vibrational Density of States for a system
+## Sample command line argument for computing vdos for Li Al P S system
 
-# Example of computing VDOS (Vibrational Density of States) for a system
-# ----------------------------------------------------------------------
-
-CL Argument: 
-
+### CL Argument: 
+```sh
 CPDyAna vdos --data-dir . --elements Li Al P S
+```
 
-# Sample output
-# -------------
-
+### Sample output
+```terminal
 Starting VDOS analysis for elements: Li, Al, P, S
 Processing 1 file sets...
 Processing file set 1/1: LiAlPS
@@ -26,3 +24,4 @@ nblocks = 1, blocks.shape = (1, 220747, 24, 3), block_length_ps = 427169.72717
 Saving custom VDOS plot to: D:\Internship\Summer Internship 2025\CPDyAnafork-master\CPDyAnafork-master\vdos_LiAlPS_2.png
   → VDOS analysis completed with prefix: vdos_LiAlPS
 VDOS analysis completed.
+```

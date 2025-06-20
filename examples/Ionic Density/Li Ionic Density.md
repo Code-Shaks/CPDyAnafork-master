@@ -1,13 +1,15 @@
-Example of computing Ionic Density of Lithium (Li)
-----------------------------------------------------------------------
+# Li ionic density
+## Sample command line argument for computation of Li ionic density
 
-CL Argument: 
+### CL Argument
 
+```sh
 CPDyAna ionic-density --data-dir . --element Li
+```
 
-Sample output
--------------
+### Sample Output
 
+```terminal
 Starting ionic density analysis for element: Li
 Processing 1 file sets...
 Processing file set 1/1: LiAlPS
@@ -21,3 +23,4 @@ xsf file:  LiAlPS_density.xsf
 ==============================Density written to LiAlPS_density.xsf
   → Density file created: LiAlPS_density.xsf
 Ionic density analysis completed. Generated 1 density files.
+```
