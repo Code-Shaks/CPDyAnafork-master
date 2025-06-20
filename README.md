@@ -32,12 +32,10 @@ cd CPDyAna
   - Python 3.8+
   - ASE
   - pymatgen
-  - SAMOS
   - numpy, matplotlib, scipy
 You can install dependencies with:
 ```shell
 pip install -e .
-pip install -e samos
 pip install pymatgen
 ```
 
