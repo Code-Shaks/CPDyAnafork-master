@@ -5,7 +5,7 @@ Example of computing Mean Squared Displacement vs Time
 
 CL Argument: 
 
-CPDyAna msd --data-dir . -T 600 --diffusing-elements Li --diffusivity-choices Charged --initial-slope-time 10 --final-slope-time 40 --block 500 --initial-time 0 --final-time 50 --first-time 0 --last-time 50 --diffusivity-direction-choices XYZ XY YZ ZX X Y Z
+CPDyAna msd --data-dir . -T 600 --diffusing-elements Li --diffusivity-choices Charged --initial-slope-time 5 --final-slope-time 15 --block 500 --initial-time 0 --final-time 20 --first-time 0 --last-time 20 --diffusivity-direction-choices XYZ XY YZ ZX X Y Z
 
 Sample output
 -------------
