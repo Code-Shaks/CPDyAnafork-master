@@ -197,7 +197,29 @@ def compute_plot_vdos(frames, prefix, elements=None, time_interval=0.00193511):
     # Plot total VDOS using SAMOS's built-in plot
     res = da.get_power_spectrum()
     fig1, ax1 = plt.subplots(figsize=(6, 4))
+    
+    # First, clear any existing plots
+    ax1.clear()
     plot_power_spectrum(res, ax=ax1)
+    
+    # First set all lines to not show in legend
+    for line in ax1.get_lines():
+        line.set_label('_nolegend_')
+    
+    if elements is None:
+        elements = ['Li', 'Al', 'P', 'S']
+    
+    # Then selectively apply labels to specific lines
+    element_colors = {}
+    for el in elements:
+        key = f'periodogram_{el}_mean'
+        if res.get_array(key) is not None:
+            # Find first line matching this element's data
+            for line in ax1.get_lines():
+                if np.array_equal(line.get_ydata(), res.get_array(key)):
+                    line.set_label(el)
+                    element_colors[el] = line.get_color()
+                    break  # Only set label for first matching line
     ax1.set_xlabel('Frequency (THz)', fontsize=12)
     ax1.set_ylabel('Signal (A$^2$ fs$^{-1}$)', fontsize=12)
     ax1.tick_params(axis='both', which='major', labelsize=11)
