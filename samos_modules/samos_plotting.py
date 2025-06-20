@@ -41,14 +41,18 @@ def my_format(real, decimals=2):
     Provides consistent formatting for axis labels, handling scientific
     notation and decimal places appropriately for publication figures.
     
-    Args:
+    Parameters
+    ----------
         x (float): Value to format.
         pos (int): Position on the axis (unused but required by matplotlib).
         
-    Returns:
+    Returns
+    -------
         str: Formatted string representation of the value.
         
-    Example:
+    Example
+    -------
+        >>> from matplotlib.ticker import FuncFormatter
         >>> formatter = FuncFormatter(my_format)
         >>> ax.xaxis.set_major_formatter(formatter)
     """
@@ -64,15 +68,18 @@ def format_mean_err(mean, err, decimals=2):
     Creates properly formatted strings for displaying numerical results
     with uncertainties, following scientific notation conventions.
     
-    Args:
+    Parameters
+    ----------
         mean (float): Mean value to format.
         error (float): Error or uncertainty value.
         precision (int, optional): Number of significant digits. Defaults to 2.
         
-    Returns:
+    Returns
+    -------
         str: Formatted string in the form "mean ± error".
-        
-    Example:
+
+    Example
+    -------
         >>> result = format_mean_err(1.234e-5, 2.1e-6)
         >>> print(result)  # "1.23(21)×10⁻⁵"
         
@@ -108,7 +115,8 @@ def plot_msd_isotropic(msd,
     diffusive regime, including error bars and diffusion coefficient
     extraction.
     
-    Args:
+    Parameters
+    ----------
         time_data (np.ndarray): Time values in picoseconds.
         msd_data (dict): Dictionary containing MSD data for different species.
         species_labels (list): List of species names for legend.
@@ -116,11 +124,13 @@ def plot_msd_isotropic(msd,
         save_path (str, optional): Path to save the figure.
         figsize (tuple, optional): Figure size (width, height). Defaults to (10, 8).
         show_fits (bool, optional): Whether to show linear fits. Defaults to True.
-        
-    Returns:
+
+    Returns
+    -------
         tuple: (figure, axis) objects for further customization.
-        
-    Example:
+
+    Example
+    -------
         >>> time = np.linspace(0, 100, 1000)  # ps
         >>> msd_li = {'mean': time * 0.1, 'error': time * 0.01}
         >>> msd_data = {'Li': msd_li}
@@ -231,7 +241,8 @@ def plot_msd_anisotropic(msd,
     useful for analyzing diffusion anisotropy in layered materials
     or systems with preferred diffusion directions.
     
-    Args:
+    Parameters
+    ----------
         time_data (np.ndarray): Time values in picoseconds.
         msd_data_x (dict): MSD data for X direction.
         msd_data_y (dict): MSD data for Y direction.
@@ -239,11 +250,13 @@ def plot_msd_anisotropic(msd,
         species_labels (list): Species names for legend.
         save_path (str, optional): Path to save the figure.
         figsize (tuple, optional): Figure size. Defaults to (12, 10).
-        
-    Returns:
+
+    Returns
+    -------
         tuple: (figure, axes) objects for further customization.
-        
-    Example:
+
+    Example
+    -------
         >>> # For layered material with anisotropic diffusion
         >>> fig, axes = plot_msd_anisotropic(
         ...     time, msd_x, msd_y, msd_z, ['Li⁺'],
@@ -345,19 +358,22 @@ def plot_vaf_isotropic(vaf,
     
     Creates VAF plots with integration to calculate diffusion coefficients
     via the Green-Kubo relation.
-    
-    Args:
+
+    Parameters
+    ----------
         time_data (np.ndarray): Time values in picoseconds.
         vaf_data (dict): Dictionary containing VAF data.
         species_labels (list): Species names for legend.
         save_path (str, optional): Path to save the figure.
         figsize (tuple, optional): Figure size. Defaults to (10, 8).
         show_integral (bool, optional): Whether to show running integral.
-        
-    Returns:
+
+    Returns
+    -------
         tuple: (figure, axis) objects.
-        
-    Example:
+
+    Example
+    -------
         >>> time = np.linspace(0, 20, 2000)
         >>> vaf = np.exp(-time/5) * np.cos(2*np.pi*time/3)
         >>> vaf_data = {'Li': vaf}
@@ -462,8 +478,9 @@ def plot_power_spectrum(power_spectrum, ax=None, show=False, color_scheme='jmol'
     
     Creates frequency domain plots for vibrational analysis,
     phonon density of states, and spectroscopic comparisons.
-    
-    Args:
+
+    Parameters
+    ----------
         frequency_data (np.ndarray): Frequency values in THz or cm⁻¹.
         spectrum_data (dict): Dictionary containing spectrum data.
         species_labels (list): Species names for legend.
@@ -471,11 +488,13 @@ def plot_power_spectrum(power_spectrum, ax=None, show=False, color_scheme='jmol'
         figsize (tuple, optional): Figure size. Defaults to (10, 8).
         xlim (tuple, optional): X-axis limits for frequency range.
         log_scale (bool, optional): Use logarithmic y-axis. Defaults to False.
-        
-    Returns:
+
+    Returns
+    -------
         tuple: (figure, axis) objects.
-        
-    Example:
+
+    Example
+    -------
         >>> freq = np.linspace(0, 50, 1000)  # THz
         >>> spectrum = np.exp(-(freq-10)**2/5)  # Gaussian peak
         >>> spectrum_data = {'Li': spectrum}
@@ -531,8 +550,9 @@ def plot_rdf(
     
     Creates publication-quality RDF plots with proper normalization
     and peak identification for structural analysis.
-    
-    Args:
+
+    Parameters
+    ----------
         r_data (np.ndarray): Radial distance values in Angstroms.
         rdf_data (dict): Dictionary containing RDF data for different pairs.
         pair_labels (list): List of pair labels (e.g., ['Li-Li', 'Li-O']).
@@ -540,11 +560,13 @@ def plot_rdf(
         figsize (tuple, optional): Figure size. Defaults to (10, 8).
         xlim (tuple, optional): X-axis limits.
         ylim (tuple, optional): Y-axis limits.
-        
-    Returns:
+
+    Returns
+    -------
         tuple: (figure, axis) objects.
-        
-    Example:
+
+    Example
+    -------
         >>> r = np.linspace(0, 10, 1000)
         >>> rdf_data = {
         ...     'Li-Li': np.exp(-(r-2.5)**2/0.1),
@@ -620,18 +642,21 @@ def plot_angular_spec(angspec_res,
     
     Creates polar or Cartesian plots for analyzing angular distributions,
     molecular orientations, or rotational dynamics.
-    
-    Args:
+
+    Parameters
+    ----------
         theta_data (np.ndarray): Angular values in radians or degrees.
         intensity_data (np.ndarray): Intensity or probability values.
         save_path (str, optional): Path to save the figure.
         figsize (tuple, optional): Figure size. Defaults to (10, 8).
         polar (bool, optional): Use polar projection. Defaults to True.
-        
-    Returns:
+
+    Returns
+    -------
         tuple: (figure, axis) objects.
-        
-    Example:
+
+    Example
+    -------
         >>> theta = np.linspace(0, 2*np.pi, 360)
         >>> intensity = 1 + 0.5*np.cos(2*theta)  # p-orbital like
         >>> 
