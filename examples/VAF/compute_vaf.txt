@@ -1,6 +1,6 @@
 #!/bin/bash
 
-Example of computing VDOS (Vibrational Density of States) for a system
+Example of computing Velocity Autocorrelation Function
 ----------------------------------------------------------------------
 
 CL Argument: 

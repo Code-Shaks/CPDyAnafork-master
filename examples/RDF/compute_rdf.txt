@@ -1,0 +1,17 @@
+#!/bin/bash
+
+Example of computing Radial Distribuition Function for a system
+----------------------------------------------------------------------
+
+CL Argument: 
+
+CPDyAna rdf --data-dir . xlim 0 10
+
+Sample output
+-------------
+Starting RDF analysis...
+Central atoms: Li, Al, P, S
+Processing 1 file sets...
+Processing file set 1/1: LiAlPS
+  → RDF plots created with prefix: rdf_plot_LiAlPS
+RDF analysis completed for 1 file sets.

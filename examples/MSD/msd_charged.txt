@@ -1,0 +1,19 @@
+#!/bin/bash
+
+Example of computing Mean Squared Displacement vs Time
+------------------------------------------------------
+
+CL Argument: 
+
+CPDyAna msd --data-dir . -T 600 --diffusing-elements Li --diffusivity-choices Charged --initial-slope-time 10 --final-slope-time 40 --block 500 --initial-time 0 --final-time 50 --first-time 0 --last-time 50 --diffusivity-direction-choices XYZ XY YZ ZX X Y Z
+
+Sample output
+-------------
+
+Starting MSD analysis...                                                                                                                                                       
+Processing 1 file sets for 1 temperature(s)
+Analyzing elements: Li
+
+Saving results to OUTPUT.json...
+Generating MSD plot with 7 data series...
+MSD plot saved to: MSD.jpg
