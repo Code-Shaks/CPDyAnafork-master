@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Usage Examples &#8212; CPDyAna 01-02-2014 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <script src="../_static/documentation_options.js?v=b59d7fc8"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="usage-examples">
+<h1>Usage Examples<a class="headerlink" href="#usage-examples" title="Link to this heading">¶</a></h1>
+<p>This section provides comprehensive examples for using CPDyAna to analyze molecular dynamics trajectories. Examples cover both basic usage and advanced analysis workflows.</p>
+<section id="command-line-interface-examples">
+<h2>Command-Line Interface Examples<a class="headerlink" href="#command-line-interface-examples" title="Link to this heading">¶</a></h2>
+<section id="basic-msd-analysis">
+<h3>Basic MSD Analysis<a class="headerlink" href="#basic-msd-analysis" title="Link to this heading">¶</a></h3>
+<p>Calculate Mean Square Displacement for Li ions at 800K:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Basic MSD analysis</span>
+<span class="w"> </span>CPDyAna<span class="w"> </span>msd<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--data-dir<span class="w"> </span>/path/to/md_data<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--temperature<span class="w"> </span><span class="m">800</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--diffusing-elements<span class="w"> </span>Li<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--initial-time<span class="w"> </span><span class="m">5</span>.0<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--final-time<span class="w"> </span><span class="m">200</span>.0<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--save-path<span class="w"> </span>Li_msd_800K.png
+</pre></div>
+</div>
+</section>
+<section id="multi-element-analysis">
+<h3>Multi-Element Analysis<a class="headerlink" href="#multi-element-analysis" title="Link to this heading">¶</a></h3>
+<p>Analyze multiple elements and temperatures:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Multi-element, multi-temperature MSD</span>
+<span class="w"> </span>CPDyAna<span class="w"> </span>msd<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--data-dir<span class="w"> </span>/path/to/md_data<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--temperature<span class="w"> </span><span class="m">600</span><span class="w"> </span><span class="m">800</span><span class="w"> </span><span class="m">1000</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--diffusing-elements<span class="w"> </span>Li<span class="w"> </span>Na<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--diffusivity-direction-choices<span class="w"> </span>X<span class="w"> </span>Y<span class="w"> </span>Z<span class="w"> </span>XYZ<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--diffusivity-choices<span class="w"> </span>Tracer<span class="w"> </span>Collective
+</pre></div>
+</div>
+</section>
+<section id="van-hove-correlation-functions">
+<h3>Van Hove Correlation Functions<a class="headerlink" href="#van-hove-correlation-functions" title="Link to this heading">¶</a></h3>
+<p>Calculate both self and distinct Van Hove correlations:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Van Hove correlation analysis</span>
+<span class="w"> </span>CPDyAna<span class="w"> </span>vh<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--data-dir<span class="w"> </span>/path/to/md_data<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--temperature<span class="w"> </span><span class="m">800</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--diffusing-elements<span class="w"> </span>Li<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--correlation<span class="w"> </span>Self<span class="w"> </span>Distinct<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--rmax<span class="w"> </span><span class="m">15</span>.0<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--sigma<span class="w"> </span><span class="m">0</span>.1<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--ngrid<span class="w"> </span><span class="m">151</span>
+</pre></div>
+</div>
+</section>
+<section id="radial-distribution-functions">
+<h3>Radial Distribution Functions<a class="headerlink" href="#radial-distribution-functions" title="Link to this heading">¶</a></h3>
+<p>Compute RDF for multiple atom pairs:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># RDF analysis</span>
+<span class="w"> </span>CPDyAna<span class="w"> </span>rdf<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--data-dir<span class="w"> </span>/path/to/md_data<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--central-atom<span class="w"> </span>Li<span class="w"> </span>Al<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--pair-atoms<span class="w"> </span>Li<span class="w"> </span>Al<span class="w"> </span>P<span class="w"> </span>S<span class="w"> </span>O<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--rmax<span class="w"> </span><span class="m">12</span>.0<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--ngrid<span class="w"> </span><span class="m">1200</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--time-after-start<span class="w"> </span><span class="m">50</span>.0
+</pre></div>
+</div>
+</section>
+<section id="ionic-density-mapping">
+<h3>Ionic Density Mapping<a class="headerlink" href="#ionic-density-mapping" title="Link to this heading">¶</a></h3>
+<p>Generate 3D density maps for visualization:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 3D ionic density calculation</span>
+<span class="w"> </span>CPDyAna<span class="w"> </span>ionic-density<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--data-dir<span class="w"> </span>/path/to/md_data<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--element<span class="w"> </span>Li<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--sigma<span class="w"> </span><span class="m">0</span>.4<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--density<span class="w"> </span><span class="m">0</span>.15<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--time-after-start<span class="w"> </span><span class="m">20</span>.0<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--num-frames<span class="w"> </span><span class="m">500</span>
+</pre></div>
+</div>
+</section>
+<section id="velocity-autocorrelation-functions">
+<h3>Velocity Autocorrelation Functions<a class="headerlink" href="#velocity-autocorrelation-functions" title="Link to this heading">¶</a></h3>
+<p>Calculate VAF for diffusion analysis:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># VAF analysis</span>
+<span class="w"> </span>CPDyAna<span class="w"> </span>vaf<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--data-dir<span class="w"> </span>/path/to/md_data<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--element<span class="w"> </span>Li<span class="w"> </span>Na<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--start<span class="w"> </span><span class="m">10</span>.0<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--nframes<span class="w"> </span><span class="m">2000</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--blocks<span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--t-end-fit-ps<span class="w"> </span><span class="m">20</span>.0
+</pre></div>
+</div>
+</section>
+<section id="vibrational-density-of-states">
+<h3>Vibrational Density of States<a class="headerlink" href="#vibrational-density-of-states" title="Link to this heading">¶</a></h3>
+<p>Compute VDOS for all elements:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># VDOS calculation</span>
+<span class="w"> </span>CPDyAna<span class="w"> </span>vdos<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--data-dir<span class="w"> </span>/path/to/md_data<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--elements<span class="w"> </span>Li<span class="w"> </span>Al<span class="w"> </span>P<span class="w"> </span>S<span class="w"> </span>O<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--start<span class="w"> </span><span class="m">50</span>.0<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--nframes<span class="w"> </span><span class="m">5000</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--stride<span class="w"> </span><span class="m">2</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="python-api-examples">
+<h2>Python API Examples<a class="headerlink" href="#python-api-examples" title="Link to this heading">¶</a></h2>
+<section id="direct-function-usage">
+<h3>Direct Function Usage<a class="headerlink" href="#direct-function-usage" title="Link to this heading">¶</a></h3>
+<p>Using CPDyAna functions directly in Python scripts:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">target.CPDyAna</span><span class="w"> </span><span class="kn">import</span> <span class="n">Job</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">target</span><span class="w"> </span><span class="kn">import</span> <span class="n">plotting</span> <span class="k">as</span> <span class="n">p</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="c1"># Define analysis parameters</span>
+<span class="n">temperatures</span> <span class="o">=</span> <span class="p">[</span><span class="mf">800.0</span><span class="p">]</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Li&#39;</span><span class="p">]</span>
+<span class="n">diffusivity_directions</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;XYZ&#39;</span><span class="p">]</span>
+<span class="n">diffusivity_types</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Tracer&#39;</span><span class="p">]</span>
+<span class="n">correlations</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Self&#39;</span><span class="p">]</span>
+
+<span class="c1"># File paths (modify for your data)</span>
+<span class="n">pos_files</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;/path/to/data/md.pos&#39;</span><span class="p">]</span>
+<span class="n">cel_files</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;/path/to/data/md.cel&#39;</span><span class="p">]</span>
+<span class="n">evp_files</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;/path/to/data/md.evp&#39;</span><span class="p">]</span>
+<span class="n">ion_files</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;/path/to/data/md.in&#39;</span><span class="p">]</span>
+
+<span class="c1"># Run analysis</span>
+<span class="n">input_data</span><span class="p">,</span> <span class="n">output_data</span> <span class="o">=</span> <span class="n">Job</span><span class="p">(</span>
+    <span class="n">temperature</span><span class="o">=</span><span class="n">temperatures</span><span class="p">,</span>
+    <span class="n">diffusing_elements</span><span class="o">=</span><span class="n">elements</span><span class="p">,</span>
+    <span class="n">diffusivity_direction_choices</span><span class="o">=</span><span class="n">diffusivity_directions</span><span class="p">,</span>
+    <span class="n">diffusivity_choices</span><span class="o">=</span><span class="n">diffusivity_types</span><span class="p">,</span>
+    <span class="n">correlation</span><span class="o">=</span><span class="n">correlations</span><span class="p">,</span>
+    <span class="n">pos_file</span><span class="o">=</span><span class="n">pos_files</span><span class="p">,</span>
+    <span class="n">cel_file</span><span class="o">=</span><span class="n">cel_files</span><span class="p">,</span>
+    <span class="n">evp_file</span><span class="o">=</span><span class="n">evp_files</span><span class="p">,</span>
+    <span class="n">ion_file</span><span class="o">=</span><span class="n">ion_files</span><span class="p">,</span>
+    <span class="n">Conv_factor</span><span class="o">=</span><span class="mf">0.529177249</span><span class="p">,</span>  <span class="c1"># Bohr to Angstrom</span>
+    <span class="n">initial_time</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span>
+    <span class="n">final_time</span><span class="o">=</span><span class="mf">200.0</span><span class="p">,</span>
+    <span class="n">initial_slope_time</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
+    <span class="n">final_slope_time</span><span class="o">=</span><span class="mf">150.0</span><span class="p">,</span>
+    <span class="n">block</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+    <span class="n">rmax</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
+    <span class="n">step_skip</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">sigma</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">ngrid</span><span class="o">=</span><span class="mi">101</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;msd&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Save results</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;analysis_results.json&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">output_data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># Generate plots</span>
+<span class="n">plot_data</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">800.0</span><span class="p">,</span> <span class="s1">&#39;Li&#39;</span><span class="p">,</span> <span class="s1">&#39;Tracer&#39;</span><span class="p">,</span> <span class="s1">&#39;XYZ&#39;</span><span class="p">]]</span>
+<span class="n">p</span><span class="o">.</span><span class="n">msd_plot</span><span class="p">(</span><span class="n">output_data</span><span class="p">,</span> <span class="n">plot_data</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">200.0</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="s1">&#39;custom_msd.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="samos-module-integration">
+<h3>SAMOS Module Integration<a class="headerlink" href="#samos-module-integration" title="Link to this heading">¶</a></h3>
+<p>Using SAMOS modules for advanced analysis:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">samos_modules.samos_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">util_msd</span><span class="p">,</span> <span class="n">util_rdf_and_plot</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">samos_modules.samos_io</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_lammps_dump</span>
+
+<span class="c1"># Convert LAMMPS trajectory to ASE format</span>
+<span class="n">traj</span> <span class="o">=</span> <span class="n">read_lammps_dump</span><span class="p">(</span>
+    <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;dump.lammpstrj&#39;</span><span class="p">,</span>
+    <span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Li&#39;</span><span class="p">,</span> <span class="s1">&#39;Al&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">,</span> <span class="s1">&#39;S&#39;</span><span class="p">,</span> <span class="s1">&#39;O&#39;</span><span class="p">],</span>
+    <span class="n">timestep</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>  <span class="c1"># ps</span>
+    <span class="n">save_extxyz</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">outfile</span><span class="o">=</span><span class="s1">&#39;converted.extxyz&#39;</span>
+<span class="p">)</span>
+
+<span class="c1"># Calculate MSD using SAMOS</span>
+<span class="n">util_msd</span><span class="p">(</span>
+    <span class="n">trajectory_path</span><span class="o">=</span><span class="s1">&#39;converted.extxyz&#39;</span><span class="p">,</span>
+    <span class="n">stepsize</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">species</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Li&#39;</span><span class="p">],</span>
+    <span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">savefig</span><span class="o">=</span><span class="s1">&#39;samos_msd.png&#39;</span><span class="p">,</span>
+    <span class="n">t_start_fit_ps</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">t_end_fit_ps</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="n">nblocks</span><span class="o">=</span><span class="mi">4</span>
+<span class="p">)</span>
+
+<span class="c1"># Calculate RDF using SAMOS</span>
+<span class="n">util_rdf_and_plot</span><span class="p">(</span>
+    <span class="n">trajectory_path</span><span class="o">=</span><span class="s1">&#39;converted.extxyz&#39;</span><span class="p">,</span>
+    <span class="n">radius</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
+    <span class="n">stepsize</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">bins</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+    <span class="n">species_pairs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Li-O&#39;</span><span class="p">,</span> <span class="s1">&#39;Li-Li&#39;</span><span class="p">,</span> <span class="s1">&#39;Al-O&#39;</span><span class="p">],</span>
+    <span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">savefig</span><span class="o">=</span><span class="s1">&#39;samos_rdf.png&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="batch-processing-workflows">
+<h2>Batch Processing Workflows<a class="headerlink" href="#batch-processing-workflows" title="Link to this heading">¶</a></h2>
+<section id="processing-multiple-simulations">
+<h3>Processing Multiple Simulations<a class="headerlink" href="#processing-multiple-simulations" title="Link to this heading">¶</a></h3>
+<p>Script for batch analysis of multiple MD runs:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">glob</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+
+<span class="c1"># Directory containing multiple simulation folders</span>
+<span class="n">base_dir</span> <span class="o">=</span> <span class="s1">&#39;/path/to/simulations&#39;</span>
+
+<span class="c1"># Find all simulation directories</span>
+<span class="n">sim_dirs</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base_dir</span><span class="p">,</span> <span class="s1">&#39;sim_*&#39;</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">sim_dir</span> <span class="ow">in</span> <span class="n">sim_dirs</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processing </span><span class="si">{</span><span class="n">sim_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Check for required files</span>
+    <span class="n">required_files</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;*.pos&#39;</span><span class="p">,</span> <span class="s1">&#39;*.cel&#39;</span><span class="p">,</span> <span class="s1">&#39;*.evp&#39;</span><span class="p">,</span> <span class="s1">&#39;*.in&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sim_dir</span><span class="p">,</span> <span class="n">pattern</span><span class="p">))</span> <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">required_files</span><span class="p">):</span>
+
+        <span class="c1"># Run MSD analysis</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;python&#39;</span><span class="p">,</span> <span class="s1">&#39;CPDyAna.py&#39;</span><span class="p">,</span> <span class="s1">&#39;msd&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;--data-dir&#39;</span><span class="p">,</span> <span class="n">sim_dir</span><span class="p">,</span>
+            <span class="s1">&#39;--temperature&#39;</span><span class="p">,</span> <span class="s1">&#39;800&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;--diffusing-elements&#39;</span><span class="p">,</span> <span class="s1">&#39;Li&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;--save-path&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">sim_dir</span><span class="si">}</span><span class="s1">/msd_result.png&#39;</span>
+        <span class="p">]</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ✓ MSD analysis completed&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ✗ MSD analysis failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ✗ Missing required files&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="temperature-series-analysis">
+<h3>Temperature Series Analysis<a class="headerlink" href="#temperature-series-analysis" title="Link to this heading">¶</a></h3>
+<p>Analyzing diffusion across temperature range:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">target.CPDyAna</span><span class="w"> </span><span class="kn">import</span> <span class="n">Job</span>
+
+<span class="c1"># Temperature range</span>
+<span class="n">temperatures</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">600</span><span class="p">,</span> <span class="mi">1200</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>  <span class="c1"># 600K to 1200K</span>
+<span class="n">diffusion_coefficients</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">T</span> <span class="ow">in</span> <span class="n">temperatures</span><span class="p">:</span>
+    <span class="c1"># Run analysis for each temperature</span>
+    <span class="c1"># (assuming files are named with temperature)</span>
+    <span class="n">pos_file</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;md_</span><span class="si">{</span><span class="n">T</span><span class="si">}</span><span class="s1">K.pos&#39;</span><span class="p">]</span>
+    <span class="n">cel_file</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;md_</span><span class="si">{</span><span class="n">T</span><span class="si">}</span><span class="s1">K.cel&#39;</span><span class="p">]</span>
+    <span class="n">evp_file</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;md_</span><span class="si">{</span><span class="n">T</span><span class="si">}</span><span class="s1">K.evp&#39;</span><span class="p">]</span>
+    <span class="n">ion_file</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;md_</span><span class="si">{</span><span class="n">T</span><span class="si">}</span><span class="s1">K.in&#39;</span><span class="p">]</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">input_data</span><span class="p">,</span> <span class="n">output_data</span> <span class="o">=</span> <span class="n">Job</span><span class="p">(</span>
+            <span class="n">temperature</span><span class="o">=</span><span class="p">[</span><span class="n">T</span><span class="p">],</span>
+            <span class="n">diffusing_elements</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Li&#39;</span><span class="p">],</span>
+            <span class="c1"># ... other parameters ...</span>
+            <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;msd&quot;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Extract diffusion coefficient</span>
+        <span class="n">D</span> <span class="o">=</span> <span class="n">output_data</span><span class="p">[(</span><span class="n">T</span><span class="p">,</span> <span class="s1">&#39;Li&#39;</span><span class="p">)][</span><span class="s1">&#39;msd_data&#39;</span><span class="p">][</span><span class="s1">&#39;Tracer&#39;</span><span class="p">][</span><span class="s1">&#39;XYZ&#39;</span><span class="p">][</span><span class="s1">&#39;diffusion_coeff&#39;</span><span class="p">]</span>
+        <span class="n">diffusion_coefficients</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">D</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed for T=</span><span class="si">{</span><span class="n">T</span><span class="si">}</span><span class="s2">K: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">diffusion_coefficients</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+<span class="c1"># Plot Arrhenius behavior</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="mi">1000</span><span class="o">/</span><span class="n">temperatures</span><span class="p">,</span> <span class="n">diffusion_coefficients</span><span class="p">,</span> <span class="s1">&#39;o-&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;1000/T (1/K)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Diffusion Coefficient (cm²/s)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Arrhenius Plot for Li Diffusion&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;arrhenius_plot.png&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="advanced-analysis-examples">
+<h2>Advanced Analysis Examples<a class="headerlink" href="#advanced-analysis-examples" title="Link to this heading">¶</a></h2>
+<section id="custom-van-hove-analysis">
+<h3>Custom Van Hove Analysis<a class="headerlink" href="#custom-van-hove-analysis" title="Link to this heading">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">target.correrelation_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">Van_Hove_self</span><span class="p">,</span> <span class="n">Van_Hove_distinct</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Load trajectory data (example structure)</span>
+<span class="c1"># pos_array: shape (n_frames, n_atoms, 3)</span>
+<span class="c1"># dt: time step array</span>
+
+<span class="c1"># Self Van Hove correlation</span>
+<span class="n">dist_interval</span><span class="p">,</span> <span class="n">reduced_nt</span><span class="p">,</span> <span class="n">grt_self</span> <span class="o">=</span> <span class="n">Van_Hove_self</span><span class="p">(</span>
+    <span class="n">avg_step</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="n">dt</span><span class="o">=</span><span class="n">dt</span><span class="p">,</span>
+    <span class="n">rmax</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span>
+    <span class="n">step_skip</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">sigma</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span>
+    <span class="n">ngrid</span><span class="o">=</span><span class="mi">151</span><span class="p">,</span>
+    <span class="n">moving_ion_pos</span><span class="o">=</span><span class="n">pos_array</span>
+<span class="p">)</span>
+
+<span class="c1"># Plot self correlation</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">reduced_nt</span><span class="p">[::</span><span class="mi">5</span><span class="p">]):</span>  <span class="c1"># Plot every 5th time</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dist_interval</span><span class="p">,</span> <span class="n">grt_self</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+            <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;t = </span><span class="si">{</span><span class="n">t</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1"> ps&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Distance (Å)&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;G_s(r,t)&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Self Van Hove Correlation Function&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;van_hove_self.png&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="file-format-tips">
+<h2>File Format Tips<a class="headerlink" href="#file-format-tips" title="Link to this heading">¶</a></h2>
+<section id="required-file-structure">
+<h3>Required File Structure<a class="headerlink" href="#required-file-structure" title="Link to this heading">¶</a></h3>
+<p>For Quantum ESPRESSO trajectories, ensure your data directory contains:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>data_directory/
+├── simulation.pos    # Atomic positions
+├── simulation.cel    # Unit cell parameters
+├── simulation.evp    # Energy, volume, pressure
+└── simulation.in     # Ion definitions
+</pre></div>
+</div>
+<p>For multiple temperatures or conditions:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>data_directory/
+├── md_600K.pos, md_600K.cel, md_600K.evp, md_600K.in
+├── md_800K.pos, md_800K.cel, md_800K.evp, md_800K.in
+└── md_1000K.pos, md_1000K.cel, md_1000K.evp, md_1000K.in
+</pre></div>
+</div>
+</section>
+<section id="performance-optimization">
+<h3>Performance Optimization<a class="headerlink" href="#performance-optimization" title="Link to this heading">¶</a></h3>
+<p>For large trajectories, use these optimization strategies:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Use larger step_skip for faster analysis</span>
+<span class="n">python</span> <span class="n">CPDyAna</span><span class="o">.</span><span class="n">py</span> <span class="n">msd</span> \
+    <span class="o">--</span><span class="n">step</span><span class="o">-</span><span class="n">skip</span> <span class="mi">1000</span> \
+    <span class="o">--</span><span class="n">block</span> <span class="mi">1000</span> \
+    <span class="c1"># ... other parameters</span>
+
+<span class="c1"># For SAMOS functions, use appropriate stepsize</span>
+<span class="n">util_msd</span><span class="p">(</span>
+    <span class="n">trajectory_path</span><span class="o">=</span><span class="s1">&#39;large_trajectory.extxyz&#39;</span><span class="p">,</span>
+    <span class="n">stepsize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>  <span class="c1"># Use every 10th frame</span>
+    <span class="c1"># ... other parameters</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">CPDyAna</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024, Vinay Maithani.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/docs/usage_Examples.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

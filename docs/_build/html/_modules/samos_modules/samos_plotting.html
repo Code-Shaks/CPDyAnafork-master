@@ -1,0 +1,831 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>samos_modules.samos_plotting &mdash; CPDyAna 01-02-2024 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=18cd0f04"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            CPDyAna
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../target.html">Target Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#main-analysis-driver">Main Analysis Driver</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#cpdyana-combined-molecular-dynamics-analysis-tool">CPDyAna – Combined Molecular Dynamics Analysis Tool</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.CPDyAna.Job"><code class="docutils literal notranslate"><span class="pre">Job()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.CPDyAna.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.CPDyAna.parser"><code class="docutils literal notranslate"><span class="pre">parser()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#key-functions">Key Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#data-processing">Data Processing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.data_processing.data_evaluator"><code class="docutils literal notranslate"><span class="pre">data_evaluator()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.data_processing.find_terms"><code class="docutils literal notranslate"><span class="pre">find_terms()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.data_processing.segmenter_func"><code class="docutils literal notranslate"><span class="pre">segmenter_func()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#id1">Key Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#input-output-operations">Input/Output Operations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.read_cel_file"><code class="docutils literal notranslate"><span class="pre">read_cel_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.read_evp_file"><code class="docutils literal notranslate"><span class="pre">read_evp_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.read_ion_file"><code class="docutils literal notranslate"><span class="pre">read_ion_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.read_pos_file"><code class="docutils literal notranslate"><span class="pre">read_pos_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#supported-file-types">Supported File Types</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#core-calculations">Core Calculations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.calc_fft"><code class="docutils literal notranslate"><span class="pre">calc_fft()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.calc_msd_tracer"><code class="docutils literal notranslate"><span class="pre">calc_msd_tracer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.calculate_msd"><code class="docutils literal notranslate"><span class="pre">calculate_msd()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.disp_sum"><code class="docutils literal notranslate"><span class="pre">disp_sum()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.msd_charged"><code class="docutils literal notranslate"><span class="pre">msd_charged()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.msd_tracer"><code class="docutils literal notranslate"><span class="pre">msd_tracer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#analysis-types">Analysis Types</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#correlation-analysis">Correlation Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.correrelation_analysis.Van_Hove_distinct"><code class="docutils literal notranslate"><span class="pre">Van_Hove_distinct()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.correrelation_analysis.Van_Hove_self"><code class="docutils literal notranslate"><span class="pre">Van_Hove_self()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#correlation-types">Correlation Types</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#rdf-computation">RDF Computation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_rdf.build_ase_trajectory"><code class="docutils literal notranslate"><span class="pre">build_ase_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_rdf.compute_rdf"><code class="docutils literal notranslate"><span class="pre">compute_rdf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_rdf.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#vaf-computation">VAF Computation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_vaf.build_trajectory"><code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_vaf.compute_vaf"><code class="docutils literal notranslate"><span class="pre">compute_vaf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_vaf.convert_symbols_to_atomic_numbers"><code class="docutils literal notranslate"><span class="pre">convert_symbols_to_atomic_numbers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_vaf.finite_diff_velocities"><code class="docutils literal notranslate"><span class="pre">finite_diff_velocities()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_vaf.read_cel"><code class="docutils literal notranslate"><span class="pre">read_cel()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_vaf.read_evp"><code class="docutils literal notranslate"><span class="pre">read_evp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_vaf.read_pos"><code class="docutils literal notranslate"><span class="pre">read_pos()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#plotting-and-visualization">Plotting and Visualization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.int_or_float"><code class="docutils literal notranslate"><span class="pre">int_or_float()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.msd_plot"><code class="docutils literal notranslate"><span class="pre">msd_plot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.parse_cli_args"><code class="docutils literal notranslate"><span class="pre">parse_cli_args()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.van_hove_plot"><code class="docutils literal notranslate"><span class="pre">van_hove_plot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#plot-types">Plot Types</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#probability-density-analysis">Probability Density Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.build_trajectory"><code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.calculate_probability_density"><code class="docutils literal notranslate"><span class="pre">calculate_probability_density()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.convert_symbols_to_atomic_numbers"><code class="docutils literal notranslate"><span class="pre">convert_symbols_to_atomic_numbers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.divide_chunks"><code class="docutils literal notranslate"><span class="pre">divide_chunks()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.parse_mask"><code class="docutils literal notranslate"><span class="pre">parse_mask()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#output-formats">Output Formats</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#vdos-analysis">VDOS Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.vdos.build_trajectory"><code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.vdos.compute_plot_vdos"><code class="docutils literal notranslate"><span class="pre">compute_plot_vdos()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.vdos.convert_symbols_to_atomic_numbers"><code class="docutils literal notranslate"><span class="pre">convert_symbols_to_atomic_numbers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.vdos.finite_diff_velocities"><code class="docutils literal notranslate"><span class="pre">finite_diff_velocities()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.vdos.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.vdos.read_cel"><code class="docutils literal notranslate"><span class="pre">read_cel()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.vdos.read_evp"><code class="docutils literal notranslate"><span class="pre">read_evp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.vdos.read_pos"><code class="docutils literal notranslate"><span class="pre">read_pos()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#utility-modules">Utility Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#module-target.json_serializable">JSON Serialization</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.json_serializable.convert_to_serializable"><code class="docutils literal notranslate"><span class="pre">convert_to_serializable()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#module-target.const">Constants</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../samos_modules.html">SAMOS Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../samos_modules.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../samos_modules.html#core-analysis-module">Core Analysis Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.AngularSpectrum"><code class="docutils literal notranslate"><span class="pre">AngularSpectrum</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.AngularSpectrum.run"><code class="docutils literal notranslate"><span class="pre">AngularSpectrum.run()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.BaseAnalyzer"><code class="docutils literal notranslate"><span class="pre">BaseAnalyzer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.BaseAnalyzer.__init__"><code class="docutils literal notranslate"><span class="pre">BaseAnalyzer.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.BaseAnalyzer.run"><code class="docutils literal notranslate"><span class="pre">BaseAnalyzer.run()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.BaseAnalyzer.set_trajectory"><code class="docutils literal notranslate"><span class="pre">BaseAnalyzer.set_trajectory()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer.__init__"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer.get_kinetic_energies"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.get_kinetic_energies()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer.get_msd"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.get_msd()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer.get_power_spectrum"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.get_power_spectrum()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer.get_species_of_interest"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.get_species_of_interest()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer.get_vaf"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.get_vaf()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer.set_species_of_interest"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.set_species_of_interest()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer.set_trajectories"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.set_trajectories()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer.set_verbosity"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.set_verbosity()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.RDF"><code class="docutils literal notranslate"><span class="pre">RDF</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.RDF.run"><code class="docutils literal notranslate"><span class="pre">RDF.run()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.RDF.run_fort"><code class="docutils literal notranslate"><span class="pre">RDF.run_fort()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.TimeSeries"><code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.get_gaussian_density"><code class="docutils literal notranslate"><span class="pre">get_gaussian_density()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.util_msd"><code class="docutils literal notranslate"><span class="pre">util_msd()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.util_rdf_and_plot"><code class="docutils literal notranslate"><span class="pre">util_rdf_and_plot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.write_xsf_header"><code class="docutils literal notranslate"><span class="pre">write_xsf_header()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#key-functions">Key Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../samos_modules.html#i-o-operations-module">I/O Operations Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_io.get_indices"><code class="docutils literal notranslate"><span class="pre">get_indices()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_io.get_position_indices"><code class="docutils literal notranslate"><span class="pre">get_position_indices()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_io.get_thermo_props"><code class="docutils literal notranslate"><span class="pre">get_thermo_props()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_io.pos_2_absolute"><code class="docutils literal notranslate"><span class="pre">pos_2_absolute()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_io.read_lammps_dump"><code class="docutils literal notranslate"><span class="pre">read_lammps_dump()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_io.read_positions_with_ase"><code class="docutils literal notranslate"><span class="pre">read_positions_with_ase()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_io.read_step_info"><code class="docutils literal notranslate"><span class="pre">read_step_info()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_io.read_xsf"><code class="docutils literal notranslate"><span class="pre">read_xsf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_io.write_grid"><code class="docutils literal notranslate"><span class="pre">write_grid()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_io.write_xsf"><code class="docutils literal notranslate"><span class="pre">write_xsf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#supported-formats">Supported Formats</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../samos_modules.html#plotting-module">Plotting Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_plotting.format_mean_err"><code class="docutils literal notranslate"><span class="pre">format_mean_err()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_plotting.my_format"><code class="docutils literal notranslate"><span class="pre">my_format()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_plotting.plot_angular_spec"><code class="docutils literal notranslate"><span class="pre">plot_angular_spec()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_plotting.plot_msd_anisotropic"><code class="docutils literal notranslate"><span class="pre">plot_msd_anisotropic()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_plotting.plot_msd_isotropic"><code class="docutils literal notranslate"><span class="pre">plot_msd_isotropic()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_plotting.plot_power_spectrum"><code class="docutils literal notranslate"><span class="pre">plot_power_spectrum()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_plotting.plot_rdf"><code class="docutils literal notranslate"><span class="pre">plot_rdf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_plotting.plot_vaf_isotropic"><code class="docutils literal notranslate"><span class="pre">plot_vaf_isotropic()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../samos_modules.html#compiled-extensions">Compiled Extensions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../samos_modules.html#usage-examples">Usage Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#basic-msd-analysis-with-samos">Basic MSD Analysis with SAMOS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#rdf-calculation-and-plotting">RDF Calculation and Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#reading-lammps-trajectories">Reading LAMMPS Trajectories</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Module Index:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">target</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html">Target Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#main-analysis-driver">Main Analysis Driver</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#cpdyana-combined-molecular-dynamics-analysis-tool">CPDyAna – Combined Molecular Dynamics Analysis Tool</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.CPDyAna.Job"><code class="docutils literal notranslate"><span class="pre">Job()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.CPDyAna.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.CPDyAna.parser"><code class="docutils literal notranslate"><span class="pre">parser()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#key-functions">Key Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#data-processing">Data Processing</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.data_processing.data_evaluator"><code class="docutils literal notranslate"><span class="pre">data_evaluator()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.data_processing.find_terms"><code class="docutils literal notranslate"><span class="pre">find_terms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.data_processing.segmenter_func"><code class="docutils literal notranslate"><span class="pre">segmenter_func()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#id1">Key Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#input-output-operations">Input/Output Operations</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.input_reader.read_cel_file"><code class="docutils literal notranslate"><span class="pre">read_cel_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.input_reader.read_evp_file"><code class="docutils literal notranslate"><span class="pre">read_evp_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.input_reader.read_ion_file"><code class="docutils literal notranslate"><span class="pre">read_ion_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.input_reader.read_pos_file"><code class="docutils literal notranslate"><span class="pre">read_pos_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#supported-file-types">Supported File Types</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#core-calculations">Core Calculations</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.calculations.calc_fft"><code class="docutils literal notranslate"><span class="pre">calc_fft()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.calculations.calc_msd_tracer"><code class="docutils literal notranslate"><span class="pre">calc_msd_tracer()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.calculations.calculate_msd"><code class="docutils literal notranslate"><span class="pre">calculate_msd()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.calculations.disp_sum"><code class="docutils literal notranslate"><span class="pre">disp_sum()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.calculations.msd_charged"><code class="docutils literal notranslate"><span class="pre">msd_charged()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.calculations.msd_tracer"><code class="docutils literal notranslate"><span class="pre">msd_tracer()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#analysis-types">Analysis Types</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#correlation-analysis">Correlation Analysis</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.correrelation_analysis.Van_Hove_distinct"><code class="docutils literal notranslate"><span class="pre">Van_Hove_distinct()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.correrelation_analysis.Van_Hove_self"><code class="docutils literal notranslate"><span class="pre">Van_Hove_self()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#correlation-types">Correlation Types</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#rdf-computation">RDF Computation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.compute_rdf.build_ase_trajectory"><code class="docutils literal notranslate"><span class="pre">build_ase_trajectory()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.compute_rdf.compute_rdf"><code class="docutils literal notranslate"><span class="pre">compute_rdf()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.compute_rdf.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#vaf-computation">VAF Computation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.compute_vaf.build_trajectory"><code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.compute_vaf.compute_vaf"><code class="docutils literal notranslate"><span class="pre">compute_vaf()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.compute_vaf.convert_symbols_to_atomic_numbers"><code class="docutils literal notranslate"><span class="pre">convert_symbols_to_atomic_numbers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.compute_vaf.finite_diff_velocities"><code class="docutils literal notranslate"><span class="pre">finite_diff_velocities()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.compute_vaf.read_cel"><code class="docutils literal notranslate"><span class="pre">read_cel()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.compute_vaf.read_evp"><code class="docutils literal notranslate"><span class="pre">read_evp()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.compute_vaf.read_pos"><code class="docutils literal notranslate"><span class="pre">read_pos()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#plotting-and-visualization">Plotting and Visualization</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.plotting.int_or_float"><code class="docutils literal notranslate"><span class="pre">int_or_float()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.plotting.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.plotting.msd_plot"><code class="docutils literal notranslate"><span class="pre">msd_plot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.plotting.parse_cli_args"><code class="docutils literal notranslate"><span class="pre">parse_cli_args()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.plotting.van_hove_plot"><code class="docutils literal notranslate"><span class="pre">van_hove_plot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#plot-types">Plot Types</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#probability-density-analysis">Probability Density Analysis</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.probability_density.build_trajectory"><code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.probability_density.calculate_probability_density"><code class="docutils literal notranslate"><span class="pre">calculate_probability_density()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.probability_density.convert_symbols_to_atomic_numbers"><code class="docutils literal notranslate"><span class="pre">convert_symbols_to_atomic_numbers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.probability_density.divide_chunks"><code class="docutils literal notranslate"><span class="pre">divide_chunks()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.probability_density.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.probability_density.parse_mask"><code class="docutils literal notranslate"><span class="pre">parse_mask()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#output-formats">Output Formats</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#vdos-analysis">VDOS Analysis</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.vdos.build_trajectory"><code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.vdos.compute_plot_vdos"><code class="docutils literal notranslate"><span class="pre">compute_plot_vdos()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.vdos.convert_symbols_to_atomic_numbers"><code class="docutils literal notranslate"><span class="pre">convert_symbols_to_atomic_numbers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.vdos.finite_diff_velocities"><code class="docutils literal notranslate"><span class="pre">finite_diff_velocities()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.vdos.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.vdos.read_cel"><code class="docutils literal notranslate"><span class="pre">read_cel()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.vdos.read_evp"><code class="docutils literal notranslate"><span class="pre">read_evp()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.vdos.read_pos"><code class="docutils literal notranslate"><span class="pre">read_pos()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#utility-modules">Utility Modules</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#module-target.json_serializable">JSON Serialization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#module-target.const">Constants</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CPDyAna</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">samos_modules.samos_plotting</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for samos_modules.samos_plotting</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ase.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">atomic_numbers</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">samos_modules.samos_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_color</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ase.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">atomic_numbers</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
+
+
+<div class="viewcode-block" id="my_format">
+<a class="viewcode-back" href="../../samos_modules.html#samos_modules.samos_plotting.my_format">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">my_format</span><span class="p">(</span><span class="n">real</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="n">exp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">real</span><span class="p">))</span>
+    <span class="n">pref</span> <span class="o">=</span> <span class="n">real</span> <span class="o">/</span> <span class="mi">10</span><span class="o">**</span><span class="n">exp</span>
+    <span class="k">return</span> <span class="sa">r</span><span class="s1">&#39;{:.</span><span class="si">{prec}</span><span class="s1">f} \cdot 10^{{</span><span class="si">{}</span><span class="s1">}}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pref</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">exp</span><span class="p">),</span> <span class="n">prec</span><span class="o">=</span><span class="n">decimals</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="format_mean_err">
+<a class="viewcode-back" href="../../samos_modules.html#samos_modules.samos_plotting.format_mean_err">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">format_mean_err</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">mean</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;N/A&#39;</span>
+    <span class="n">mean_rounded_to_prec</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;{:.</span><span class="si">{prec}</span><span class="s1">e}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="n">decimals</span><span class="p">))</span>
+    <span class="n">exp_mean</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">mean_rounded_to_prec</span><span class="p">))))</span>
+    <span class="n">pref_mean</span> <span class="o">=</span> <span class="n">mean_rounded_to_prec</span> <span class="o">/</span> <span class="mf">10.0</span><span class="o">**</span><span class="n">exp_mean</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">err</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">r</span><span class="s1">&#39;{:.</span><span class="si">{prec}</span><span class="s1">f}\cdot 10^{{</span><span class="si">{}</span><span class="s1">}}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pref_mean</span><span class="p">,</span> <span class="n">exp_mean</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="n">decimals</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">err_rounded_to_prec</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;{:.</span><span class="si">{prec}</span><span class="s1">e}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="n">decimals</span><span class="p">))</span>
+        <span class="n">exp_err</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">err_rounded_to_prec</span><span class="p">))))</span>
+        <span class="n">pref_err</span> <span class="o">=</span> <span class="n">err_rounded_to_prec</span> <span class="o">/</span> <span class="mf">10.0</span><span class="o">**</span><span class="n">exp_err</span>
+        <span class="k">if</span> <span class="n">exp_mean</span> <span class="o">==</span> <span class="n">exp_err</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">r</span><span class="s1">&#39;\left({:.</span><span class="si">{prec}</span><span class="s1">f} \pm {:.</span><span class="si">{prec}</span><span class="s1">f} \right)\cdot 10^{{</span><span class="si">{}</span><span class="s1">}}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pref_mean</span><span class="p">,</span> <span class="n">pref_err</span><span class="p">,</span> <span class="n">exp_mean</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="n">decimals</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">r</span><span class="s1">&#39;{:.</span><span class="si">{prec}</span><span class="s1">f} \cdot 10^{{</span><span class="si">{}</span><span class="s1">}} \pm {:.</span><span class="si">{prec}</span><span class="s1">f} \cdot 10^{{</span><span class="si">{}</span><span class="s1">}}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">pref_mean</span><span class="p">,</span> <span class="n">exp_mean</span><span class="p">,</span> <span class="n">pref_err</span><span class="p">,</span> <span class="n">exp_err</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="n">decimals</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="plot_msd_isotropic">
+<a class="viewcode-back" href="../../samos_modules.html#samos_modules.samos_plotting.plot_msd_isotropic">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_msd_isotropic</span><span class="p">(</span><span class="n">msd</span><span class="p">,</span>
+                       <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">no_legend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">species_of_interest</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">no_label</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                       <span class="n">alpha_fill</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">alpha_block</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">alpha_fit</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">color_scheme</span><span class="o">=</span><span class="s1">&#39;jmol&#39;</span><span class="p">,</span> <span class="n">exclude_from_label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                       <span class="n">color_dict</span><span class="o">=</span><span class="p">{},</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">no_block_fits</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">no_long</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">attrs</span> <span class="o">=</span> <span class="n">msd</span><span class="o">.</span><span class="n">get_attrs</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;decomposed&#39;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="s1">&#39;Plotting decomposed trajectories is not implemented&#39;</span><span class="p">)</span>
+    <span class="n">multiple_params_fit</span> <span class="o">=</span> <span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;multiple_params_fit&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">nr_of_trajectories</span> <span class="o">=</span> <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;nr_of_trajectories&#39;</span><span class="p">]</span>
+    <span class="n">t_start_fit_dt</span> <span class="o">=</span> <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;t_start_fit_dt&#39;</span><span class="p">]</span>
+    <span class="n">stepsize</span> <span class="o">=</span> <span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stepsize_t&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">timestep_fs</span> <span class="o">=</span> <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;timestep_fs&#39;</span><span class="p">]</span>
+    <span class="n">plot_long</span> <span class="o">=</span> <span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;do_long&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">no_long</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\mathrm</span><span class="si">{MSD}</span><span class="s1">(t)$ $\left( \mathrm{\AA}^2 \right) $ &#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$t$ $\left( \mathrm</span><span class="si">{ps}</span><span class="s1">\right)$&#39;</span><span class="p">)</span>
+
+    <span class="n">times_msd</span> <span class="o">=</span> <span class="n">msd</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="s1">&#39;t_list_fs&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1e3</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">no_block_fits</span><span class="p">:</span>
+        <span class="n">times_fit</span> <span class="o">=</span> <span class="n">timestep_fs</span> <span class="o">/</span> <span class="mf">1000.0</span> <span class="o">*</span> <span class="n">stepsize</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
+            <span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;t_start_fit_dt&#39;</span><span class="p">)</span> <span class="o">//</span> <span class="n">stepsize</span><span class="p">,</span>
+            <span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;t_end_fit_dt&#39;</span><span class="p">)</span> <span class="o">//</span> <span class="n">stepsize</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">species_of_interest</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">species_of_interest</span> <span class="o">=</span> <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;species_of_interest&#39;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">index_of_species</span><span class="p">,</span> <span class="n">atomic_species</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">species_of_interest</span><span class="p">):</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">attrs</span><span class="p">[</span><span class="n">atomic_species</span><span class="p">][</span><span class="s1">&#39;diffusion_mean_cm2_s&#39;</span><span class="p">]</span>
+        <span class="n">diff_sem</span> <span class="o">=</span> <span class="n">attrs</span><span class="p">[</span><span class="n">atomic_species</span><span class="p">][</span><span class="s1">&#39;diffusion_sem_cm2_s&#39;</span><span class="p">]</span>
+        <span class="n">diff_std</span> <span class="o">=</span> <span class="n">attrs</span><span class="p">[</span><span class="n">atomic_species</span><span class="p">][</span><span class="s1">&#39;diffusion_std_cm2_s&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">atomic_species</span> <span class="ow">in</span> <span class="n">color_dict</span><span class="p">:</span>
+            <span class="n">color</span> <span class="o">=</span> <span class="n">color_dict</span><span class="p">[</span><span class="n">atomic_species</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">color</span> <span class="o">=</span> <span class="n">get_color</span><span class="p">(</span><span class="n">atomic_species</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="n">color_scheme</span><span class="p">)</span>
+        <span class="n">msd_mean</span> <span class="o">=</span> <span class="n">msd</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span>
+            <span class="s1">&#39;msd_isotropic_</span><span class="si">{}</span><span class="s1">_mean&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atomic_species</span><span class="p">))</span>
+        <span class="n">msd_sem</span> <span class="o">=</span> <span class="n">msd</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="s1">&#39;msd_isotropic_</span><span class="si">{}</span><span class="s1">_sem&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atomic_species</span><span class="p">))</span>
+        <span class="n">p1</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+            <span class="n">times_msd</span><span class="p">,</span> <span class="n">msd_mean</span><span class="o">-</span><span class="n">msd_sem</span><span class="p">,</span> <span class="n">msd_mean</span><span class="o">+</span><span class="n">msd_sem</span><span class="p">,</span>
+            <span class="n">facecolor</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha_fill</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">no_label</span> <span class="ow">or</span> <span class="p">(</span><span class="n">exclude_from_label</span> <span class="ow">and</span> <span class="n">atomic_species</span> <span class="ow">in</span> <span class="n">exclude_from_label</span><span class="p">):</span>
+            <span class="n">label_this_species</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="n">label</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">multiple_params_fit</span><span class="p">:</span>
+                <span class="n">label_this_species</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;$D_{{\mathrm{{</span><span class="si">{}</span><span class="s1">}}}}=</span><span class="si">{}</span><span class="s1"> \, \frac{{cm^2}}{{s}}$&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">atomic_species</span><span class="p">,</span> <span class="n">format_mean_err</span><span class="p">(</span><span class="n">diff</span><span class="p">,</span> <span class="n">diff_sem</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="n">decimals</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">label_this_species</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atomic_species</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">label_this_species</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">plot_long</span><span class="p">:</span>
+            <span class="c1"># reduce number of lines in plot, customize for later!</span>
+            <span class="c1"># Keep the legend though!</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                    <span class="n">label</span><span class="o">=</span><span class="n">label_this_species</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">times_msd</span><span class="p">,</span> <span class="n">msd_mean</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">2.</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">times_msd</span><span class="p">,</span> <span class="n">msd_mean</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
+                    <span class="n">linewidth</span><span class="o">=</span><span class="mf">2.</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label_this_species</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">itraj</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nr_of_trajectories</span><span class="p">):</span>
+            <span class="n">msd_this_traj</span> <span class="o">=</span> <span class="n">msd</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span>
+                <span class="s1">&#39;msd_isotropic_</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atomic_species</span><span class="p">,</span> <span class="n">itraj</span><span class="p">))</span>
+            <span class="n">slopes_intercepts_this_traj</span> <span class="o">=</span> <span class="n">msd</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span>
+                <span class="s1">&#39;slopes_intercepts_isotropic_</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atomic_species</span><span class="p">,</span> <span class="n">itraj</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">iblock</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">msd_this_traj</span><span class="p">)):</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                    <span class="n">times_msd</span><span class="p">,</span> <span class="n">msd_this_traj</span><span class="p">[</span><span class="n">iblock</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha_block</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">no_block_fits</span><span class="p">:</span>
+                    <span class="n">slope_this_block</span><span class="p">,</span> <span class="n">intercept_this_block</span> <span class="o">=</span> <span class="n">slopes_intercepts_this_traj</span><span class="p">[</span><span class="n">iblock</span><span class="p">]</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">times_fit</span><span class="p">,</span> <span class="p">[</span><span class="mf">1000.</span><span class="o">*</span><span class="n">slope_this_block</span><span class="o">*</span><span class="n">x</span><span class="o">+</span><span class="n">intercept_this_block</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">times_fit</span><span class="p">],</span>
+                            <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha_fit</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">plot_long</span><span class="p">:</span>
+                <span class="n">times_long</span> <span class="o">=</span> <span class="n">msd</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="s1">&#39;t_list_long_fs&#39;</span><span class="p">)[</span><span class="n">itraj</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1e3</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">times_long</span><span class="p">,</span> <span class="n">msd</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="s1">&#39;msd_long_</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">atomic_species</span><span class="p">,</span> <span class="n">itraj</span><span class="p">)),</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">no_legend</span><span class="p">):</span>
+        <span class="n">leg</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">labelspacing</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+        <span class="n">leg</span><span class="o">.</span><span class="n">get_frame</span><span class="p">()</span><span class="o">.</span><span class="n">set_alpha</span><span class="p">(</span><span class="mf">0.</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">grid</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">show</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">ax</span></div>
+
+
+
+<div class="viewcode-block" id="plot_msd_anisotropic">
+<a class="viewcode-back" href="../../samos_modules.html#samos_modules.samos_plotting.plot_msd_anisotropic">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_msd_anisotropic</span><span class="p">(</span><span class="n">msd</span><span class="p">,</span>
+                         <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">no_legend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">species_of_interest</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">no_label</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                         <span class="n">alpha_fill</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">alpha_block</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">alpha_fit</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">color_scheme</span><span class="o">=</span><span class="s1">&#39;jmol&#39;</span><span class="p">,</span> <span class="n">exclude_from_label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                         <span class="n">diagonal_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">label_diagonal</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">no_block_fits</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">attrs</span> <span class="o">=</span> <span class="n">msd</span><span class="o">.</span><span class="n">get_attrs</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;decomposed&#39;</span><span class="p">]):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="s1">&#39;Only plotting decomposed with this functions&#39;</span><span class="p">)</span>
+    <span class="n">multiple_params_fit</span> <span class="o">=</span> <span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;multiple_params_fit&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">nr_of_trajectories</span> <span class="o">=</span> <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;nr_of_trajectories&#39;</span><span class="p">]</span>
+    <span class="n">t_start_fit_dt</span> <span class="o">=</span> <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;t_start_fit_dt&#39;</span><span class="p">]</span>
+    <span class="n">stepsize</span> <span class="o">=</span> <span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stepsize_t&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">timestep_fs</span> <span class="o">=</span> <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;timestep_fs&#39;</span><span class="p">]</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\mathrm</span><span class="si">{MSD}</span><span class="s1">(t)$ $\left( \mathrm{\AA}^2 \right) $ &#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$t$ $\left( \mathrm</span><span class="si">{ps}</span><span class="s1">\right)$&#39;</span><span class="p">)</span>
+
+    <span class="n">times_msd</span> <span class="o">=</span> <span class="n">msd</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="s1">&#39;t_list_fs&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1e3</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">no_block_fits</span><span class="p">:</span>
+        <span class="n">times_fit</span> <span class="o">=</span> <span class="n">timestep_fs</span> <span class="o">/</span> <span class="mf">1000.0</span> <span class="o">*</span> <span class="n">stepsize</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
+            <span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;t_start_fit_dt&#39;</span><span class="p">)</span> <span class="o">//</span> <span class="n">stepsize</span><span class="p">,</span>
+            <span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;t_end_fit_dt&#39;</span><span class="p">)</span> <span class="o">//</span> <span class="n">stepsize</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">species_of_interest</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">species_of_interest</span> <span class="o">=</span> <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;species_of_interest&#39;</span><span class="p">]</span>
+
+    <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="s1">&#39;orange&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">index_of_species</span><span class="p">,</span> <span class="n">atomic_species</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">species_of_interest</span><span class="p">):</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">attrs</span><span class="p">[</span><span class="n">atomic_species</span><span class="p">][</span><span class="s1">&#39;diffusion_mean_cm2_s&#39;</span><span class="p">]</span>
+        <span class="n">diff_sem</span> <span class="o">=</span> <span class="n">attrs</span><span class="p">[</span><span class="n">atomic_species</span><span class="p">][</span><span class="s1">&#39;diffusion_sem_cm2_s&#39;</span><span class="p">]</span>
+        <span class="n">diff_std</span> <span class="o">=</span> <span class="n">attrs</span><span class="p">[</span><span class="n">atomic_species</span><span class="p">][</span><span class="s1">&#39;diffusion_std_cm2_s&#39;</span><span class="p">]</span>
+        <span class="c1"># color = get_color(atomic_species, scheme=color_scheme)</span>
+        <span class="n">msd_mean</span> <span class="o">=</span> <span class="n">msd</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span>
+            <span class="s1">&#39;msd_decomposed_</span><span class="si">{}</span><span class="s1">_mean&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atomic_species</span><span class="p">))</span>
+        <span class="n">msd_sem</span> <span class="o">=</span> <span class="n">msd</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="s1">&#39;msd_decomposed_</span><span class="si">{}</span><span class="s1">_sem&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atomic_species</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">no_label</span> <span class="ow">or</span> <span class="p">(</span><span class="n">exclude_from_label</span> <span class="ow">and</span> <span class="n">atomic_species</span> <span class="ow">in</span> <span class="n">exclude_from_label</span><span class="p">):</span>
+            <span class="n">label_this_species</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">label_this_species</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+                <span class="n">color</span> <span class="o">=</span> <span class="n">colors</span><span class="p">[</span><span class="n">count</span><span class="p">]</span>
+                <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">diagonal_only</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">j</span><span class="p">):</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">label_this_species</span> <span class="ow">and</span> <span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="n">j</span> <span class="ow">or</span> <span class="n">label_diagonal</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">multiple_params_fit</span><span class="p">:</span>
+                        <span class="n">label</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;$\mathrm{{</span><span class="si">{}</span><span class="s1">}}_{{</span><span class="si">{}{}</span><span class="s1">}}$&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="n">atomic_species</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">label</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;$D_{{\mathrm{{</span><span class="si">{}</span><span class="s1">}}}}^{{</span><span class="si">{}{}</span><span class="s1">}}=</span><span class="si">{}</span><span class="s1"> \, \frac{{cm^2}}{{s}}$&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="n">atomic_species</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">format_mean_err</span><span class="p">(</span><span class="n">diff</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">],</span> <span class="n">diff_sem</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">label</span> <span class="o">=</span> <span class="kc">None</span>
+
+                <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">times_msd</span><span class="p">,</span> <span class="n">msd_mean</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
+                        <span class="n">linewidth</span><span class="o">=</span><span class="mf">2.</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">times_msd</span><span class="p">,</span> <span class="n">msd_mean</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">msd_sem</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">],</span> <span class="n">msd_mean</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">msd_sem</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">],</span>
+                                <span class="n">facecolor</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha_fill</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">itraj</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nr_of_trajectories</span><span class="p">):</span>
+                    <span class="n">msd_this_traj</span> <span class="o">=</span> <span class="n">msd</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span>
+                        <span class="s1">&#39;msd_decomposed_</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atomic_species</span><span class="p">,</span> <span class="n">itraj</span><span class="p">))</span>
+                    <span class="n">slopes_intercepts_this_traj</span> <span class="o">=</span> <span class="n">msd</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span>
+                        <span class="s1">&#39;slopes_intercepts_decomposed_</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atomic_species</span><span class="p">,</span> <span class="n">itraj</span><span class="p">))</span>
+                    <span class="k">for</span> <span class="n">iblock</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">msd_this_traj</span><span class="p">)):</span>
+                        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">times_msd</span><span class="p">,</span> <span class="n">msd_this_traj</span><span class="p">[</span><span class="n">iblock</span><span class="p">,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">],</span>
+                                <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha_block</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">no_block_fits</span><span class="p">:</span>
+                            <span class="n">slope_this_block</span><span class="p">,</span> <span class="n">intercept_this_block</span> <span class="o">=</span> <span class="n">slopes_intercepts_this_traj</span><span class="p">[</span>
+                                <span class="n">iblock</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+                            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">times_fit</span><span class="p">,</span> <span class="p">[</span><span class="mf">1000.</span><span class="o">*</span><span class="n">slope_this_block</span><span class="o">*</span><span class="n">x</span><span class="o">+</span><span class="n">intercept_this_block</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">times_fit</span><span class="p">],</span>
+                                    <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha_fit</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">no_legend</span><span class="p">):</span>
+        <span class="n">leg</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">leg</span><span class="o">.</span><span class="n">get_frame</span><span class="p">()</span><span class="o">.</span><span class="n">set_alpha</span><span class="p">(</span><span class="mf">0.</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">grid</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">show</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">ax</span></div>
+
+
+
+<div class="viewcode-block" id="plot_vaf_isotropic">
+<a class="viewcode-back" href="../../samos_modules.html#samos_modules.samos_plotting.plot_vaf_isotropic">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_vaf_isotropic</span><span class="p">(</span><span class="n">vaf</span><span class="p">,</span>
+                       <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">no_legend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">species_of_interest</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                       <span class="n">color_scheme</span><span class="o">=</span><span class="s1">&#39;jmol&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.ticker</span><span class="w"> </span><span class="kn">import</span> <span class="n">ScalarFormatter</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">ScalarFormatter</span><span class="p">()</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">set_powerlimits</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">attrs</span> <span class="o">=</span> <span class="n">vaf</span><span class="o">.</span><span class="n">get_attrs</span><span class="p">()</span>
+
+    <span class="n">nr_of_trajectories</span> <span class="o">=</span> <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;nr_of_trajectories&#39;</span><span class="p">]</span>
+    <span class="n">t_start_fit_dt</span> <span class="o">=</span> <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;t_start_fit_dt&#39;</span><span class="p">]</span>
+    <span class="n">t_end_fit_dt</span> <span class="o">=</span> <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;t_end_fit_dt&#39;</span><span class="p">]</span>
+    <span class="n">stepsize</span> <span class="o">=</span> <span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stepsize_t&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">timestep_fs</span> <span class="o">=</span> <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;timestep_fs&#39;</span><span class="p">]</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;VAF $\left[ \AA^2 fs^{-2} \right]$&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Time $t$ [fs]&#39;</span><span class="p">)</span>
+    <span class="n">axes_D</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
+    <span class="n">axes_D</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="n">axes_D</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span>
+        <span class="sa">r</span><span class="s2">&quot;$\int^t_0 VAF(t&#39;) dt&#39; \quad \left[ \frac{cm^2}</span><span class="si">{s}</span><span class="s2"> \right]$&quot;</span><span class="p">)</span>
+    <span class="n">maxy</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># to set reasonable ylimits for axes_D, I track the max diff by hand</span>
+
+    <span class="n">times</span> <span class="o">=</span> <span class="n">timestep_fs</span><span class="o">*</span><span class="n">stepsize</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
+        <span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;t_start_dt&#39;</span><span class="p">)</span><span class="o">/</span><span class="n">stepsize</span><span class="p">,</span>
+        <span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;t_end_dt&#39;</span><span class="p">)</span><span class="o">/</span><span class="n">stepsize</span>
+    <span class="p">)</span>
+
+    <span class="n">times_fit</span> <span class="o">=</span> <span class="n">timestep_fs</span><span class="o">*</span><span class="n">stepsize</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
+        <span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;t_start_fit_dt&#39;</span><span class="p">)</span><span class="o">/</span><span class="n">stepsize</span><span class="p">,</span>
+        <span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;t_end_fit_dt&#39;</span><span class="p">)</span><span class="o">/</span><span class="n">stepsize</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">species_of_interest</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">species_of_interest</span> <span class="o">=</span> <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;species_of_interest&#39;</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">index_of_species</span><span class="p">,</span> <span class="n">atomic_species</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">species_of_interest</span><span class="p">):</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">attrs</span><span class="p">[</span><span class="n">atomic_species</span><span class="p">][</span><span class="s1">&#39;diffusion_mean_cm2_s&#39;</span><span class="p">]</span>
+        <span class="n">diff_sem</span> <span class="o">=</span> <span class="n">attrs</span><span class="p">[</span><span class="n">atomic_species</span><span class="p">][</span><span class="s1">&#39;diffusion_sem_cm2_s&#39;</span><span class="p">]</span>
+        <span class="n">diff_std</span> <span class="o">=</span> <span class="n">attrs</span><span class="p">[</span><span class="n">atomic_species</span><span class="p">][</span><span class="s1">&#39;diffusion_std_cm2_s&#39;</span><span class="p">]</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">get_color</span><span class="p">(</span><span class="n">atomic_species</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="n">color_scheme</span><span class="p">)</span>
+        <span class="n">vaf_mean</span> <span class="o">=</span> <span class="n">vaf</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span>
+            <span class="s1">&#39;vaf_isotropic_</span><span class="si">{}</span><span class="s1">_mean&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atomic_species</span><span class="p">))</span>
+        <span class="n">vaf_sem</span> <span class="o">=</span> <span class="n">vaf</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="s1">&#39;vaf_isotropic_</span><span class="si">{}</span><span class="s1">_sem&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atomic_species</span><span class="p">))</span>
+        <span class="n">vaf_integral_mean</span> <span class="o">=</span> <span class="n">vaf</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span>
+            <span class="s1">&#39;vaf_integral_isotropic_</span><span class="si">{}</span><span class="s1">_mean&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atomic_species</span><span class="p">))</span>
+        <span class="n">vaf_integral_sem</span> <span class="o">=</span> <span class="n">vaf</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span>
+            <span class="s1">&#39;vaf_integral_isotropic_</span><span class="si">{}</span><span class="s1">_sem&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atomic_species</span><span class="p">))</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+            <span class="n">times</span><span class="p">,</span> <span class="n">vaf_mean</span><span class="o">-</span><span class="n">vaf_sem</span><span class="p">,</span> <span class="n">vaf_mean</span><span class="o">+</span><span class="n">vaf_sem</span><span class="p">,</span>
+            <span class="n">facecolor</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">.2</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">vaf_mean</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">3.</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;VAF (</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atomic_species</span><span class="p">))</span>
+
+        <span class="n">maxy</span> <span class="o">=</span> <span class="nb">max</span><span class="p">((</span><span class="n">maxy</span><span class="p">,</span> <span class="p">(</span><span class="n">vaf_integral_mean</span><span class="o">+</span><span class="n">vaf_integral_sem</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()))</span>
+        <span class="k">for</span> <span class="n">itraj</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nr_of_trajectories</span><span class="p">):</span>
+            <span class="n">vaf_this_traj</span> <span class="o">=</span> <span class="n">vaf</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span>
+                <span class="s1">&#39;vaf_isotropic_</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atomic_species</span><span class="p">,</span> <span class="n">itraj</span><span class="p">))</span>
+            <span class="n">vaf_integral_this_traj</span> <span class="o">=</span> <span class="n">vaf</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span>
+                <span class="s1">&#39;vaf_integral_isotropic_</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atomic_species</span><span class="p">,</span> <span class="n">itraj</span><span class="p">))</span>
+            <span class="n">maxy</span> <span class="o">=</span> <span class="nb">max</span><span class="p">((</span><span class="n">maxy</span><span class="p">,</span> <span class="n">vaf_integral_this_traj</span><span class="o">.</span><span class="n">max</span><span class="p">()))</span>
+
+            <span class="k">for</span> <span class="n">iblock</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">vaf_this_traj</span><span class="p">)):</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">vaf_this_traj</span><span class="p">[</span><span class="n">iblock</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,)</span>
+                <span class="n">axes_D</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                    <span class="n">times</span><span class="p">,</span> <span class="n">vaf_integral_this_traj</span><span class="p">[</span><span class="n">iblock</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,)</span>
+
+        <span class="n">axes_D</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">vaf_integral_mean</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">3.</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span>
+                    <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$D_{{</span><span class="si">{}</span><span class="s1">}}^{{VAF}}=( </span><span class="si">{:.2e}</span><span class="s1"> \pm </span><span class="si">{:.2e}</span><span class="s1">) \frac{{cm^2}}{{s}}$&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atomic_species</span><span class="p">,</span> <span class="n">diff</span><span class="p">,</span> <span class="n">diff_sem</span><span class="p">))</span>
+        <span class="n">axes_D</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">vaf_integral_mean</span><span class="o">-</span><span class="n">vaf_integral_sem</span><span class="p">,</span> <span class="n">vaf_integral_mean</span><span class="o">+</span><span class="n">vaf_integral_sem</span><span class="p">,</span>
+                            <span class="n">facecolor</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">.2</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">axes_D</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">maxy</span><span class="p">)</span>
+    <span class="n">axes_D</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">t_start_fit_dt</span><span class="o">*</span><span class="n">timestep_fs</span><span class="o">*</span><span class="n">stepsize</span><span class="p">,</span>
+                   <span class="n">color</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,)</span>
+    <span class="n">axes_D</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">t_end_fit_dt</span><span class="o">*</span><span class="n">timestep_fs</span><span class="o">*</span><span class="n">stepsize</span><span class="p">,</span>
+                   <span class="n">color</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">no_legend</span><span class="p">):</span>
+        <span class="n">leg</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+        <span class="n">leg</span><span class="o">.</span><span class="n">get_frame</span><span class="p">()</span><span class="o">.</span><span class="n">set_alpha</span><span class="p">(</span><span class="mf">0.</span><span class="p">)</span>
+        <span class="n">leg</span> <span class="o">=</span> <span class="n">axes_D</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">leg</span><span class="o">.</span><span class="n">get_frame</span><span class="p">()</span><span class="o">.</span><span class="n">set_alpha</span><span class="p">(</span><span class="mf">0.</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">show</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="plot_power_spectrum">
+<a class="viewcode-back" href="../../samos_modules.html#samos_modules.samos_plotting.plot_power_spectrum">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_power_spectrum</span><span class="p">(</span><span class="n">power_spectrum</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">color_scheme</span><span class="o">=</span><span class="s1">&#39;jmol&#39;</span><span class="p">,</span> <span class="n">alpha_signals</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+                        <span class="n">alpha_fill</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">attrs</span> <span class="o">=</span> <span class="n">power_spectrum</span><span class="o">.</span><span class="n">get_attrs</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\omega$ $\left[THz\right]$&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Signal $[\AA^2 fs^{-1}]$&#39;</span><span class="p">)</span>
+    <span class="n">species_of_interest</span> <span class="o">=</span> <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;species_of_interest&#39;</span><span class="p">]</span>
+    <span class="n">nr_of_trajectories</span> <span class="o">=</span> <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;nr_of_trajectories&#39;</span><span class="p">]</span>
+    <span class="n">frequencies</span> <span class="o">=</span> <span class="p">[</span><span class="n">power_spectrum</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="s1">&#39;frequency_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">itraj</span><span class="p">))</span> <span class="k">for</span> <span class="n">itraj</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nr_of_trajectories</span><span class="p">)]</span>
+    <span class="k">for</span> <span class="n">index_of_species</span><span class="p">,</span> <span class="n">atomic_species</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">species_of_interest</span><span class="p">):</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">get_color</span><span class="p">(</span><span class="n">atomic_species</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="n">color_scheme</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">alpha_signals</span> <span class="o">&gt;</span> <span class="mf">1e-4</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">itraj</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nr_of_trajectories</span><span class="p">):</span>
+                <span class="n">freq</span> <span class="o">=</span> <span class="n">frequencies</span><span class="p">[</span><span class="n">itraj</span><span class="p">]</span>
+                <span class="n">periodogram</span> <span class="o">=</span> <span class="n">power_spectrum</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span>
+                    <span class="s1">&#39;periodogram_</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atomic_species</span><span class="p">,</span> <span class="n">itraj</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">signal</span> <span class="ow">in</span> <span class="n">periodogram</span><span class="p">:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">signal</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha_signals</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">periodogram_mean</span> <span class="o">=</span> <span class="n">power_spectrum</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span>
+                <span class="s1">&#39;periodogram_</span><span class="si">{}</span><span class="s1">_mean&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atomic_species</span><span class="p">))</span>
+            <span class="n">periodogram_sem</span> <span class="o">=</span> <span class="n">power_spectrum</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span>
+                <span class="s1">&#39;periodogram_</span><span class="si">{}</span><span class="s1">_sem&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atomic_species</span><span class="p">))</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frequencies</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">periodogram_mean</span><span class="p">,</span>
+                    <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">frequencies</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">periodogram_mean</span><span class="o">-</span><span class="n">periodogram_sem</span><span class="p">,</span> <span class="n">periodogram_mean</span><span class="o">+</span><span class="n">periodogram_sem</span><span class="p">,</span>
+                            <span class="n">facecolor</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha_fill</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">show</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="plot_rdf">
+<a class="viewcode-back" href="../../samos_modules.html#samos_modules.samos_plotting.plot_rdf">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_rdf</span><span class="p">(</span>
+        <span class="n">rdf_res</span><span class="p">,</span>
+        <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">no_legend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">species_of_interest</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">no_label</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">alpha_fill</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">alpha_block</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">alpha_fit</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span>
+        <span class="n">color_scheme</span><span class="o">=</span><span class="s1">&#39;jmol&#39;</span><span class="p">,</span> <span class="n">exclude_from_label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">plot_params</span><span class="o">=</span><span class="p">{},</span> <span class="n">plot_params2</span><span class="o">=</span><span class="p">{},</span> <span class="n">no_int</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">no_int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">ax2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax2</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
+
+    <span class="n">attrs</span> <span class="o">=</span> <span class="n">rdf_res</span><span class="o">.</span><span class="n">get_attrs</span><span class="p">()</span>
+
+    <span class="n">handles</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">spec1</span><span class="p">,</span> <span class="n">spec2</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;species_pairs&#39;</span><span class="p">]:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">rdf</span> <span class="o">=</span> <span class="n">rdf_res</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="s1">&#39;rdf_</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">spec1</span><span class="p">,</span> <span class="n">spec2</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s1">&#39;Warning: RDF for </span><span class="si">{}</span><span class="s1">-</span><span class="si">{}</span><span class="s1"> was not calculated, skipping&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">spec1</span><span class="p">,</span> <span class="n">spec2</span><span class="p">))</span>
+            <span class="k">continue</span>
+        <span class="n">integral</span> <span class="o">=</span> <span class="n">rdf_res</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="s1">&#39;int_</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">spec1</span><span class="p">,</span> <span class="n">spec2</span><span class="p">))</span>
+        <span class="n">radii</span> <span class="o">=</span> <span class="n">rdf_res</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="s1">&#39;radii_</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">spec1</span><span class="p">,</span> <span class="n">spec2</span><span class="p">))</span>
+        <span class="n">plot_params_</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">plot_params</span><span class="p">)</span>
+        <span class="n">plot_params2_</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">plot_params2</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s1">&#39;color&#39;</span> <span class="ow">in</span> <span class="n">plot_params_</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">elif</span> <span class="s1">&#39;colordict&#39;</span> <span class="ow">in</span> <span class="n">plot_params_</span><span class="p">:</span>
+            <span class="n">plot_params_</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">plot_params_</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span>
+                <span class="s1">&#39;colordict&#39;</span><span class="p">)[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">spec1</span><span class="p">,</span> <span class="n">spec2</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="s1">&#39;label&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">plot_params_</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">no_label</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;labelspec&#39;</span> <span class="ow">in</span> <span class="n">plot_params_</span><span class="p">:</span>
+                <span class="n">labelspec</span> <span class="o">=</span> <span class="n">plot_params_</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;labelspec&#39;</span><span class="p">)</span>
+                <span class="n">plot_params_</span><span class="p">[</span>
+                    <span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;$g(r)_{{</span><span class="si">{}</span><span class="s1">-</span><span class="si">{}</span><span class="s1">}}$ </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">spec1</span><span class="p">,</span> <span class="n">spec2</span><span class="p">,</span> <span class="n">labelspec</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">plot_params_</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">-</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">spec1</span><span class="p">,</span> <span class="n">spec2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;label&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">plot_params2_</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">no_label</span><span class="p">:</span>
+            <span class="n">plot_params2_</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;$\int g(r)$ </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">spec1</span><span class="p">,</span> <span class="n">spec2</span><span class="p">)</span>
+        <span class="n">l</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">radii</span><span class="p">,</span> <span class="n">rdf</span><span class="p">,</span> <span class="o">**</span><span class="n">plot_params_</span><span class="p">)</span>
+        <span class="n">handles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;color&#39;</span> <span class="ow">in</span> <span class="n">plot_params2_</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">if</span> <span class="s1">&#39;colordict&#39;</span> <span class="ow">in</span> <span class="n">plot_params2_</span><span class="p">:</span>
+            <span class="n">plot_params2_</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">plot_params2_</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span>
+                <span class="s1">&#39;colordict&#39;</span><span class="p">)[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">spec1</span><span class="p">,</span> <span class="n">spec2</span><span class="p">)]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">plot_params2_</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">get_color</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">no_int</span><span class="p">):</span>
+            <span class="n">l2</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">radii</span><span class="p">,</span> <span class="n">integral</span><span class="p">,</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">plot_params2_</span><span class="p">)</span>
+            <span class="n">handles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">l2</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$r$ $\left(\mathrm{\AA}\right)$&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$g(r)$&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">handlelength</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">no_int</span><span class="p">):</span>
+        <span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\int \rho(r) \mathrm</span><span class="si">{d}</span><span class="s1">r$&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">show</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">handles</span></div>
+
+
+
+<div class="viewcode-block" id="plot_angular_spec">
+<a class="viewcode-back" href="../../samos_modules.html#samos_modules.samos_plotting.plot_angular_spec">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_angular_spec</span><span class="p">(</span><span class="n">angspec_res</span><span class="p">,</span>
+                      <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">no_legend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">species_of_interest</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">no_label</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                      <span class="n">alpha_fill</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">alpha_block</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">alpha_fit</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">color_scheme</span><span class="o">=</span><span class="s1">&#39;jmol&#39;</span><span class="p">,</span> <span class="n">exclude_from_label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">attrs</span> <span class="o">=</span> <span class="n">angspec_res</span><span class="o">.</span><span class="n">get_attrs</span><span class="p">()</span>
+    <span class="n">handles</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">spec1</span><span class="p">,</span> <span class="n">spec2</span><span class="p">,</span> <span class="n">spec3</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;species_pairs&#39;</span><span class="p">]:</span>
+        <span class="n">angular_spec</span> <span class="o">=</span> <span class="n">angspec_res</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span>
+            <span class="s1">&#39;aspec_</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">spec1</span><span class="p">,</span> <span class="n">spec2</span><span class="p">,</span> <span class="n">spec3</span><span class="p">))</span>
+        <span class="n">angles</span> <span class="o">=</span> <span class="n">angspec_res</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span>
+            <span class="s1">&#39;angles_</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">spec1</span><span class="p">,</span> <span class="n">spec2</span><span class="p">,</span> <span class="n">spec3</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">no_label</span><span class="p">:</span>
+            <span class="n">label1</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;$g(r)$ </span><span class="si">{}</span><span class="s1">-</span><span class="si">{}</span><span class="s1">-</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">spec2</span><span class="p">,</span> <span class="n">spec1</span><span class="p">,</span> <span class="n">spec3</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">label1</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">l</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">angles</span><span class="p">,</span> <span class="n">angular_spec</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label1</span><span class="p">)</span>
+        <span class="n">handles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">handles</span><span class="p">)</span>
+    <span class="c1"># ~ ax.set_xlabel(r&#39;r / $\AA$&#39;)</span>
+    <span class="c1"># ~ ax.set_ylabel(r&#39;$g(r)$&#39;)</span>
+    <span class="c1"># ~ ax2.set_ylabel(r&#39;$\int g(r) dr$&#39;)</span>
+    <span class="k">if</span> <span class="n">show</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Vinay Maithani.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

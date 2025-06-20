@@ -1,0 +1,1095 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>samos_modules.samos_io &mdash; CPDyAna 01-02-2024 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=18cd0f04"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            CPDyAna
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../target.html">Target Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#main-analysis-driver">Main Analysis Driver</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#cpdyana-combined-molecular-dynamics-analysis-tool">CPDyAna – Combined Molecular Dynamics Analysis Tool</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.CPDyAna.Job"><code class="docutils literal notranslate"><span class="pre">Job()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.CPDyAna.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.CPDyAna.parser"><code class="docutils literal notranslate"><span class="pre">parser()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#key-functions">Key Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#data-processing">Data Processing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.data_processing.data_evaluator"><code class="docutils literal notranslate"><span class="pre">data_evaluator()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.data_processing.find_terms"><code class="docutils literal notranslate"><span class="pre">find_terms()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.data_processing.segmenter_func"><code class="docutils literal notranslate"><span class="pre">segmenter_func()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#id1">Key Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#input-output-operations">Input/Output Operations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.read_cel_file"><code class="docutils literal notranslate"><span class="pre">read_cel_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.read_evp_file"><code class="docutils literal notranslate"><span class="pre">read_evp_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.read_ion_file"><code class="docutils literal notranslate"><span class="pre">read_ion_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.read_pos_file"><code class="docutils literal notranslate"><span class="pre">read_pos_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#supported-file-types">Supported File Types</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#core-calculations">Core Calculations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.calc_fft"><code class="docutils literal notranslate"><span class="pre">calc_fft()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.calc_msd_tracer"><code class="docutils literal notranslate"><span class="pre">calc_msd_tracer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.calculate_msd"><code class="docutils literal notranslate"><span class="pre">calculate_msd()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.disp_sum"><code class="docutils literal notranslate"><span class="pre">disp_sum()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.msd_charged"><code class="docutils literal notranslate"><span class="pre">msd_charged()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.msd_tracer"><code class="docutils literal notranslate"><span class="pre">msd_tracer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#analysis-types">Analysis Types</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#correlation-analysis">Correlation Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.correrelation_analysis.Van_Hove_distinct"><code class="docutils literal notranslate"><span class="pre">Van_Hove_distinct()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.correrelation_analysis.Van_Hove_self"><code class="docutils literal notranslate"><span class="pre">Van_Hove_self()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#correlation-types">Correlation Types</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#rdf-computation">RDF Computation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_rdf.build_ase_trajectory"><code class="docutils literal notranslate"><span class="pre">build_ase_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_rdf.compute_rdf"><code class="docutils literal notranslate"><span class="pre">compute_rdf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_rdf.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#vaf-computation">VAF Computation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_vaf.build_trajectory"><code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_vaf.compute_vaf"><code class="docutils literal notranslate"><span class="pre">compute_vaf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_vaf.convert_symbols_to_atomic_numbers"><code class="docutils literal notranslate"><span class="pre">convert_symbols_to_atomic_numbers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_vaf.finite_diff_velocities"><code class="docutils literal notranslate"><span class="pre">finite_diff_velocities()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_vaf.read_cel"><code class="docutils literal notranslate"><span class="pre">read_cel()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_vaf.read_evp"><code class="docutils literal notranslate"><span class="pre">read_evp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_vaf.read_pos"><code class="docutils literal notranslate"><span class="pre">read_pos()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#plotting-and-visualization">Plotting and Visualization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.int_or_float"><code class="docutils literal notranslate"><span class="pre">int_or_float()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.msd_plot"><code class="docutils literal notranslate"><span class="pre">msd_plot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.parse_cli_args"><code class="docutils literal notranslate"><span class="pre">parse_cli_args()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.van_hove_plot"><code class="docutils literal notranslate"><span class="pre">van_hove_plot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#plot-types">Plot Types</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#probability-density-analysis">Probability Density Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.build_trajectory"><code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.calculate_probability_density"><code class="docutils literal notranslate"><span class="pre">calculate_probability_density()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.convert_symbols_to_atomic_numbers"><code class="docutils literal notranslate"><span class="pre">convert_symbols_to_atomic_numbers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.divide_chunks"><code class="docutils literal notranslate"><span class="pre">divide_chunks()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.parse_mask"><code class="docutils literal notranslate"><span class="pre">parse_mask()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#output-formats">Output Formats</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#vdos-analysis">VDOS Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.vdos.build_trajectory"><code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.vdos.compute_plot_vdos"><code class="docutils literal notranslate"><span class="pre">compute_plot_vdos()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.vdos.convert_symbols_to_atomic_numbers"><code class="docutils literal notranslate"><span class="pre">convert_symbols_to_atomic_numbers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.vdos.finite_diff_velocities"><code class="docutils literal notranslate"><span class="pre">finite_diff_velocities()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.vdos.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.vdos.read_cel"><code class="docutils literal notranslate"><span class="pre">read_cel()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.vdos.read_evp"><code class="docutils literal notranslate"><span class="pre">read_evp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.vdos.read_pos"><code class="docutils literal notranslate"><span class="pre">read_pos()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#utility-modules">Utility Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#module-target.json_serializable">JSON Serialization</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.json_serializable.convert_to_serializable"><code class="docutils literal notranslate"><span class="pre">convert_to_serializable()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#module-target.const">Constants</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../samos_modules.html">SAMOS Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../samos_modules.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../samos_modules.html#core-analysis-module">Core Analysis Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.AngularSpectrum"><code class="docutils literal notranslate"><span class="pre">AngularSpectrum</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.AngularSpectrum.run"><code class="docutils literal notranslate"><span class="pre">AngularSpectrum.run()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.BaseAnalyzer"><code class="docutils literal notranslate"><span class="pre">BaseAnalyzer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.BaseAnalyzer.__init__"><code class="docutils literal notranslate"><span class="pre">BaseAnalyzer.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.BaseAnalyzer.run"><code class="docutils literal notranslate"><span class="pre">BaseAnalyzer.run()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.BaseAnalyzer.set_trajectory"><code class="docutils literal notranslate"><span class="pre">BaseAnalyzer.set_trajectory()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer.__init__"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer.get_kinetic_energies"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.get_kinetic_energies()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer.get_msd"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.get_msd()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer.get_power_spectrum"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.get_power_spectrum()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer.get_species_of_interest"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.get_species_of_interest()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer.get_vaf"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.get_vaf()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer.set_species_of_interest"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.set_species_of_interest()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer.set_trajectories"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.set_trajectories()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer.set_verbosity"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.set_verbosity()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.RDF"><code class="docutils literal notranslate"><span class="pre">RDF</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.RDF.run"><code class="docutils literal notranslate"><span class="pre">RDF.run()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.RDF.run_fort"><code class="docutils literal notranslate"><span class="pre">RDF.run_fort()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.TimeSeries"><code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.get_gaussian_density"><code class="docutils literal notranslate"><span class="pre">get_gaussian_density()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.util_msd"><code class="docutils literal notranslate"><span class="pre">util_msd()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.util_rdf_and_plot"><code class="docutils literal notranslate"><span class="pre">util_rdf_and_plot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.write_xsf_header"><code class="docutils literal notranslate"><span class="pre">write_xsf_header()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#key-functions">Key Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../samos_modules.html#i-o-operations-module">I/O Operations Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_io.get_indices"><code class="docutils literal notranslate"><span class="pre">get_indices()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_io.get_position_indices"><code class="docutils literal notranslate"><span class="pre">get_position_indices()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_io.get_thermo_props"><code class="docutils literal notranslate"><span class="pre">get_thermo_props()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_io.pos_2_absolute"><code class="docutils literal notranslate"><span class="pre">pos_2_absolute()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_io.read_lammps_dump"><code class="docutils literal notranslate"><span class="pre">read_lammps_dump()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_io.read_positions_with_ase"><code class="docutils literal notranslate"><span class="pre">read_positions_with_ase()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_io.read_step_info"><code class="docutils literal notranslate"><span class="pre">read_step_info()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_io.read_xsf"><code class="docutils literal notranslate"><span class="pre">read_xsf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_io.write_grid"><code class="docutils literal notranslate"><span class="pre">write_grid()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_io.write_xsf"><code class="docutils literal notranslate"><span class="pre">write_xsf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#supported-formats">Supported Formats</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../samos_modules.html#plotting-module">Plotting Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_plotting.format_mean_err"><code class="docutils literal notranslate"><span class="pre">format_mean_err()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_plotting.my_format"><code class="docutils literal notranslate"><span class="pre">my_format()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_plotting.plot_angular_spec"><code class="docutils literal notranslate"><span class="pre">plot_angular_spec()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_plotting.plot_msd_anisotropic"><code class="docutils literal notranslate"><span class="pre">plot_msd_anisotropic()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_plotting.plot_msd_isotropic"><code class="docutils literal notranslate"><span class="pre">plot_msd_isotropic()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_plotting.plot_power_spectrum"><code class="docutils literal notranslate"><span class="pre">plot_power_spectrum()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_plotting.plot_rdf"><code class="docutils literal notranslate"><span class="pre">plot_rdf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_plotting.plot_vaf_isotropic"><code class="docutils literal notranslate"><span class="pre">plot_vaf_isotropic()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../samos_modules.html#compiled-extensions">Compiled Extensions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../samos_modules.html#usage-examples">Usage Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#basic-msd-analysis-with-samos">Basic MSD Analysis with SAMOS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#rdf-calculation-and-plotting">RDF Calculation and Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#reading-lammps-trajectories">Reading LAMMPS Trajectories</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Module Index:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">target</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html">Target Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#main-analysis-driver">Main Analysis Driver</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#cpdyana-combined-molecular-dynamics-analysis-tool">CPDyAna – Combined Molecular Dynamics Analysis Tool</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.CPDyAna.Job"><code class="docutils literal notranslate"><span class="pre">Job()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.CPDyAna.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.CPDyAna.parser"><code class="docutils literal notranslate"><span class="pre">parser()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#key-functions">Key Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#data-processing">Data Processing</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.data_processing.data_evaluator"><code class="docutils literal notranslate"><span class="pre">data_evaluator()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.data_processing.find_terms"><code class="docutils literal notranslate"><span class="pre">find_terms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.data_processing.segmenter_func"><code class="docutils literal notranslate"><span class="pre">segmenter_func()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#id1">Key Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#input-output-operations">Input/Output Operations</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.input_reader.read_cel_file"><code class="docutils literal notranslate"><span class="pre">read_cel_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.input_reader.read_evp_file"><code class="docutils literal notranslate"><span class="pre">read_evp_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.input_reader.read_ion_file"><code class="docutils literal notranslate"><span class="pre">read_ion_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.input_reader.read_pos_file"><code class="docutils literal notranslate"><span class="pre">read_pos_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#supported-file-types">Supported File Types</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#core-calculations">Core Calculations</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.calculations.calc_fft"><code class="docutils literal notranslate"><span class="pre">calc_fft()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.calculations.calc_msd_tracer"><code class="docutils literal notranslate"><span class="pre">calc_msd_tracer()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.calculations.calculate_msd"><code class="docutils literal notranslate"><span class="pre">calculate_msd()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.calculations.disp_sum"><code class="docutils literal notranslate"><span class="pre">disp_sum()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.calculations.msd_charged"><code class="docutils literal notranslate"><span class="pre">msd_charged()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.calculations.msd_tracer"><code class="docutils literal notranslate"><span class="pre">msd_tracer()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#analysis-types">Analysis Types</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#correlation-analysis">Correlation Analysis</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.correrelation_analysis.Van_Hove_distinct"><code class="docutils literal notranslate"><span class="pre">Van_Hove_distinct()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.correrelation_analysis.Van_Hove_self"><code class="docutils literal notranslate"><span class="pre">Van_Hove_self()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#correlation-types">Correlation Types</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#rdf-computation">RDF Computation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.compute_rdf.build_ase_trajectory"><code class="docutils literal notranslate"><span class="pre">build_ase_trajectory()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.compute_rdf.compute_rdf"><code class="docutils literal notranslate"><span class="pre">compute_rdf()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.compute_rdf.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#vaf-computation">VAF Computation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.compute_vaf.build_trajectory"><code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.compute_vaf.compute_vaf"><code class="docutils literal notranslate"><span class="pre">compute_vaf()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.compute_vaf.convert_symbols_to_atomic_numbers"><code class="docutils literal notranslate"><span class="pre">convert_symbols_to_atomic_numbers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.compute_vaf.finite_diff_velocities"><code class="docutils literal notranslate"><span class="pre">finite_diff_velocities()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.compute_vaf.read_cel"><code class="docutils literal notranslate"><span class="pre">read_cel()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.compute_vaf.read_evp"><code class="docutils literal notranslate"><span class="pre">read_evp()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.compute_vaf.read_pos"><code class="docutils literal notranslate"><span class="pre">read_pos()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#plotting-and-visualization">Plotting and Visualization</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.plotting.int_or_float"><code class="docutils literal notranslate"><span class="pre">int_or_float()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.plotting.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.plotting.msd_plot"><code class="docutils literal notranslate"><span class="pre">msd_plot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.plotting.parse_cli_args"><code class="docutils literal notranslate"><span class="pre">parse_cli_args()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.plotting.van_hove_plot"><code class="docutils literal notranslate"><span class="pre">van_hove_plot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#plot-types">Plot Types</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#probability-density-analysis">Probability Density Analysis</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.probability_density.build_trajectory"><code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.probability_density.calculate_probability_density"><code class="docutils literal notranslate"><span class="pre">calculate_probability_density()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.probability_density.convert_symbols_to_atomic_numbers"><code class="docutils literal notranslate"><span class="pre">convert_symbols_to_atomic_numbers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.probability_density.divide_chunks"><code class="docutils literal notranslate"><span class="pre">divide_chunks()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.probability_density.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.probability_density.parse_mask"><code class="docutils literal notranslate"><span class="pre">parse_mask()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#output-formats">Output Formats</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#vdos-analysis">VDOS Analysis</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.vdos.build_trajectory"><code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.vdos.compute_plot_vdos"><code class="docutils literal notranslate"><span class="pre">compute_plot_vdos()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.vdos.convert_symbols_to_atomic_numbers"><code class="docutils literal notranslate"><span class="pre">convert_symbols_to_atomic_numbers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.vdos.finite_diff_velocities"><code class="docutils literal notranslate"><span class="pre">finite_diff_velocities()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.vdos.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.vdos.read_cel"><code class="docutils literal notranslate"><span class="pre">read_cel()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.vdos.read_evp"><code class="docutils literal notranslate"><span class="pre">read_evp()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.vdos.read_pos"><code class="docutils literal notranslate"><span class="pre">read_pos()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#utility-modules">Utility Modules</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#module-target.json_serializable">JSON Serialization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#module-target.const">Constants</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CPDyAna</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">samos_modules.samos_io</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for samos_modules.samos_io</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ase.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">read</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ase</span><span class="w"> </span><span class="kn">import</span> <span class="n">Atoms</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ase.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">atomic_masses</span><span class="p">,</span> <span class="n">chemical_symbols</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">samos_modules.samos_trajectory</span><span class="w"> </span><span class="kn">import</span> <span class="n">Trajectory</span>
+
+<span class="n">bohr_to_ang</span> <span class="o">=</span> <span class="mf">0.52917720859</span>
+
+<div class="viewcode-block" id="read_positions_with_ase">
+<a class="viewcode-back" href="../../samos_modules.html#samos_modules.samos_io.read_positions_with_ase">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_positions_with_ase</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads all frames from a trajectory file using ASE and returns</span>
+<span class="sd">    a numpy array of shape (nsteps, natoms, 3).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Read all frames</span>
+    <span class="n">images</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">images</span> <span class="o">=</span> <span class="p">[</span><span class="n">images</span><span class="p">]</span>
+    <span class="n">positions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">img</span><span class="o">.</span><span class="n">get_positions</span><span class="p">()</span> <span class="k">for</span> <span class="n">img</span> <span class="ow">in</span> <span class="n">images</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">positions</span></div>
+
+
+<span class="c1"># Fix the regex patterns by using raw strings</span>
+<span class="n">integer_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(?P&lt;int&gt;\d+)&#39;</span><span class="p">)</span>  <span class="c1"># Fixed: use raw string</span>
+<span class="n">float_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(?P&lt;float&gt;[\-]?\d+\.\d+(e[+\-]\d+)?)&#39;</span><span class="p">)</span>  <span class="c1"># Fixed: use raw string</span>
+
+
+<div class="viewcode-block" id="get_indices">
+<a class="viewcode-back" href="../../samos_modules.html#samos_modules.samos_io.get_indices">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_indices</span><span class="p">(</span><span class="n">header_list</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">postfix</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">idc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">header_list</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}{</span><span class="n">dim</span><span class="si">}{</span><span class="n">postfix</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="s1">&#39;xyz&#39;</span><span class="p">])</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="n">idc</span></div>
+
+
+
+<div class="viewcode-block" id="get_position_indices">
+<a class="viewcode-back" href="../../samos_modules.html#samos_modules.samos_io.get_position_indices">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_position_indices</span><span class="p">(</span><span class="n">header_list</span><span class="p">):</span>
+    <span class="c1"># Unwrapped positions u, # scaled positions s</span>
+    <span class="c1"># wrapped positions given as x y z</span>
+    <span class="k">for</span> <span class="n">postfix</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;u&quot;</span><span class="p">,</span> <span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="n">found</span><span class="p">,</span> <span class="n">idc</span> <span class="o">=</span> <span class="n">get_indices</span><span class="p">(</span><span class="n">header_list</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                                 <span class="n">postfix</span><span class="o">=</span><span class="n">postfix</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">found</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">postfix</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: I am not unwrapping positions,&quot;</span>
+                      <span class="s2">&quot; this is not yet implemented&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">postfix</span><span class="p">,</span> <span class="n">idc</span>
+    <span class="k">if</span> <span class="s1">&#39;xsu&#39;</span> <span class="ow">in</span> <span class="n">header_list</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Do not support scaled&quot;</span>
+                                  <span class="s2">&quot; unwrapped coordinates&quot;</span><span class="p">)</span>
+
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;No position indices found&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="read_step_info">
+<a class="viewcode-back" href="../../samos_modules.html#samos_modules.samos_io.read_step_info">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_step_info</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="n">lidx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">additional_kw</span><span class="o">=</span><span class="p">[],</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">==</span> <span class="mi">9</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;ITEM: TIMESTEP&quot;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Did not start with &#39;ITEM: TIMESTEP&#39;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                        <span class="s2">&quot;Is this not a valid lammps dump file?&quot;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">timestep</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">integer_regex</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Timestep is not an integer or was not found in &quot;</span>
+              <span class="sa">f</span><span class="s2">&quot;line </span><span class="si">{</span><span class="n">lidx</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">e</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">lines</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;ITEM: NUMBER OF ATOMS&quot;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Not a valid lammps dump file, &quot;</span>
+                        <span class="s2">&quot;expected NUMBER OF ATOMS&quot;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">nat</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">integer_regex</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Could not read number of atoms&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">e</span>
+    <span class="n">cell</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">lines</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;ITEM: BOX BOUNDS pp pp pp&quot;</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">idim</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+                <span class="n">d1</span><span class="p">,</span> <span class="n">d2</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;float&#39;</span><span class="p">))</span>
+                          <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">float_regex</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="mi">5</span><span class="o">+</span><span class="n">idim</span><span class="p">])]</span>
+                <span class="n">cell</span><span class="p">[</span><span class="n">idim</span><span class="p">,</span> <span class="n">idim</span><span class="p">]</span> <span class="o">=</span> <span class="n">d2</span> <span class="o">-</span> <span class="n">d1</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not read cell dimension </span><span class="si">{</span><span class="n">idim</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">e</span>
+    <span class="k">elif</span> <span class="n">lines</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;ITEM: BOX BOUNDS xy xz yz pp pp pp&quot;</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># see https://docs.lammps.org/dump.html</span>
+            <span class="c1"># and https://docs.lammps.org/Howto_triclinic.html</span>
+            <span class="n">xlo</span><span class="p">,</span> <span class="n">xhi</span><span class="p">,</span> <span class="n">xy</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;float&#39;</span><span class="p">))</span>
+                            <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">float_regex</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="mi">5</span><span class="p">])]</span>
+            <span class="n">ylo</span><span class="p">,</span> <span class="n">yhi</span><span class="p">,</span> <span class="n">xz</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;float&#39;</span><span class="p">))</span>
+                            <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">float_regex</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="mi">6</span><span class="p">])]</span>
+            <span class="n">zlo</span><span class="p">,</span> <span class="n">zhi</span><span class="p">,</span> <span class="n">yz</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;float&#39;</span><span class="p">))</span>
+                            <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">float_regex</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="mi">7</span><span class="p">])]</span>
+            <span class="n">cell</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">xhi</span> <span class="o">-</span> <span class="n">xlo</span>
+            <span class="n">cell</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">yhi</span> <span class="o">-</span> <span class="n">ylo</span>
+            <span class="n">cell</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">zhi</span> <span class="o">-</span> <span class="n">zlo</span>
+            <span class="n">cell</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">xy</span>
+            <span class="n">cell</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">xz</span>
+            <span class="n">cell</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">yz</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not read cell dimension </span><span class="si">{</span><span class="n">idim</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">e</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;unsupported lammps dump file, &quot;</span>
+                         <span class="s2">&quot;expected  BOX BOUNDS pp pp pp or &quot;</span>
+                         <span class="s2">&quot;BOX BOUNDS xy xz yz pp pp pp&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">start</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Read starting cell as:</span><span class="se">\n</span><span class="si">{</span><span class="n">cell</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">lines</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;ITEM: ATOMS&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Not a supported format, expected ITEM: ATOMS&quot;</span><span class="p">)</span>
+        <span class="n">header_list</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s2">&quot;ITEM: ATOMS&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+        <span class="n">atomid_idx</span> <span class="o">=</span> <span class="n">header_list</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Atom ID index: </span><span class="si">{</span><span class="n">atomid_idx</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">element_idx</span> <span class="o">=</span> <span class="n">header_list</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;element&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Element found at index </span><span class="si">{element_idx}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">element_idx</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">type_idx</span> <span class="o">=</span> <span class="n">header_list</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;type found at index </span><span class="si">{type_idx}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">type_idx</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">postype</span><span class="p">,</span> <span class="n">posids</span> <span class="o">=</span> <span class="n">get_position_indices</span><span class="p">(</span><span class="n">header_list</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Abandoning because positions are not given&quot;</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Positions are given as: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="p">{</span><span class="s1">&#39;u&#39;</span><span class="p">:</span> <span class="s2">&quot;unwrapped&quot;</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">:</span> <span class="s2">&quot;Scaled (wrapped)&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;&quot;</span><span class="p">:</span> <span class="s2">&quot;Wrapped&quot;</span><span class="p">}[</span><span class="n">postype</span><span class="p">]))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Position indices are: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">posids</span><span class="p">))</span>
+        <span class="n">has_vel</span><span class="p">,</span> <span class="n">velids</span> <span class="o">=</span> <span class="n">get_indices</span><span class="p">(</span><span class="n">header_list</span><span class="p">,</span> <span class="s1">&#39;v&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">has_vel</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Velocities found at indices: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">velids</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Velocities were not found&quot;</span><span class="p">)</span>
+        <span class="n">has_frc</span><span class="p">,</span> <span class="n">frcids</span> <span class="o">=</span> <span class="n">get_indices</span><span class="p">(</span><span class="n">header_list</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">has_frc</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Forces found at indices: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">frcids</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Forces were not found&quot;</span><span class="p">)</span>
+        <span class="n">additional_ids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">additional_kw</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">kw</span> <span class="ow">in</span> <span class="n">additional_kw</span><span class="p">:</span>
+                <span class="n">additional_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">header_list</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">kw</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">nat</span><span class="p">,</span> <span class="n">atomid_idx</span><span class="p">,</span> <span class="n">element_idx</span><span class="p">,</span> <span class="n">type_idx</span><span class="p">,</span> <span class="n">postype</span><span class="p">,</span>
+                <span class="n">posids</span><span class="p">,</span> <span class="n">has_vel</span><span class="p">,</span> <span class="n">velids</span><span class="p">,</span> <span class="n">has_frc</span><span class="p">,</span> <span class="n">frcids</span><span class="p">,</span> <span class="n">additional_ids</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">nat</span><span class="p">,</span> <span class="n">timestep</span><span class="p">,</span> <span class="n">cell</span></div>
+
+
+
+<div class="viewcode-block" id="pos_2_absolute">
+<a class="viewcode-back" href="../../samos_modules.html#samos_modules.samos_io.pos_2_absolute">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">pos_2_absolute</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">postype</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Transforming positions to absolute positions</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">postype</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;u&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">pos</span>
+    <span class="k">elif</span> <span class="n">postype</span> <span class="o">==</span> <span class="s1">&#39;s&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">pos</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown postype &#39;</span><span class="si">{</span><span class="n">postype</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_thermo_props">
+<a class="viewcode-back" href="../../samos_modules.html#samos_modules.samos_io.get_thermo_props">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_thermo_props</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>  <span class="c1"># first line</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="c1"># header = [h.lstrip(&#39;v_&#39;).lstrip(&#39;c_&#39;) for h in header]</span>
+    <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># special case if only one line is present</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">arr</span><span class="p">])</span>
+    <span class="n">ts_index</span> <span class="o">=</span> <span class="n">header</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;TimeStep&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">header</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="n">ts_index</span></div>
+
+
+
+<div class="viewcode-block" id="read_lammps_dump">
+<a class="viewcode-back" href="../../samos_modules.html#samos_modules.samos_io.read_lammps_dump">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_lammps_dump</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                     <span class="n">elements_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">types</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">timestep</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                     <span class="n">mass_types</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                     <span class="n">thermo_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">thermo_pe</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">thermo_stress</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                     <span class="n">save_extxyz</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                     <span class="n">ignore_forces</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ignore_velocities</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                     <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">f_conv</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">e_conv</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">s_conv</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                     <span class="n">additional_keywords_dump</span><span class="o">=</span><span class="p">[],</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                     <span class="n">istep</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read a filedump from lammps.</span>
+<span class="sd">    It expects atomid to be printed, and positions</span>
+<span class="sd">    to be given in scaled or unwrapped coordinates</span>
+<span class="sd">    :param filename: lammps dump file to read</span>
+<span class="sd">    :param elements: list of elements to use</span>
+<span class="sd">    :param elements_file:</span>
+<span class="sd">        file containing elements (separated by space),</span>
+<span class="sd">        instead of elements</span>
+<span class="sd">    :param types:</span>
+<span class="sd">        list of types if elements are not specified</span>
+<span class="sd">        and type is a column</span>
+<span class="sd">    :param timestep: timestep of dump (in fs)</span>
+<span class="sd">    :param thermo_file: file containing thermo output in case required</span>
+<span class="sd">    :param thermo_pe:</span>
+<span class="sd">        potential energy column in thermo file (as given in header)</span>
+<span class="sd">    :param thermo_stress:</span>
+<span class="sd">        stress column in thermo file (as given in header,</span>
+<span class="sd">        will do the _xx/_yy etc)</span>
+<span class="sd">    :param save_extxyz:</span>
+<span class="sd">        save to extxyz file</span>
+<span class="sd">        (or if outfile is given with .extxyz)</span>
+<span class="sd">    :param outfile: output file name, will write trajectory by default</span>
+<span class="sd">    :param ignore_forces: ignore forces even if written in dump</span>
+<span class="sd">    :param ignore_velocities: ignore velocities even if written in dump</span>
+<span class="sd">    :param skip: skip first n steps</span>
+<span class="sd">    :param f_conv: force conversion factor</span>
+<span class="sd">    :param e_conv: energy conversion factor</span>
+<span class="sd">    :param s_conv: stress conversion factor</span>
+<span class="sd">    :param additional_keywords_dump:</span>
+<span class="sd">        additional keywords to be added read form dump and</span>
+<span class="sd">        to be added as array. The column name is used both</span>
+<span class="sd">        as key but also as arrayname</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># opening a first time to check file and get</span>
+    <span class="c1"># indices of positions, velocities etc...</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="c1"># first doing a check</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="nb">next</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">)]</span>
+        <span class="p">(</span><span class="n">nat_must</span><span class="p">,</span> <span class="n">atomid_idx</span><span class="p">,</span> <span class="n">element_idx</span><span class="p">,</span> <span class="n">type_idx</span><span class="p">,</span>
+         <span class="n">postype</span><span class="p">,</span> <span class="n">posids</span><span class="p">,</span> <span class="n">has_vel</span><span class="p">,</span> <span class="n">velids</span><span class="p">,</span>
+         <span class="n">has_frc</span><span class="p">,</span> <span class="n">frcids</span><span class="p">,</span> <span class="n">additional_ids_dump</span><span class="p">)</span> <span class="o">=</span> <span class="n">read_step_info</span><span class="p">(</span>
+            <span class="n">lines</span><span class="p">,</span> <span class="n">lidx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">additional_kw</span><span class="o">=</span><span class="n">additional_keywords_dump</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="n">quiet</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ignore_forces</span><span class="p">:</span>
+            <span class="n">has_frc</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">ignore_velocities</span><span class="p">:</span>
+            <span class="n">has_vel</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="c1"># these are read as strings</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nat_must</span><span class="p">)])</span>
+        <span class="n">atomids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">body</span><span class="p">[:,</span> <span class="n">atomid_idx</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">sorting_key</span> <span class="o">=</span> <span class="n">atomids</span><span class="o">.</span><span class="n">argsort</span><span class="p">()</span>
+        <span class="c1"># figuring out elements of structure</span>
+        <span class="k">if</span> <span class="n">types</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">type_idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;types specified but not found in file&quot;</span><span class="p">)</span>
+            <span class="n">types_in_body</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">body</span><span class="p">[:,</span> <span class="n">type_idx</span><span class="p">][</span><span class="n">sorting_key</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;types in body: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">types_in_body</span><span class="p">))))))</span>
+            <span class="n">types_in_body</span> <span class="o">-=</span> <span class="mi">1</span>  <span class="c1"># 1-based to 0-based indexing</span>
+            <span class="n">symbols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">types</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">)[</span><span class="n">types_in_body</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">element_idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># readingin elements frmo body</span>
+            <span class="n">symbols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">body</span><span class="p">[:,</span> <span class="n">element_idx</span><span class="p">])[</span><span class="n">sorting_key</span><span class="p">]</span>
+            <span class="c1"># print(elements)</span>
+            <span class="c1"># print(len(elements))</span>
+        <span class="k">elif</span> <span class="n">elements</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span> <span class="o">==</span> <span class="n">nat_must</span>
+            <span class="n">symbols</span> <span class="o">=</span> <span class="n">elements</span><span class="p">[:]</span>
+        <span class="k">elif</span> <span class="n">elements_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">elements_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">line</span><span class="p">:</span>
+                        <span class="k">break</span>
+                <span class="n">elements</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span> <span class="o">!=</span> <span class="n">nat_must</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;length of list of elements (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span><span class="si">}</span><span class="s2">) &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;is not equal number of atoms (</span><span class="si">{</span><span class="n">nat_must</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+                <span class="n">symbols</span> <span class="o">=</span> <span class="n">elements</span><span class="p">[:]</span>
+        <span class="k">elif</span> <span class="n">mass_types</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># reading in masses from lammps input file stored in mass_types</span>
+            <span class="c1"># and using these to infer elements</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">mass_types</span><span class="p">)</span> <span class="k">as</span> <span class="n">fmass</span><span class="p">:</span>
+                <span class="n">masses</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">reading_masses</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fmass</span><span class="p">:</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span> <span class="k">continue</span>
+                    <span class="k">if</span> <span class="n">reading_masses</span><span class="p">:</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">typ</span><span class="p">,</span> <span class="n">mass</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[:</span><span class="mi">2</span><span class="p">]</span>
+                            <span class="n">masses</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="nb">int</span><span class="p">(</span><span class="n">typ</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">mass</span><span class="p">)))</span>
+                        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                            <span class="k">break</span>
+                    <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Masses&#39;</span><span class="p">):</span>
+                        <span class="n">reading_masses</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">pass</span>
+            <span class="n">type_indices</span><span class="p">,</span> <span class="n">masses</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">masses</span><span class="p">)</span>
+            <span class="n">masses</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">masses</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="n">type_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">type_indices</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+            <span class="c1"># small check whether all types are present</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">type_indices</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">type_indices</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Types are not consecutive&quot;</span><span class="p">)</span>
+            <span class="c1"># trying to figure out elements</span>
+            <span class="k">if</span> <span class="n">type_idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;types specified but not found in file&quot;</span><span class="p">)</span>
+            <span class="n">types</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">mass</span> <span class="ow">in</span> <span class="n">masses</span><span class="p">:</span>
+                <span class="c1"># finding the closest element based on its mass</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">atomic_masses</span> <span class="o">-</span> <span class="n">mass</span><span class="p">))</span>
+                <span class="n">types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chemical_symbols</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+            <span class="n">types_in_body</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">body</span><span class="p">[:,</span> <span class="n">type_idx</span><span class="p">][</span><span class="n">sorting_key</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;types in body: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">types_in_body</span><span class="p">))))))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;symbols: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">types</span><span class="p">)))</span>
+            <span class="n">types_in_body</span> <span class="o">-=</span> <span class="mi">1</span>  <span class="c1"># 1-based to 0-based indexing</span>
+            <span class="n">symbols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">types</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">)[</span><span class="n">types_in_body</span><span class="p">]</span>
+
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># last resort, setting everything to Hydrogen</span>
+            <span class="n">symbols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;H&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">nat_must</span>
+
+    <span class="n">positions</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">timesteps</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">cells</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">has_vel</span><span class="p">:</span>
+        <span class="n">velocities</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">has_frc</span><span class="p">:</span>
+        <span class="n">forces</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">lidx</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">iframe</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="c1"># dealing with additional kwywods</span>
+    <span class="n">additional_arrays</span> <span class="o">=</span> <span class="p">{</span><span class="n">kw</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">kw</span> <span class="ow">in</span> <span class="n">additional_keywords_dump</span><span class="p">}</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">step_info</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">)]</span>
+            <span class="k">if</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">step_info</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;End reached at line </span><span class="si">{</span><span class="n">lidx</span><span class="si">}</span><span class="s2">, stopping&quot;</span><span class="p">)</span>
+                <span class="k">break</span>
+            <span class="n">nat</span><span class="p">,</span> <span class="n">timestep_</span><span class="p">,</span> <span class="n">cell</span> <span class="o">=</span> <span class="n">read_step_info</span><span class="p">(</span>
+                <span class="n">step_info</span><span class="p">,</span> <span class="n">lidx</span><span class="o">=</span><span class="n">lidx</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="n">quiet</span><span class="p">)</span>
+            <span class="n">lidx</span> <span class="o">+=</span> <span class="mi">9</span>
+            <span class="k">if</span> <span class="n">nat</span> <span class="o">!=</span> <span class="n">nat_must</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Changing number of atoms is not supported, breaking&quot;</span><span class="p">)</span>
+                <span class="k">break</span>
+
+            <span class="c1"># these are read as strings</span>
+            <span class="n">body</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nat_must</span><span class="p">)])</span>
+            <span class="n">lidx</span> <span class="o">+=</span> <span class="n">nat_must</span>
+            <span class="n">atomids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">body</span><span class="p">[:,</span> <span class="n">atomid_idx</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+            <span class="n">sorting_key</span> <span class="o">=</span> <span class="n">atomids</span><span class="o">.</span><span class="n">argsort</span><span class="p">()</span>
+            <span class="n">pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">body</span><span class="p">[:,</span> <span class="n">posids</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)[</span><span class="n">sorting_key</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">iframe</span> <span class="o">&gt;=</span> <span class="n">skip</span> <span class="ow">and</span> <span class="n">iframe</span> <span class="o">%</span> <span class="n">istep</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">positions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pos_2_absolute</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">postype</span><span class="p">))</span>
+                <span class="n">timesteps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">timestep_</span><span class="p">)</span>
+                <span class="n">cells</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">has_vel</span><span class="p">:</span>
+                    <span class="n">velocities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">body</span><span class="p">[:,</span> <span class="n">velids</span><span class="p">],</span>
+                                               <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)[</span><span class="n">sorting_key</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">has_frc</span><span class="p">:</span>
+                    <span class="n">forces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f_conv</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">body</span><span class="p">[:,</span> <span class="n">frcids</span><span class="p">],</span>
+                                                  <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)[</span><span class="n">sorting_key</span><span class="p">])</span>
+                <span class="k">for</span> <span class="n">kw</span><span class="p">,</span> <span class="n">idx_add</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">additional_keywords_dump</span><span class="p">,</span>
+                                       <span class="n">additional_ids_dump</span><span class="p">):</span>
+                    <span class="n">additional_arrays</span><span class="p">[</span><span class="n">kw</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">body</span><span class="p">[:,</span> <span class="n">idx_add</span><span class="p">],</span>
+                                 <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)[</span><span class="n">sorting_key</span><span class="p">])</span>
+            <span class="n">iframe</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Read trajectory of length </span><span class="si">{</span><span class="n">iframe</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Creating Trajectory of length </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">timesteps</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">atoms</span> <span class="o">=</span> <span class="n">Atoms</span><span class="p">(</span><span class="n">symbols</span><span class="p">,</span> <span class="n">positions</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cell</span><span class="o">=</span><span class="n">cells</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pbc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">traj</span> <span class="o">=</span> <span class="n">Trajectory</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">atoms</span><span class="p">,</span>
+                          <span class="n">positions</span><span class="o">=</span><span class="n">positions</span><span class="p">,</span> <span class="n">cells</span><span class="o">=</span><span class="n">cells</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="n">traj</span> <span class="o">=</span> <span class="n">Trajectory</span><span class="p">(</span><span class="n">types</span><span class="o">=</span><span class="n">symbols</span><span class="p">,</span> <span class="n">cells</span><span class="o">=</span><span class="n">cells</span><span class="p">)</span>
+        <span class="n">traj</span><span class="o">.</span><span class="n">set_positions</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">has_vel</span><span class="p">:</span>
+        <span class="n">traj</span><span class="o">.</span><span class="n">set_velocities</span><span class="p">(</span><span class="n">velocities</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">has_frc</span><span class="p">:</span>
+        <span class="n">traj</span><span class="o">.</span><span class="n">set_forces</span><span class="p">(</span><span class="n">forces</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">timestep</span><span class="p">:</span>
+        <span class="n">traj</span><span class="o">.</span><span class="n">set_timestep</span><span class="p">(</span><span class="n">timestep</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">arr</span> <span class="ow">in</span> <span class="n">additional_arrays</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">traj</span><span class="o">.</span><span class="n">set_array</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">arr</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">thermo_file</span><span class="p">:</span>
+        <span class="n">header</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="n">ts_index</span> <span class="o">=</span> <span class="n">get_thermo_props</span><span class="p">(</span><span class="n">thermo_file</span><span class="p">)</span>
+        <span class="n">timesteps_thermo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">arr</span><span class="p">[:,</span> <span class="n">ts_index</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ts</span> <span class="ow">in</span> <span class="n">timesteps</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">timesteps_thermo</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">ts</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Index </span><span class="si">{</span><span class="n">ts</span><span class="si">}</span><span class="s2"> is not in thermo file&quot;</span><span class="p">)</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="c1"># if thermo_te:</span>
+        <span class="c1">#     colidx = header.index(thermo_te)</span>
+        <span class="c1">#     traj.set_total_energies(arr[indices, colidx])</span>
+        <span class="k">if</span> <span class="n">thermo_pe</span><span class="p">:</span>
+            <span class="n">colidx</span> <span class="o">=</span> <span class="n">header</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">thermo_pe</span><span class="p">)</span>
+            <span class="n">traj</span><span class="o">.</span><span class="n">set_pot_energies</span><span class="p">(</span><span class="n">e_conv</span><span class="o">*</span><span class="n">arr</span><span class="p">[</span><span class="n">indices</span><span class="p">,</span> <span class="n">colidx</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">thermo_stress</span><span class="p">:</span>
+            <span class="n">stressall</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="c1"># voigt notation for stress:</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;xx&#39;</span><span class="p">,</span> <span class="s1">&#39;yy&#39;</span><span class="p">,</span> <span class="s1">&#39;zz&#39;</span><span class="p">,</span> <span class="s1">&#39;yz&#39;</span><span class="p">,</span> <span class="s1">&#39;xz&#39;</span><span class="p">,</span> <span class="s1">&#39;xy&#39;</span><span class="p">)</span>
+            <span class="c1"># first diagonal terms:</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+                <span class="n">fullkey</span> <span class="o">=</span> <span class="n">thermo_stress</span> <span class="o">+</span> <span class="n">key</span>
+                <span class="n">colidx</span> <span class="o">=</span> <span class="n">header</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">fullkey</span><span class="p">)</span>
+                <span class="n">stressall</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s_conv</span><span class="o">*</span><span class="n">arr</span><span class="p">[</span><span class="n">indices</span><span class="p">,</span> <span class="n">colidx</span><span class="p">])</span>
+            <span class="n">traj</span><span class="o">.</span><span class="n">set_stress</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">stressall</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="c1"># if thermo_ke:</span>
+        <span class="c1">#     colidx = header.index(thermo_ke)</span>
+        <span class="c1">#     traj.set_kinetic_energies(arr[indices, colidx])</span>
+    <span class="k">if</span> <span class="n">save_extxyz</span> <span class="ow">or</span> <span class="p">(</span><span class="n">outfile</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">outfile</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;extxyz&#39;</span><span class="p">)):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">ase.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">write</span>
+        <span class="n">path_to_save</span> <span class="o">=</span> <span class="n">outfile</span> <span class="ow">or</span> <span class="n">filename</span> <span class="o">+</span> <span class="s1">&#39;.extxyz&#39;</span>
+        <span class="n">asetraj</span> <span class="o">=</span> <span class="n">traj</span><span class="o">.</span><span class="n">get_ase_trajectory</span><span class="p">()</span>
+        <span class="n">write</span><span class="p">(</span><span class="n">path_to_save</span><span class="p">,</span> <span class="n">asetraj</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;extxyz&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">outfile</span><span class="p">:</span>
+        <span class="n">path_to_save</span> <span class="o">=</span> <span class="n">outfile</span> <span class="ow">or</span> <span class="n">filename</span> <span class="o">+</span> <span class="s1">&#39;.traj&#39;</span>
+        <span class="n">traj</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">path_to_save</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">traj</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">argparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArgumentParser</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">(</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reads lammps input and returns/saves a Trajectory instance&quot;&quot;&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;filename&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;The filename/path of the lammps trajectory&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-o&#39;</span><span class="p">,</span> <span class="s1">&#39;--outfile&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;The filename/path to save trajectory at&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-t&#39;</span><span class="p">,</span> <span class="s1">&#39;--types&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;list of types, will be matched with&#39;</span>
+                              <span class="s1">&#39; types given in lammps&#39;</span><span class="p">))</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-e&#39;</span><span class="p">,</span> <span class="s1">&#39;--elements&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;list of elements&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--elements-file&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;A file containing the elements &#39;</span>
+                              <span class="s1">&#39;as space-separated strings&#39;</span><span class="p">))</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--mass-types&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;The input file of lammps containing &#39;</span>
+                                <span class="s1">&#39;the masses of the types&#39;</span><span class="p">))</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--timestep&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;The timestep of the trajectory printed&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--f-conv&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;The conversion factor for forces&#39;</span><span class="p">,</span>
+                        <span class="n">default</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--e-conv&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;The conversion factor for energies&#39;</span><span class="p">,</span>
+                        <span class="n">default</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--s-conv&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;The conversion factor for stresses&#39;</span><span class="p">,</span>
+                        <span class="n">default</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-i&#39;</span><span class="p">,</span> <span class="s1">&#39;--istep&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Just take this frequency of steps from the trajectory&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s1">&#39;--thermo-file&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;File path to equivalent thermo-file&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s1">&#39;--thermo-pe&#39;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Thermo keyword for potential energy&#39;</span><span class="p">,)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--thermo-stress&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;Thermo keyword for stress &#39;</span>
+                              <span class="s1">&#39;without the xx/yy/xz..&#39;</span><span class="p">))</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--save-extxyz&#39;</span><span class="p">,</span>
+                        <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;save extxyz instead of traj&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--ignore-velocities&#39;</span><span class="p">,</span>
+                        <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Ignore velocities in dump file&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--ignore-forces&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Ignore forces in dump file&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--skip&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Skip this many first steps&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-a&#39;</span><span class="p">,</span> <span class="s1">&#39;--additional-keywords-dump&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;Additional keywords to be read from dump file&#39;</span><span class="p">),</span>
+                        <span class="n">default</span><span class="o">=</span><span class="p">[])</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-q&#39;</span><span class="p">,</span> <span class="s1">&#39;--quiet&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Do not print anything&#39;</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="n">read_lammps_dump</span><span class="p">(</span><span class="o">**</span><span class="nb">vars</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
+
+<div class="viewcode-block" id="read_xsf">
+<a class="viewcode-back" href="../../samos_modules.html#samos_modules.samos_io.read_xsf">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_xsf</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">fold_positions</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">finished</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">skip_lines</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">reading_grid</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">reading_dims</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">reading_structure</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">reading_nat</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">reading_cell</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">xdim</span><span class="p">,</span> <span class="n">ydim</span><span class="p">,</span> <span class="n">zdim</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="n">rho_of_r</span><span class="p">,</span> <span class="n">atoms</span><span class="p">,</span> <span class="n">positions</span><span class="p">,</span> <span class="n">cell</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">finished</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">reading_grid</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+                        <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="n">xdim</span><span class="o">-</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">y</span> <span class="o">!=</span> <span class="n">ydim</span><span class="o">-</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">z</span> <span class="o">!=</span> <span class="n">zdim</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                            <span class="n">rho_of_r</span><span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                        <span class="c1"># Move on to next gridpoint</span>
+                        <span class="n">x</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="n">xdim</span><span class="p">:</span>
+                            <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span>
+                            <span class="n">y</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="k">if</span> <span class="n">y</span> <span class="o">==</span> <span class="n">ydim</span><span class="p">:</span>
+                            <span class="n">z</span> <span class="o">+=</span> <span class="mi">1</span>
+                            <span class="n">y</span> <span class="o">=</span> <span class="mi">0</span>
+                        <span class="k">if</span> <span class="n">z</span> <span class="o">==</span> <span class="n">zdim</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                            <span class="n">finished</span> <span class="o">=</span> <span class="kc">True</span>
+                            <span class="k">break</span>
+
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="k">break</span>
+            <span class="k">elif</span> <span class="n">skip_lines</span><span class="p">:</span>
+                <span class="n">skip_lines</span> <span class="o">-=</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">reading_structure</span><span class="p">:</span>
+                <span class="n">pos</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">:]))</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+                    <span class="n">reading_structure</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">atoms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="n">positions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">reading_nat</span><span class="p">:</span>
+                <span class="n">nat</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()))</span>
+                <span class="n">reading_nat</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">reading_structure</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">elif</span> <span class="n">reading_cell</span><span class="p">:</span>
+                <span class="n">cell</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">())))</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                    <span class="n">reading_cell</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="n">reading_grid</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">elif</span> <span class="n">reading_dims</span><span class="p">:</span>
+                <span class="n">xdim</span><span class="p">,</span> <span class="n">ydim</span><span class="p">,</span> <span class="n">zdim</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()))</span>
+                <span class="n">rho_of_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">xdim</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">ydim</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">zdim</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="c1"># ~ data2 = np.empty(xdim*ydim*zdim)</span>
+                <span class="c1"># ~ iiii=0</span>
+                <span class="n">reading_dims</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">reading_cell</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">skip_lines</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="s1">&#39;DATAGRID_3D_UNKNOWN&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">z</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">cell</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">reading_dims</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">elif</span> <span class="s1">&#39;PRIMCOORD&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                <span class="n">atoms</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">positions</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">reading_nat</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">if</span> <span class="n">finished</span><span class="p">:</span>
+                <span class="k">break</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">volume_ang</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">cell</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cell</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">cell</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="k">except</span> <span class="ne">UnboundLocalError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;No cell was read in XSF file, stopping&#39;</span><span class="p">)</span>
+    <span class="n">volume_au</span> <span class="o">=</span> <span class="n">volume_ang</span> <span class="o">/</span> <span class="n">bohr_to_ang</span><span class="o">**</span><span class="mi">3</span>
+
+    <span class="k">if</span> <span class="n">fold_positions</span><span class="p">:</span>
+        <span class="n">invcell</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">I</span>
+        <span class="n">cell</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">pos</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">positions</span><span class="p">):</span>
+            <span class="c1"># point in crystal coordinates</span>
+            <span class="n">points_in_crystal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">invcell</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="c1"># point collapsed into unit cell</span>
+            <span class="n">points_in_unit_cell</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="o">%</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">points_in_crystal</span><span class="p">]</span>
+            <span class="n">positions</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">cell</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">points_in_unit_cell</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">rho_of_r</span><span class="p">,</span> <span class="n">volume_ang</span><span class="o">=</span><span class="n">volume_ang</span><span class="p">,</span> <span class="n">volume_au</span><span class="o">=</span><span class="n">volume_au</span><span class="p">,</span>
+        <span class="n">atoms</span><span class="o">=</span><span class="n">atoms</span><span class="p">,</span> <span class="n">positions</span><span class="o">=</span><span class="n">positions</span><span class="p">,</span> <span class="n">cell</span><span class="o">=</span><span class="n">cell</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="write_xsf">
+<a class="viewcode-back" href="../../samos_modules.html#samos_modules.samos_io.write_xsf">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">write_xsf</span><span class="p">(</span>
+        <span class="n">atoms</span><span class="p">,</span> <span class="n">positions</span><span class="p">,</span> <span class="n">cell</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span>
+        <span class="n">vals_per_line</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">outfilename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">is_flattened</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="kc">None</span><span class="p">,):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">outfilename</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outfilename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">outfilename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;No file&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">is_flattened</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">xdim</span><span class="p">,</span> <span class="n">ydim</span><span class="p">,</span> <span class="n">zdim</span> <span class="o">=</span> <span class="n">shape</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="s1">&#39;if you pass a flattend array you &#39;</span>
+                <span class="s1">&#39;need to give the original shape&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">xdim</span><span class="p">,</span> <span class="n">ydim</span><span class="p">,</span> <span class="n">zdim</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; CRYSTAL</span><span class="se">\n</span><span class="s1"> PRIMVEC</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">cell</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;    </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;    &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">[</span><span class="s1">&#39;</span><span class="si">{:.9f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">row</span><span class="p">])))</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;PRIMCOORD</span><span class="se">\n</span><span class="s1">       </span><span class="si">{}</span><span class="s1">        1</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">)))</span>
+    <span class="k">for</span> <span class="n">atom</span><span class="p">,</span> <span class="n">pos</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">positions</span><span class="p">):</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:&lt;3}</span><span class="s1">     </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">atom</span><span class="p">,</span> <span class="s1">&#39;   &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;</span><span class="si">{:.9f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">pos</span><span class="p">])))</span>
+
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;BEGIN_BLOCK_DATAGRID_3D</span>
+<span class="s2">3D_PWSCF</span>
+<span class="s2">DATAGRID_3D_UNKNOWN</span>
+<span class="s2">         </span><span class="si">{}</span><span class="s2">         </span><span class="si">{}</span><span class="s2">         </span><span class="si">{}</span>
+<span class="s2">  0.000000  0.000000  0.000000</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">shape</span><span class="p">]))</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">cell</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;    </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;    &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">[</span><span class="s1">&#39;</span><span class="si">{:.9f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">row</span><span class="p">])))</span>
+    <span class="n">col</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">is_flattened</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;  </span><span class="si">{:0.4E}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">col</span> <span class="o">&lt;</span> <span class="n">vals_per_line</span><span class="p">:</span>
+                <span class="n">col</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">col</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">zdim</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ydim</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">xdim</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;  </span><span class="si">{:0.4E}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">data</span><span class="p">[</span><span class="n">x</span> <span class="o">%</span> <span class="n">xdim</span><span class="p">,</span> <span class="n">y</span> <span class="o">%</span> <span class="n">ydim</span><span class="p">,</span> <span class="n">z</span> <span class="o">%</span> <span class="n">zdim</span><span class="p">]))</span>
+                    <span class="k">if</span> <span class="n">col</span> <span class="o">&lt;</span> <span class="n">vals_per_line</span><span class="p">:</span>
+                        <span class="n">col</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                        <span class="n">col</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">col</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;END_DATAGRID_3D</span><span class="se">\n</span><span class="s1">END_BLOCK_DATAGRID_3D</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="write_grid">
+<a class="viewcode-back" href="../../samos_modules.html#samos_modules.samos_io.write_grid">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">write_grid</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">outfilename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">vals_per_line</span><span class="o">=</span><span class="mi">5</span><span class="p">,):</span>
+    <span class="n">xdim</span><span class="p">,</span> <span class="n">ydim</span><span class="p">,</span> <span class="n">zdim</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">outfilename</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outfilename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">outfilename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;No file&#39;</span><span class="p">)</span>
+
+    <span class="n">xdim</span><span class="p">,</span> <span class="n">ydim</span><span class="p">,</span> <span class="n">zdim</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;3         </span><span class="si">{}</span><span class="s1">         </span><span class="si">{}</span><span class="s1">         </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="o">*</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">]))</span>
+    <span class="n">col</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">zdim</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ydim</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">xdim</span><span class="p">):</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;  </span><span class="si">{:0.4E}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">]))</span>
+                <span class="k">if</span> <span class="n">col</span> <span class="o">&lt;</span> <span class="n">vals_per_line</span><span class="p">:</span>
+                    <span class="n">col</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                    <span class="n">col</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">col</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">argparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArgumentParser</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">(</span>
+        <span class="s2">&quot;Reads and writes an XSF file or a data file.</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;python temp.xsf -o grid.xyz&quot;</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;file&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--format&#39;</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;xsf&#39;</span><span class="p">,</span> <span class="s1">&#39;grid&#39;</span><span class="p">,</span> <span class="s1">&#39;none&#39;</span><span class="p">],</span>
+                   <span class="n">default</span><span class="o">=</span><span class="s1">&#39;grid&#39;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="s1">&#39;whether to print the output in xsf or grid format&#39;</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-o&#39;</span><span class="p">,</span> <span class="s1">&#39;--output&#39;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="s1">&#39;The name of the output file, default to sys.out&#39;</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s1">&#39;--min&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;print minimum grid value and exit&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s1">&#39;--max&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;print maximum grid value and exit&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">)</span>
+
+    <span class="n">pa</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">read_xsf</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">pa</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pa</span><span class="o">.</span><span class="n">min</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
+    <span class="k">elif</span> <span class="n">pa</span><span class="o">.</span><span class="n">max</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+    <span class="k">elif</span> <span class="n">pa</span><span class="o">.</span><span class="n">format</span> <span class="o">==</span> <span class="s1">&#39;grid&#39;</span><span class="p">:</span>
+        <span class="n">write_grid</span><span class="p">(</span><span class="n">outfilename</span><span class="o">=</span><span class="n">pa</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="o">**</span><span class="n">r</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">pa</span><span class="o">.</span><span class="n">format</span> <span class="o">==</span> <span class="s1">&#39;xsf&#39;</span><span class="p">:</span>
+        <span class="n">write_xsf</span><span class="p">(</span><span class="n">outfilename</span><span class="o">=</span><span class="n">pa</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="o">**</span><span class="n">r</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">pa</span><span class="o">.</span><span class="n">format</span> <span class="o">==</span> <span class="s1">&#39;none&#39;</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;unknown format </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pa</span><span class="o">.</span><span class="n">format</span><span class="p">))</span>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Vinay Maithani.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

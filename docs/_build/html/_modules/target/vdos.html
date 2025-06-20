@@ -1,0 +1,661 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>target.vdos &mdash; CPDyAna 01-02-2024 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=18cd0f04"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            CPDyAna
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../target.html">Target Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#main-analysis-driver">Main Analysis Driver</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#cpdyana-combined-molecular-dynamics-analysis-tool">CPDyAna – Combined Molecular Dynamics Analysis Tool</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.CPDyAna.Job"><code class="docutils literal notranslate"><span class="pre">Job()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.CPDyAna.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.CPDyAna.parser"><code class="docutils literal notranslate"><span class="pre">parser()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#key-functions">Key Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#data-processing">Data Processing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.data_processing.data_evaluator"><code class="docutils literal notranslate"><span class="pre">data_evaluator()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.data_processing.find_terms"><code class="docutils literal notranslate"><span class="pre">find_terms()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.data_processing.segmenter_func"><code class="docutils literal notranslate"><span class="pre">segmenter_func()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#id1">Key Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#input-output-operations">Input/Output Operations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.read_cel_file"><code class="docutils literal notranslate"><span class="pre">read_cel_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.read_evp_file"><code class="docutils literal notranslate"><span class="pre">read_evp_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.read_ion_file"><code class="docutils literal notranslate"><span class="pre">read_ion_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.read_pos_file"><code class="docutils literal notranslate"><span class="pre">read_pos_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#supported-file-types">Supported File Types</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#core-calculations">Core Calculations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.calc_fft"><code class="docutils literal notranslate"><span class="pre">calc_fft()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.calc_msd_tracer"><code class="docutils literal notranslate"><span class="pre">calc_msd_tracer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.calculate_msd"><code class="docutils literal notranslate"><span class="pre">calculate_msd()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.disp_sum"><code class="docutils literal notranslate"><span class="pre">disp_sum()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.msd_charged"><code class="docutils literal notranslate"><span class="pre">msd_charged()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.msd_tracer"><code class="docutils literal notranslate"><span class="pre">msd_tracer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#analysis-types">Analysis Types</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#correlation-analysis">Correlation Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.correrelation_analysis.Van_Hove_distinct"><code class="docutils literal notranslate"><span class="pre">Van_Hove_distinct()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.correrelation_analysis.Van_Hove_self"><code class="docutils literal notranslate"><span class="pre">Van_Hove_self()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#correlation-types">Correlation Types</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#rdf-computation">RDF Computation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_rdf.build_ase_trajectory"><code class="docutils literal notranslate"><span class="pre">build_ase_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_rdf.compute_rdf"><code class="docutils literal notranslate"><span class="pre">compute_rdf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_rdf.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#vaf-computation">VAF Computation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_vaf.build_trajectory"><code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_vaf.compute_vaf"><code class="docutils literal notranslate"><span class="pre">compute_vaf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_vaf.convert_symbols_to_atomic_numbers"><code class="docutils literal notranslate"><span class="pre">convert_symbols_to_atomic_numbers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_vaf.finite_diff_velocities"><code class="docutils literal notranslate"><span class="pre">finite_diff_velocities()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_vaf.read_cel"><code class="docutils literal notranslate"><span class="pre">read_cel()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_vaf.read_evp"><code class="docutils literal notranslate"><span class="pre">read_evp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_vaf.read_pos"><code class="docutils literal notranslate"><span class="pre">read_pos()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#plotting-and-visualization">Plotting and Visualization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.int_or_float"><code class="docutils literal notranslate"><span class="pre">int_or_float()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.msd_plot"><code class="docutils literal notranslate"><span class="pre">msd_plot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.parse_cli_args"><code class="docutils literal notranslate"><span class="pre">parse_cli_args()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.van_hove_plot"><code class="docutils literal notranslate"><span class="pre">van_hove_plot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#plot-types">Plot Types</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#probability-density-analysis">Probability Density Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.build_trajectory"><code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.calculate_probability_density"><code class="docutils literal notranslate"><span class="pre">calculate_probability_density()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.convert_symbols_to_atomic_numbers"><code class="docutils literal notranslate"><span class="pre">convert_symbols_to_atomic_numbers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.divide_chunks"><code class="docutils literal notranslate"><span class="pre">divide_chunks()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.parse_mask"><code class="docutils literal notranslate"><span class="pre">parse_mask()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#output-formats">Output Formats</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#vdos-analysis">VDOS Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.vdos.build_trajectory"><code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.vdos.compute_plot_vdos"><code class="docutils literal notranslate"><span class="pre">compute_plot_vdos()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.vdos.convert_symbols_to_atomic_numbers"><code class="docutils literal notranslate"><span class="pre">convert_symbols_to_atomic_numbers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.vdos.finite_diff_velocities"><code class="docutils literal notranslate"><span class="pre">finite_diff_velocities()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.vdos.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.vdos.read_cel"><code class="docutils literal notranslate"><span class="pre">read_cel()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.vdos.read_evp"><code class="docutils literal notranslate"><span class="pre">read_evp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.vdos.read_pos"><code class="docutils literal notranslate"><span class="pre">read_pos()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#utility-modules">Utility Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#module-target.json_serializable">JSON Serialization</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.json_serializable.convert_to_serializable"><code class="docutils literal notranslate"><span class="pre">convert_to_serializable()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#module-target.const">Constants</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../samos_modules.html">SAMOS Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../samos_modules.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../samos_modules.html#core-analysis-module">Core Analysis Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.AngularSpectrum"><code class="docutils literal notranslate"><span class="pre">AngularSpectrum</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.AngularSpectrum.run"><code class="docutils literal notranslate"><span class="pre">AngularSpectrum.run()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.BaseAnalyzer"><code class="docutils literal notranslate"><span class="pre">BaseAnalyzer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.BaseAnalyzer.__init__"><code class="docutils literal notranslate"><span class="pre">BaseAnalyzer.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.BaseAnalyzer.run"><code class="docutils literal notranslate"><span class="pre">BaseAnalyzer.run()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.BaseAnalyzer.set_trajectory"><code class="docutils literal notranslate"><span class="pre">BaseAnalyzer.set_trajectory()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer.__init__"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer.get_kinetic_energies"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.get_kinetic_energies()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer.get_msd"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.get_msd()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer.get_power_spectrum"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.get_power_spectrum()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer.get_species_of_interest"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.get_species_of_interest()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer.get_vaf"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.get_vaf()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer.set_species_of_interest"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.set_species_of_interest()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer.set_trajectories"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.set_trajectories()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer.set_verbosity"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.set_verbosity()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.RDF"><code class="docutils literal notranslate"><span class="pre">RDF</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.RDF.run"><code class="docutils literal notranslate"><span class="pre">RDF.run()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.RDF.run_fort"><code class="docutils literal notranslate"><span class="pre">RDF.run_fort()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.TimeSeries"><code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.get_gaussian_density"><code class="docutils literal notranslate"><span class="pre">get_gaussian_density()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.util_msd"><code class="docutils literal notranslate"><span class="pre">util_msd()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.util_rdf_and_plot"><code class="docutils literal notranslate"><span class="pre">util_rdf_and_plot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_analysis.write_xsf_header"><code class="docutils literal notranslate"><span class="pre">write_xsf_header()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#key-functions">Key Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../samos_modules.html#i-o-operations-module">I/O Operations Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_io.get_indices"><code class="docutils literal notranslate"><span class="pre">get_indices()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_io.get_position_indices"><code class="docutils literal notranslate"><span class="pre">get_position_indices()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_io.get_thermo_props"><code class="docutils literal notranslate"><span class="pre">get_thermo_props()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_io.pos_2_absolute"><code class="docutils literal notranslate"><span class="pre">pos_2_absolute()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_io.read_lammps_dump"><code class="docutils literal notranslate"><span class="pre">read_lammps_dump()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_io.read_positions_with_ase"><code class="docutils literal notranslate"><span class="pre">read_positions_with_ase()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_io.read_step_info"><code class="docutils literal notranslate"><span class="pre">read_step_info()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_io.read_xsf"><code class="docutils literal notranslate"><span class="pre">read_xsf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_io.write_grid"><code class="docutils literal notranslate"><span class="pre">write_grid()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_io.write_xsf"><code class="docutils literal notranslate"><span class="pre">write_xsf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#supported-formats">Supported Formats</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../samos_modules.html#plotting-module">Plotting Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_plotting.format_mean_err"><code class="docutils literal notranslate"><span class="pre">format_mean_err()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_plotting.my_format"><code class="docutils literal notranslate"><span class="pre">my_format()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_plotting.plot_angular_spec"><code class="docutils literal notranslate"><span class="pre">plot_angular_spec()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_plotting.plot_msd_anisotropic"><code class="docutils literal notranslate"><span class="pre">plot_msd_anisotropic()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_plotting.plot_msd_isotropic"><code class="docutils literal notranslate"><span class="pre">plot_msd_isotropic()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_plotting.plot_power_spectrum"><code class="docutils literal notranslate"><span class="pre">plot_power_spectrum()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_plotting.plot_rdf"><code class="docutils literal notranslate"><span class="pre">plot_rdf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#samos_modules.samos_plotting.plot_vaf_isotropic"><code class="docutils literal notranslate"><span class="pre">plot_vaf_isotropic()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../samos_modules.html#compiled-extensions">Compiled Extensions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../samos_modules.html#usage-examples">Usage Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#basic-msd-analysis-with-samos">Basic MSD Analysis with SAMOS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#rdf-calculation-and-plotting">RDF Calculation and Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../samos_modules.html#reading-lammps-trajectories">Reading LAMMPS Trajectories</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Module Index:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">target</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html">Target Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#main-analysis-driver">Main Analysis Driver</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#cpdyana-combined-molecular-dynamics-analysis-tool">CPDyAna – Combined Molecular Dynamics Analysis Tool</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.CPDyAna.Job"><code class="docutils literal notranslate"><span class="pre">Job()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.CPDyAna.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.CPDyAna.parser"><code class="docutils literal notranslate"><span class="pre">parser()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#key-functions">Key Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#data-processing">Data Processing</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.data_processing.data_evaluator"><code class="docutils literal notranslate"><span class="pre">data_evaluator()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.data_processing.find_terms"><code class="docutils literal notranslate"><span class="pre">find_terms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.data_processing.segmenter_func"><code class="docutils literal notranslate"><span class="pre">segmenter_func()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#id1">Key Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#input-output-operations">Input/Output Operations</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.input_reader.read_cel_file"><code class="docutils literal notranslate"><span class="pre">read_cel_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.input_reader.read_evp_file"><code class="docutils literal notranslate"><span class="pre">read_evp_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.input_reader.read_ion_file"><code class="docutils literal notranslate"><span class="pre">read_ion_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.input_reader.read_pos_file"><code class="docutils literal notranslate"><span class="pre">read_pos_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#supported-file-types">Supported File Types</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#core-calculations">Core Calculations</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.calculations.calc_fft"><code class="docutils literal notranslate"><span class="pre">calc_fft()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.calculations.calc_msd_tracer"><code class="docutils literal notranslate"><span class="pre">calc_msd_tracer()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.calculations.calculate_msd"><code class="docutils literal notranslate"><span class="pre">calculate_msd()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.calculations.disp_sum"><code class="docutils literal notranslate"><span class="pre">disp_sum()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.calculations.msd_charged"><code class="docutils literal notranslate"><span class="pre">msd_charged()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.calculations.msd_tracer"><code class="docutils literal notranslate"><span class="pre">msd_tracer()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#analysis-types">Analysis Types</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#correlation-analysis">Correlation Analysis</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.correrelation_analysis.Van_Hove_distinct"><code class="docutils literal notranslate"><span class="pre">Van_Hove_distinct()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.correrelation_analysis.Van_Hove_self"><code class="docutils literal notranslate"><span class="pre">Van_Hove_self()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#correlation-types">Correlation Types</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#rdf-computation">RDF Computation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.compute_rdf.build_ase_trajectory"><code class="docutils literal notranslate"><span class="pre">build_ase_trajectory()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.compute_rdf.compute_rdf"><code class="docutils literal notranslate"><span class="pre">compute_rdf()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.compute_rdf.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#vaf-computation">VAF Computation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.compute_vaf.build_trajectory"><code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.compute_vaf.compute_vaf"><code class="docutils literal notranslate"><span class="pre">compute_vaf()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.compute_vaf.convert_symbols_to_atomic_numbers"><code class="docutils literal notranslate"><span class="pre">convert_symbols_to_atomic_numbers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.compute_vaf.finite_diff_velocities"><code class="docutils literal notranslate"><span class="pre">finite_diff_velocities()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.compute_vaf.read_cel"><code class="docutils literal notranslate"><span class="pre">read_cel()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.compute_vaf.read_evp"><code class="docutils literal notranslate"><span class="pre">read_evp()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.compute_vaf.read_pos"><code class="docutils literal notranslate"><span class="pre">read_pos()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#plotting-and-visualization">Plotting and Visualization</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.plotting.int_or_float"><code class="docutils literal notranslate"><span class="pre">int_or_float()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.plotting.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.plotting.msd_plot"><code class="docutils literal notranslate"><span class="pre">msd_plot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.plotting.parse_cli_args"><code class="docutils literal notranslate"><span class="pre">parse_cli_args()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.plotting.van_hove_plot"><code class="docutils literal notranslate"><span class="pre">van_hove_plot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#plot-types">Plot Types</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#probability-density-analysis">Probability Density Analysis</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.probability_density.build_trajectory"><code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.probability_density.calculate_probability_density"><code class="docutils literal notranslate"><span class="pre">calculate_probability_density()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.probability_density.convert_symbols_to_atomic_numbers"><code class="docutils literal notranslate"><span class="pre">convert_symbols_to_atomic_numbers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.probability_density.divide_chunks"><code class="docutils literal notranslate"><span class="pre">divide_chunks()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.probability_density.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.probability_density.parse_mask"><code class="docutils literal notranslate"><span class="pre">parse_mask()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#output-formats">Output Formats</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#vdos-analysis">VDOS Analysis</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.vdos.build_trajectory"><code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.vdos.compute_plot_vdos"><code class="docutils literal notranslate"><span class="pre">compute_plot_vdos()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.vdos.convert_symbols_to_atomic_numbers"><code class="docutils literal notranslate"><span class="pre">convert_symbols_to_atomic_numbers()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.vdos.finite_diff_velocities"><code class="docutils literal notranslate"><span class="pre">finite_diff_velocities()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.vdos.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.vdos.read_cel"><code class="docutils literal notranslate"><span class="pre">read_cel()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.vdos.read_evp"><code class="docutils literal notranslate"><span class="pre">read_evp()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.vdos.read_pos"><code class="docutils literal notranslate"><span class="pre">read_pos()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#utility-modules">Utility Modules</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#module-target.json_serializable">JSON Serialization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#module-target.const">Constants</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CPDyAna</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">target.vdos</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for target.vdos</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Compute and plot VDOS from .in/.pos/.cel[/.evp] using SAMOS.</span>
+
+<span class="sd">This script reads Quantum ESPRESSO trajectory files, constructs ASE Atoms objects with velocities,</span>
+<span class="sd">computes the vibrational density of states (VDOS) using the SAMOS library, and plots/saves the results.</span>
+
+<span class="sd">Usage example:</span>
+<span class="sd">    python vdos.py --in_file LiAlPS.in --pos_file LiAlPS.pos --cel_file LiAlPS.cel --elements Li Al P S</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ase</span><span class="w"> </span><span class="kn">import</span> <span class="n">Atoms</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">samos_modules.samos_trajectory</span><span class="w"> </span><span class="kn">import</span> <span class="n">Trajectory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">samos_modules.samos_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">DynamicsAnalyzer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">samos_modules.samos_plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_power_spectrum</span>
+
+<span class="c1"># Import your input_reader</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="vm">__file__</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">)))</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">target</span><span class="w"> </span><span class="kn">import</span> <span class="n">input_reader</span> <span class="k">as</span> <span class="n">inp</span>
+
+<span class="c1"># Mapping from element symbol to atomic number</span>
+<span class="n">element_to_atomic_number</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;H&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;He&#39;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="s1">&#39;Li&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="s1">&#39;Be&#39;</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span><span class="s1">&#39;C&#39;</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span><span class="s1">&#39;N&#39;</span><span class="p">:</span><span class="mi">7</span><span class="p">,</span><span class="s1">&#39;O&#39;</span><span class="p">:</span><span class="mi">8</span><span class="p">,</span>
+    <span class="s1">&#39;F&#39;</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span><span class="s1">&#39;Ne&#39;</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span><span class="s1">&#39;Na&#39;</span><span class="p">:</span><span class="mi">11</span><span class="p">,</span><span class="s1">&#39;Mg&#39;</span><span class="p">:</span><span class="mi">12</span><span class="p">,</span><span class="s1">&#39;Al&#39;</span><span class="p">:</span><span class="mi">13</span><span class="p">,</span><span class="s1">&#39;Si&#39;</span><span class="p">:</span><span class="mi">14</span><span class="p">,</span><span class="s1">&#39;P&#39;</span><span class="p">:</span><span class="mi">15</span><span class="p">,</span><span class="s1">&#39;S&#39;</span><span class="p">:</span><span class="mi">16</span><span class="p">,</span>
+    <span class="s1">&#39;Cl&#39;</span><span class="p">:</span><span class="mi">17</span><span class="p">,</span><span class="s1">&#39;Ar&#39;</span><span class="p">:</span><span class="mi">18</span><span class="p">,</span><span class="s1">&#39;K&#39;</span><span class="p">:</span><span class="mi">19</span><span class="p">,</span><span class="s1">&#39;Ca&#39;</span><span class="p">:</span><span class="mi">20</span><span class="p">,</span><span class="s1">&#39;Sc&#39;</span><span class="p">:</span><span class="mi">21</span><span class="p">,</span><span class="s1">&#39;Ti&#39;</span><span class="p">:</span><span class="mi">22</span><span class="p">,</span><span class="s1">&#39;V&#39;</span><span class="p">:</span><span class="mi">23</span><span class="p">,</span><span class="s1">&#39;Cr&#39;</span><span class="p">:</span><span class="mi">24</span><span class="p">,</span>
+    <span class="s1">&#39;Mn&#39;</span><span class="p">:</span><span class="mi">25</span><span class="p">,</span><span class="s1">&#39;Fe&#39;</span><span class="p">:</span><span class="mi">26</span><span class="p">,</span><span class="s1">&#39;Co&#39;</span><span class="p">:</span><span class="mi">27</span><span class="p">,</span><span class="s1">&#39;Ni&#39;</span><span class="p">:</span><span class="mi">28</span><span class="p">,</span><span class="s1">&#39;Cu&#39;</span><span class="p">:</span><span class="mi">29</span><span class="p">,</span><span class="s1">&#39;Zn&#39;</span><span class="p">:</span><span class="mi">30</span><span class="p">,</span><span class="s1">&#39;Ga&#39;</span><span class="p">:</span><span class="mi">31</span><span class="p">,</span><span class="s1">&#39;Ge&#39;</span><span class="p">:</span><span class="mi">32</span><span class="p">,</span>
+    <span class="s1">&#39;As&#39;</span><span class="p">:</span><span class="mi">33</span><span class="p">,</span><span class="s1">&#39;Se&#39;</span><span class="p">:</span><span class="mi">34</span><span class="p">,</span><span class="s1">&#39;Br&#39;</span><span class="p">:</span><span class="mi">35</span><span class="p">,</span><span class="s1">&#39;Kr&#39;</span><span class="p">:</span><span class="mi">36</span><span class="p">,</span><span class="s1">&#39;Rb&#39;</span><span class="p">:</span><span class="mi">37</span><span class="p">,</span><span class="s1">&#39;Sr&#39;</span><span class="p">:</span><span class="mi">38</span><span class="p">,</span><span class="s1">&#39;Y&#39;</span><span class="p">:</span><span class="mi">39</span><span class="p">,</span><span class="s1">&#39;Zr&#39;</span><span class="p">:</span><span class="mi">40</span><span class="p">,</span>
+    <span class="s1">&#39;Nb&#39;</span><span class="p">:</span><span class="mi">41</span><span class="p">,</span><span class="s1">&#39;Mo&#39;</span><span class="p">:</span><span class="mi">42</span><span class="p">,</span><span class="s1">&#39;Tc&#39;</span><span class="p">:</span><span class="mi">43</span><span class="p">,</span><span class="s1">&#39;Ru&#39;</span><span class="p">:</span><span class="mi">44</span><span class="p">,</span><span class="s1">&#39;Rh&#39;</span><span class="p">:</span><span class="mi">45</span><span class="p">,</span><span class="s1">&#39;Pd&#39;</span><span class="p">:</span><span class="mi">46</span><span class="p">,</span><span class="s1">&#39;Ag&#39;</span><span class="p">:</span><span class="mi">47</span><span class="p">,</span><span class="s1">&#39;Cd&#39;</span><span class="p">:</span><span class="mi">48</span><span class="p">,</span>
+    <span class="s1">&#39;In&#39;</span><span class="p">:</span><span class="mi">49</span><span class="p">,</span><span class="s1">&#39;Sn&#39;</span><span class="p">:</span><span class="mi">50</span><span class="p">,</span><span class="s1">&#39;Sb&#39;</span><span class="p">:</span><span class="mi">51</span><span class="p">,</span><span class="s1">&#39;Te&#39;</span><span class="p">:</span><span class="mi">52</span><span class="p">,</span><span class="s1">&#39;I&#39;</span><span class="p">:</span><span class="mi">53</span><span class="p">,</span><span class="s1">&#39;Xe&#39;</span><span class="p">:</span><span class="mi">54</span><span class="p">,</span><span class="s1">&#39;Cs&#39;</span><span class="p">:</span><span class="mi">55</span><span class="p">,</span><span class="s1">&#39;Ba&#39;</span><span class="p">:</span><span class="mi">56</span><span class="p">,</span>
+    <span class="s1">&#39;La&#39;</span><span class="p">:</span><span class="mi">57</span><span class="p">,</span><span class="s1">&#39;Ce&#39;</span><span class="p">:</span><span class="mi">58</span><span class="p">,</span><span class="s1">&#39;Pr&#39;</span><span class="p">:</span><span class="mi">59</span><span class="p">,</span><span class="s1">&#39;Nd&#39;</span><span class="p">:</span><span class="mi">60</span><span class="p">,</span><span class="s1">&#39;Pm&#39;</span><span class="p">:</span><span class="mi">61</span><span class="p">,</span><span class="s1">&#39;Sm&#39;</span><span class="p">:</span><span class="mi">62</span><span class="p">,</span><span class="s1">&#39;Eu&#39;</span><span class="p">:</span><span class="mi">63</span><span class="p">,</span><span class="s1">&#39;Gd&#39;</span><span class="p">:</span><span class="mi">64</span><span class="p">,</span>
+    <span class="s1">&#39;Tb&#39;</span><span class="p">:</span><span class="mi">65</span><span class="p">,</span><span class="s1">&#39;Dy&#39;</span><span class="p">:</span><span class="mi">66</span><span class="p">,</span><span class="s1">&#39;Ho&#39;</span><span class="p">:</span><span class="mi">67</span><span class="p">,</span><span class="s1">&#39;Er&#39;</span><span class="p">:</span><span class="mi">68</span><span class="p">,</span><span class="s1">&#39;Tm&#39;</span><span class="p">:</span><span class="mi">69</span><span class="p">,</span><span class="s1">&#39;Yb&#39;</span><span class="p">:</span><span class="mi">70</span><span class="p">,</span><span class="s1">&#39;Lu&#39;</span><span class="p">:</span><span class="mi">71</span><span class="p">,</span><span class="s1">&#39;Hf&#39;</span><span class="p">:</span><span class="mi">72</span><span class="p">,</span>
+    <span class="s1">&#39;Ta&#39;</span><span class="p">:</span><span class="mi">73</span><span class="p">,</span><span class="s1">&#39;W&#39;</span><span class="p">:</span><span class="mi">74</span><span class="p">,</span><span class="s1">&#39;Re&#39;</span><span class="p">:</span><span class="mi">75</span><span class="p">,</span><span class="s1">&#39;Os&#39;</span><span class="p">:</span><span class="mi">76</span><span class="p">,</span><span class="s1">&#39;Ir&#39;</span><span class="p">:</span><span class="mi">77</span><span class="p">,</span><span class="s1">&#39;Pt&#39;</span><span class="p">:</span><span class="mi">78</span><span class="p">,</span><span class="s1">&#39;Au&#39;</span><span class="p">:</span><span class="mi">79</span><span class="p">,</span><span class="s1">&#39;Hg&#39;</span><span class="p">:</span><span class="mi">80</span><span class="p">,</span>
+    <span class="s1">&#39;Tl&#39;</span><span class="p">:</span><span class="mi">81</span><span class="p">,</span><span class="s1">&#39;Pb&#39;</span><span class="p">:</span><span class="mi">82</span><span class="p">,</span><span class="s1">&#39;Bi&#39;</span><span class="p">:</span><span class="mi">83</span><span class="p">,</span><span class="s1">&#39;Po&#39;</span><span class="p">:</span><span class="mi">84</span><span class="p">,</span><span class="s1">&#39;At&#39;</span><span class="p">:</span><span class="mi">85</span><span class="p">,</span><span class="s1">&#39;Rn&#39;</span><span class="p">:</span><span class="mi">86</span><span class="p">,</span><span class="s1">&#39;Fr&#39;</span><span class="p">:</span><span class="mi">87</span><span class="p">,</span><span class="s1">&#39;Ra&#39;</span><span class="p">:</span><span class="mi">88</span><span class="p">,</span>
+    <span class="s1">&#39;Ac&#39;</span><span class="p">:</span><span class="mi">89</span><span class="p">,</span><span class="s1">&#39;Th&#39;</span><span class="p">:</span><span class="mi">90</span><span class="p">,</span><span class="s1">&#39;Pa&#39;</span><span class="p">:</span><span class="mi">91</span><span class="p">,</span><span class="s1">&#39;U&#39;</span><span class="p">:</span><span class="mi">92</span><span class="p">,</span><span class="s1">&#39;Np&#39;</span><span class="p">:</span><span class="mi">93</span><span class="p">,</span><span class="s1">&#39;Pu&#39;</span><span class="p">:</span><span class="mi">94</span><span class="p">,</span><span class="s1">&#39;Am&#39;</span><span class="p">:</span><span class="mi">95</span><span class="p">,</span><span class="s1">&#39;Cm&#39;</span><span class="p">:</span><span class="mi">96</span><span class="p">,</span>
+    <span class="s1">&#39;Bk&#39;</span><span class="p">:</span><span class="mi">97</span><span class="p">,</span><span class="s1">&#39;Cf&#39;</span><span class="p">:</span><span class="mi">98</span><span class="p">,</span><span class="s1">&#39;Es&#39;</span><span class="p">:</span><span class="mi">99</span><span class="p">,</span><span class="s1">&#39;Fm&#39;</span><span class="p">:</span><span class="mi">100</span><span class="p">,</span><span class="s1">&#39;Md&#39;</span><span class="p">:</span><span class="mi">101</span><span class="p">,</span><span class="s1">&#39;No&#39;</span><span class="p">:</span><span class="mi">102</span><span class="p">,</span><span class="s1">&#39;Lr&#39;</span><span class="p">:</span><span class="mi">103</span>
+<span class="p">}</span>
+
+<div class="viewcode-block" id="convert_symbols_to_atomic_numbers">
+<a class="viewcode-back" href="../../target.html#target.vdos.convert_symbols_to_atomic_numbers">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_symbols_to_atomic_numbers</span><span class="p">(</span><span class="n">symbols</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a list of element symbols to atomic numbers.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        symbols (list): List of element symbols (str).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: List of atomic numbers (int).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">element_to_atomic_number</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">symbols</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="read_cel">
+<a class="viewcode-back" href="../../target.html#target.vdos.read_cel">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_cel</span><span class="p">(</span><span class="n">cel_file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read cell parameters from a .cel file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        cel_file (str): Path to .cel file.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: List of 4-line blocks (cell info per frame).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">cel_file</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">4</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">),</span> <span class="mi">4</span><span class="p">)]</span></div>
+
+
+<div class="viewcode-block" id="read_pos">
+<a class="viewcode-back" href="../../target.html#target.vdos.read_pos">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_pos</span><span class="p">(</span><span class="n">pos_file</span><span class="p">,</span> <span class="n">natoms</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read atomic positions from a .pos file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pos_file (str): Path to .pos file.</span>
+<span class="sd">        natoms (int): Number of atoms.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: List of (natoms+1)-line blocks (positions per frame).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">pos_file</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">natoms</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">),</span> <span class="n">natoms</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span></div>
+
+
+<div class="viewcode-block" id="read_evp">
+<a class="viewcode-back" href="../../target.html#target.vdos.read_evp">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_evp</span><span class="p">(</span><span class="n">evp_file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read time steps from a .evp file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        evp_file (str): Path to .evp file.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: List of times (float).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">times</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">L</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="n">evp_file</span><span class="p">):</span>
+            <span class="n">parts</span> <span class="o">=</span> <span class="n">L</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+                <span class="n">times</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">return</span> <span class="n">times</span></div>
+
+
+<div class="viewcode-block" id="finite_diff_velocities">
+<a class="viewcode-back" href="../../target.html#target.vdos.finite_diff_velocities">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">finite_diff_velocities</span><span class="p">(</span><span class="n">pos_arr</span><span class="p">,</span> <span class="n">times</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute velocities using finite differences from positions and times.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pos_arr (np.ndarray): Array of shape (Nframes, natoms, 3) with positions.</span>
+<span class="sd">        times (list): List of time values (ps), length Nframes.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray: Array of velocities, same shape as pos_arr.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">N</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">pos_arr</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">pos_arr</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">times</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">dt0</span> <span class="o">=</span> <span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">times</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="mi">1000</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dt0</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">pos_arr</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">pos_arr</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">dt0</span><span class="p">)</span>
+    <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>   <span class="o">=</span> <span class="p">(</span><span class="n">pos_arr</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">pos_arr</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>  <span class="o">/</span> <span class="n">dt0</span>
+    <span class="n">v</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="o">=</span> <span class="p">(</span><span class="n">pos_arr</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">pos_arr</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span><span class="o">/</span><span class="n">dt0</span>
+    <span class="k">return</span> <span class="n">v</span></div>
+
+
+<div class="viewcode-block" id="build_trajectory">
+<a class="viewcode-back" href="../../target.html#target.vdos.build_trajectory">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_trajectory</span><span class="p">(</span><span class="n">in_file</span><span class="p">,</span> <span class="n">pos_file</span><span class="p">,</span> <span class="n">cel_file</span><span class="p">,</span>
+                     <span class="n">evp_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                     <span class="n">start</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">nframes</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                     <span class="n">time_interval</span><span class="o">=</span><span class="mf">0.00193511</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build a trajectory as a list of ASE Atoms objects with velocities.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        in_file (str): Path to .in file (species).</span>
+<span class="sd">        pos_file (str): Path to .pos file (positions).</span>
+<span class="sd">        cel_file (str): Path to .cel file (cell parameters).</span>
+<span class="sd">        evp_file (str, optional): Path to .evp file (timing).</span>
+<span class="sd">        start (float): Start time in ps.</span>
+<span class="sd">        nframes (int): Number of frames to use (0=all).</span>
+<span class="sd">        stride (int): Stride for frames.</span>
+<span class="sd">        time_interval (float): Default time between frames (ps) if no .evp.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: List of ASE Atoms objects with velocities.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">BOHR2ANG</span> <span class="o">=</span> <span class="mf">0.529177249</span>
+    <span class="n">syms</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">read_ion_file</span><span class="p">(</span><span class="n">in_file</span><span class="p">)</span>
+    <span class="n">sp</span>   <span class="o">=</span> <span class="n">convert_symbols_to_atomic_numbers</span><span class="p">(</span><span class="n">syms</span><span class="p">)</span>
+    <span class="n">cel_chunks</span> <span class="o">=</span> <span class="n">read_cel</span><span class="p">(</span><span class="n">cel_file</span><span class="p">)</span>
+    <span class="n">pos_chunks</span> <span class="o">=</span> <span class="n">read_pos</span><span class="p">(</span><span class="n">pos_file</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">syms</span><span class="p">))</span>
+    <span class="n">times_full</span> <span class="o">=</span> <span class="n">read_evp</span><span class="p">(</span><span class="n">evp_file</span><span class="p">)</span> <span class="k">if</span> <span class="n">evp_file</span> <span class="k">else</span> <span class="p">[]</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cel_chunks</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">pos_chunks</span><span class="p">))</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">times_full</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="n">times_full</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">times_full</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">start_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">start</span><span class="o">/</span><span class="n">dt</span><span class="p">)</span>
+        <span class="n">time_list</span> <span class="o">=</span> <span class="n">times_full</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">total</span><span class="p">:</span><span class="n">stride</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="n">time_interval</span>
+        <span class="n">start_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">start</span><span class="o">/</span><span class="n">dt</span><span class="p">)</span>
+        <span class="n">time_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="n">dt</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start_idx</span><span class="p">,</span> <span class="n">total</span><span class="p">,</span> <span class="n">stride</span><span class="p">)]</span>
+    <span class="n">start_idx</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">start_idx</span><span class="p">,</span> <span class="n">total</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">end_idx</span>   <span class="o">=</span> <span class="n">total</span> <span class="k">if</span> <span class="n">nframes</span><span class="o">&lt;=</span><span class="mi">0</span> <span class="k">else</span> <span class="nb">min</span><span class="p">(</span><span class="n">start_idx</span><span class="o">+</span><span class="n">nframes</span><span class="p">,</span> <span class="n">total</span><span class="p">)</span>
+    <span class="n">pos_list</span> <span class="o">=</span> <span class="p">[];</span> <span class="n">cell_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start_idx</span><span class="p">,</span> <span class="n">end_idx</span><span class="p">,</span> <span class="n">stride</span><span class="p">):</span>
+        <span class="n">block_c</span> <span class="o">=</span> <span class="n">cel_chunks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">cell</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">block_c</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> <span class="o">*</span> <span class="n">BOHR2ANG</span>
+        <span class="n">block_p</span> <span class="o">=</span> <span class="n">pos_chunks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">block_p</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">*</span> <span class="n">BOHR2ANG</span>
+        <span class="n">pos_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>
+        <span class="n">cell_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span>
+    <span class="n">pos_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pos_list</span><span class="p">)</span>
+    <span class="n">vel_arr</span> <span class="o">=</span> <span class="n">finite_diff_velocities</span><span class="p">(</span><span class="n">pos_arr</span><span class="p">,</span> <span class="n">time_list</span><span class="p">)</span>
+    <span class="n">frames</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">cell</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">pos_arr</span><span class="p">,</span> <span class="n">cell_list</span><span class="p">)):</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">Atoms</span><span class="p">(</span><span class="n">numbers</span><span class="o">=</span><span class="n">sp</span><span class="p">,</span> <span class="n">positions</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span> <span class="n">cell</span><span class="o">=</span><span class="n">cell</span><span class="p">,</span> <span class="n">pbc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">a</span><span class="o">.</span><span class="n">set_velocities</span><span class="p">(</span><span class="n">vel_arr</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Built </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span><span class="si">}</span><span class="s2"> frames with velocities.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">frames</span></div>
+
+
+<div class="viewcode-block" id="compute_plot_vdos">
+<a class="viewcode-back" href="../../target.html#target.vdos.compute_plot_vdos">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_plot_vdos</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">time_interval</span><span class="o">=</span><span class="mf">0.00193511</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute and plot the vibrational density of states (VDOS) for the trajectory.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        frames (list): List of ASE Atoms objects with velocities.</span>
+<span class="sd">        prefix (str): Output file prefix for plots.</span>
+<span class="sd">        elements (list or None): List of elements to plot VDOS for (default: Li, Al, P, S).</span>
+<span class="sd">        time_interval (float): Time interval between frames in ps.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">traj</span> <span class="o">=</span> <span class="n">Trajectory</span><span class="o">.</span><span class="n">from_atoms</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
+    <span class="c1"># Set the timestep in femtoseconds for SAMOS</span>
+    <span class="n">traj</span><span class="o">.</span><span class="n">_attrs</span><span class="p">[</span><span class="s1">&#39;timestep_fs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time_interval</span> <span class="o">*</span> <span class="mi">1000</span>
+    <span class="n">da</span> <span class="o">=</span> <span class="n">DynamicsAnalyzer</span><span class="p">(</span><span class="n">trajectories</span><span class="o">=</span><span class="p">[</span><span class="n">traj</span><span class="p">])</span>
+    <span class="c1"># Plot total VDOS using SAMOS&#39;s built-in plot</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">get_power_spectrum</span><span class="p">()</span>
+    <span class="n">fig1</span><span class="p">,</span> <span class="n">ax1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+    <span class="n">plot_power_spectrum</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax1</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Frequency (THz)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Signal (A$^2$ fs$^{-1}$)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">22</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">fig1</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">save_path1</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s1">_1.png&#39;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saving VDOS plot to: </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">save_path1</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">save_path1</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fig1</span><span class="p">)</span>
+
+    <span class="c1"># Custom plot for each element</span>
+    <span class="n">fig2</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+    <span class="n">ax2</span> <span class="o">=</span> <span class="n">fig2</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">left</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mf">0.95</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">color_cycle</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">tab10</span><span class="o">.</span><span class="n">colors</span>
+    <span class="k">for</span> <span class="n">smoothing</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">100</span><span class="p">]:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">get_power_spectrum</span><span class="p">(</span><span class="n">smothening</span><span class="o">=</span><span class="n">smoothing</span><span class="p">)</span>
+        <span class="n">freq_THz</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="s1">&#39;frequency_0&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">elements</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Li&#39;</span><span class="p">,</span> <span class="s1">&#39;Al&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">,</span> <span class="s1">&#39;S&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">el</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">elements</span><span class="p">):</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;periodogram_</span><span class="si">{</span><span class="n">el</span><span class="si">}</span><span class="s1">_mean&#39;</span>
+            <span class="n">vdos</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">vdos</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">freq_THz</span><span class="p">,</span> <span class="n">vdos</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">el</span><span class="si">}</span><span class="s1"> (smooth=</span><span class="si">{</span><span class="n">smoothing</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color_cycle</span><span class="p">[</span><span class="n">idx</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">color_cycle</span><span class="p">)],</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper right&#39;</span><span class="p">,</span> <span class="n">frameon</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Signal (A$^2$ fs$^{-1}$)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Frequency (THz)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">22</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+    <span class="n">save_path2</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s1">_2.png&#39;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saving custom VDOS plot to: </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">save_path2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">save_path2</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fig2</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../../target.html#target.vdos.main">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Main function for VDOS computation and plotting.</span>
+<span class="sd">    Parses command-line arguments, builds trajectory, and generates VDOS plots.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Compute and plot VDOS using SAMOS&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--in_file&#39;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--pos_file&#39;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--cel_file&#39;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--evp_file&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--out_prefix&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;vdos&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--start&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--nframes&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--stride&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--time_interval&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.00193511</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--elements&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Elements to plot (default: Li Al P S)&quot;</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="n">frames</span> <span class="o">=</span> <span class="n">build_trajectory</span><span class="p">(</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">in_file</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">pos_file</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">cel_file</span><span class="p">,</span>
+        <span class="n">evp_file</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">evp_file</span><span class="p">,</span>
+        <span class="n">start</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">start</span><span class="p">,</span>
+        <span class="n">nframes</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">nframes</span><span class="p">,</span>
+        <span class="n">stride</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">stride</span><span class="p">,</span>
+        <span class="n">time_interval</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">time_interval</span>
+    <span class="p">)</span>
+    <span class="n">compute_plot_vdos</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">out_prefix</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">elements</span><span class="p">,</span> <span class="n">time_interval</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">time_interval</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Vinay Maithani.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

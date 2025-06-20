@@ -1,77 +1,171 @@
-target package
+Target Package
 ==============
 
-Submodules
-----------
+The target package contains the core CPDyAna analysis functionality for molecular dynamics trajectory analysis. It provides a comprehensive suite of tools for calculating diffusion properties, correlation functions, and structural analysis.
 
-target.Plotting module
-----------------------
+Main Analysis Driver
+--------------------
 
-.. automodule:: target.Plotting
+The main CPDyAna CLI interface and job orchestration.
+
+.. automodule:: target.CPDyAna
    :members:
    :undoc-members:
    :show-inheritance:
 
-target.calculations module
---------------------------
+Key Functions
+~~~~~~~~~~~~~
 
-.. automodule:: target.calculations
-   :members:
-   :undoc-members:
-   :show-inheritance:
+* :func:`target.CPDyAna.main`: Main CLI entry point
+* :func:`target.CPDyAna.Job`: Core analysis job orchestrator
+* :func:`target.CPDyAna.parser`: Command-line argument parser
 
-target.const module
--------------------
+Data Processing
+---------------
 
-.. automodule:: target.const
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-target.correrelation\_analysis module
--------------------------------------
-
-.. automodule:: target.correrelation_analysis
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-target.data\_processing module
-------------------------------
+Utilities for processing and segmenting trajectory data.
 
 .. automodule:: target.data_processing
    :members:
    :undoc-members:
    :show-inheritance:
 
-target.input\_reader module
----------------------------
+Key Functions
+~~~~~~~~~~~~~
+
+* :func:`target.data_processing.find_terms`: Find time window indices
+* :func:`target.data_processing.segmenter_func`: Segment trajectory data
+* :func:`target.data_processing.data_evaluator`: Process position data for analysis
+
+Input/Output Operations
+-----------------------
+
+Reading and parsing of Quantum ESPRESSO input and trajectory files.
 
 .. automodule:: target.input_reader
    :members:
    :undoc-members:
    :show-inheritance:
 
-target.prcss module
--------------------
+Supported File Types
+~~~~~~~~~~~~~~~~~~~~
 
-.. automodule:: target.prcss
+* **.pos files**: Position trajectories
+* **.cel files**: Unit cell parameters
+* **.evp files**: Energy, volume, pressure data
+* **.in files**: Ion definitions and atomic information
+
+Core Calculations
+-----------------
+
+Main calculation routines for MSD and diffusion analysis.
+
+.. automodule:: target.calculations
    :members:
    :undoc-members:
    :show-inheritance:
 
-target.serilalizable module
----------------------------
+Analysis Types
+~~~~~~~~~~~~~~
 
-.. automodule:: target.serilalizable
+* **Mean Square Displacement**: Tracer and collective diffusivity
+* **Diffusion Coefficients**: Multi-directional analysis (X, Y, Z, XY, XZ, YZ, XYZ)
+* **Statistical Analysis**: Block averaging and error estimation
+
+Correlation Analysis
+--------------------
+
+Van Hove correlation functions and related analysis.
+
+.. automodule:: target.correrelation_analysis
    :members:
    :undoc-members:
    :show-inheritance:
 
-Module contents
+Correlation Types
+~~~~~~~~~~~~~~~~~
+
+* **Self Correlation**: Single particle dynamics (:func:`target.correrelation_analysis.Van_Hove_self`)
+* **Distinct Correlation**: Pair dynamics (:func:`target.correrelation_analysis.Van_Hove_distinct`)
+
+RDF Computation
 ---------------
 
-.. automodule:: target
+Radial distribution function calculations with ASE integration.
+
+.. automodule:: target.compute_rdf
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+VAF Computation
+---------------
+
+Velocity autocorrelation function analysis.
+
+.. automodule:: target.compute_vaf
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Plotting and Visualization
+---------------------------
+
+Plotting utilities for analysis results.
+
+.. automodule:: target.plotting
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Plot Types
+~~~~~~~~~~
+
+* **MSD Plots**: :func:`target.plotting.msd_plot`
+* **Van Hove Plots**: :func:`target.plotting.van_hove_plot` 
+* **Multi-panel Figures**: Comparative analysis visualization
+
+Probability Density Analysis
+----------------------------
+
+3D ionic density mapping and spatial analysis.
+
+.. automodule:: target.probability_density
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Output Formats
+~~~~~~~~~~~~~~
+
+* **XSF Files**: For visualization in VESTA, XCrySDen
+* **Grid Data**: For custom visualization and analysis
+
+VDOS Analysis
+-------------
+
+Vibrational Density of States calculations.
+
+.. automodule:: target.vdos
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Utility Modules
+---------------
+
+JSON Serialization
+~~~~~~~~~~~~~~~~~~
+
+.. automodule:: target.json_serializable
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Constants
+~~~~~~~~~
+
+.. automodule:: target.const
    :members:
    :undoc-members:
    :show-inheritance:

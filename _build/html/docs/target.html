@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Target Package &#8212; CPDyAna 01-02-2014 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <script src="../_static/documentation_options.js?v=b59d7fc8"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="target-package">
+<h1>Target Package<a class="headerlink" href="#target-package" title="Link to this heading">¶</a></h1>
+<p>The target package contains the core CPDyAna analysis functionality for molecular dynamics trajectory analysis. It provides a comprehensive suite of tools for calculating diffusion properties, correlation functions, and structural analysis.</p>
+<section id="main-analysis-driver">
+<h2>Main Analysis Driver<a class="headerlink" href="#main-analysis-driver" title="Link to this heading">¶</a></h2>
+<p>The main CPDyAna CLI interface and job orchestration.</p>
+<section id="cpdyana-combined-molecular-dynamics-analysis-tool">
+<span id="module-target.CPDyAna"></span><h3>CPDyAna – Combined Molecular Dynamics Analysis Tool<a class="headerlink" href="#cpdyana-combined-molecular-dynamics-analysis-tool" title="Link to this heading">¶</a></h3>
+<p>CPDyAna is a comprehensive command-line interface for analyzing molecular dynamics
+simulations. It provides unified access to multiple analysis types including:</p>
+<ul class="simple">
+<li><p><strong>Mean Square Displacement (MSD)</strong>: Calculate diffusion coefficients and tracer diffusivity</p></li>
+<li><p><strong>Van Hove Correlation Functions</strong>: Analyze spatial correlations (self and distinct)</p></li>
+<li><p><strong>Radial Distribution Functions (RDF)</strong>: Compute pair correlation functions</p></li>
+<li><p><strong>Velocity Autocorrelation Functions (VAF)</strong>: Analyze velocity correlations</p></li>
+<li><p><strong>Vibrational Density of States (VDOS)</strong>: Calculate phonon spectra</p></li>
+<li><p><strong>Ionic Density Maps</strong>: Generate 3D density distributions</p></li>
+</ul>
+<p>This single-file variant merges the original CPDyAna.py driver with helper
+functions for a complete standalone workflow.</p>
+<dl>
+<dt>Supported File Formats:</dt><dd><ul class="simple">
+<li><p>Quantum ESPRESSO trajectory files (.pos, .cel, .evp, .in)</p></li>
+<li><p>LAMMPS trajectory files</p></li>
+<li><p>ASE-compatible formats</p></li>
+</ul>
+</dd>
+<dt>Usage Examples:</dt><dd><p># Mean Square Displacement analysis
+python CPDyAna.py msd -T 800 –data-dir /path/to/data –diffusing-elements Li Na</p>
+<p># Van Hove correlation function
+python CPDyAna.py vh -T 800 –data-dir /path/to/data –rmax 10 –sigma 0.1</p>
+<p># Radial distribution function
+python CPDyAna.py rdf –data-dir /path/to/data –central-atom Li Al</p>
+<p># Velocity autocorrelation function
+python CPDyAna.py vaf –data-dir /path/to/data –element Li –nframes 1000</p>
+<p># Ionic density mapping
+python CPDyAna.py ionic-density –data-dir /path/to/data –element Li –sigma 0.3</p>
+</dd>
+</dl>
+<p>Author: CPDyAna Development Team
+Version: Combined version (01-02-2024)
+License: Open Source</p>
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="target.CPDyAna.Job">
+<span class="sig-prename descclassname"><span class="pre">target.CPDyAna.</span></span><span class="sig-name descname"><span class="pre">Job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">temperature</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diffusing_elements</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diffusivity_direction_choices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diffusivity_choices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correlation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cel_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evp_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ion_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Conv_factor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">final_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_slope_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">final_slope_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_skip</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ngrid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.CPDyAna.Job" title="Link to this definition">¶</a></dt>
+<dd><p>Main analysis job function for MSD, Van Hove, and related molecular dynamics analyses.</p>
+<p>This function orchestrates the complete analysis workflow:
+1. Reads input files (trajectory, cell parameters, energies, ion definitions)
+2. Processes and segments data based on time windows
+3. Performs element-specific analysis for each temperature
+4. Calculates MSD or Van Hove correlation functions based on mode
+5. Returns structured dictionaries with input and output data</p>
+<dl>
+<dt>Args:</dt><dd><p>temperature (list of float): List of temperatures in Kelvin for analysis.
+diffusing_elements (list of str): Element symbols to analyze (e.g., [‘Li’, ‘Na’]).
+diffusivity_direction_choices (list of str): Spatial directions for diffusivity</p>
+<blockquote>
+<div><p>analysis (e.g., [‘X’, ‘Y’, ‘Z’, ‘XY’, ‘XYZ’]).</p>
+</div></blockquote>
+<dl class="simple">
+<dt>diffusivity_choices (list of str): Types of diffusivity to calculate </dt><dd><p>(e.g., [‘Tracer’, ‘Collective’]).</p>
+</dd>
+<dt>correlation (list of str): Correlation function types </dt><dd><p>(e.g., [‘Self’, ‘Distinct’]).</p>
+</dd>
+</dl>
+<p>pos_file (list of str): Paths to position trajectory files (.pos).
+cel_file (list of str): Paths to cell parameter files (.cel).
+evp_file (list of str): Paths to energy/volume/pressure files (.evp).
+ion_file (list of str): Paths to ion definition files (.in).
+Conv_factor (float): Unit conversion factor (typically 0.529177249</p>
+<blockquote>
+<div><p>for Bohr to Angstrom conversion).</p>
+</div></blockquote>
+<p>initial_time (float): Start time for analysis window in picoseconds.
+final_time (float): End time for analysis window in picoseconds.
+initial_slope_time (float): Start time for slope calculation in MSD analysis.
+final_slope_time (float): End time for slope calculation in MSD analysis.
+block (int): Block size for statistical averaging.
+rmax (float): Maximum radial distance for correlation function analysis in Angstroms.
+step_skip (int): Number of time steps to skip between analysis frames.
+sigma (float): Gaussian broadening parameter for correlation functions.
+ngrid (int): Number of grid points for spatial discretization.
+mode (str, optional): Analysis mode (‘msd’ for Mean Square Displacement,</p>
+<blockquote>
+<div><p>‘vh’ for Van Hove correlation functions).</p>
+</div></blockquote>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>tuple: A tuple containing two dictionaries:</dt><dd><ul class="simple">
+<li><p>temp_input_dict (dict): Input data organized by (temperature, element) keys,
+containing processed trajectory data and structural information.</p></li>
+<li><p>temp_output_dict (dict): Output data organized by (temperature, element) keys,
+containing analysis results (MSD data, correlation functions, time steps).</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt>Raises:</dt><dd><p>FileNotFoundError: If any of the input files cannot be found.
+ValueError: If time windows or parameters are invalid.</p>
+</dd>
+<dt>Note:</dt><dd><p>The function handles multiple temperatures and elements simultaneously,
+with results organized in nested dictionaries for easy access and plotting.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.CPDyAna.main">
+<span class="sig-prename descclassname"><span class="pre">target.CPDyAna.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#target.CPDyAna.main" title="Link to this definition">¶</a></dt>
+<dd><p>Main entry point for the CPDyAna command-line interface.</p>
+<p>This function serves as the central dispatcher that:
+1. Parses command-line arguments to determine analysis mode
+2. Validates input files and directory structure  
+3. Dispatches to appropriate analysis functions based on mode
+4. Handles file I/O operations and subprocess calls
+5. Manages error handling and user feedback</p>
+<p>The function supports multiple analysis modes:
+- <strong>msd</strong>: Mean Square Displacement analysis with plotting
+- <strong>vh</strong>: Van Hove correlation function analysis with plotting  
+- <strong>ionic-density</strong>: 3D ionic density map generation
+- <strong>rdf</strong>: Radial Distribution Function calculation
+- <strong>vaf</strong>: Velocity Autocorrelation Function analysis
+- <strong>vdos</strong>: Vibrational Density of States calculation</p>
+<p>For MSD and Van Hove modes, the function:
+- Calls the main Job() function to perform analysis
+- Saves results to JSON format for data persistence
+- Generates publication-quality plots</p>
+<p>For other modes, the function:
+- Validates required input files (.pos, .in, .cel, optionally .evp)
+- Calls specialized analysis modules via subprocess
+- Handles multiple file sets in batch mode</p>
+<dl class="simple">
+<dt>Raises:</dt><dd><p>SystemExit: If required files are missing or file counts don’t match
+subprocess.CalledProcessError: If subprocess analysis fails
+FileNotFoundError: If data directory or files cannot be found</p>
+</dd>
+<dt>Note:</dt><dd><p>The function automatically discovers input files based on extensions
+in the specified data directory and processes them in sorted order.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.CPDyAna.parser">
+<span class="sig-prename descclassname"><span class="pre">target.CPDyAna.</span></span><span class="sig-name descname"><span class="pre">parser</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#target.CPDyAna.parser" title="Link to this definition">¶</a></dt>
+<dd><p>Create and configure the command-line argument parser for CPDyAna.</p>
+<p>This function sets up the main argument parser with subcommands for different
+analysis modes. Each subcommand has its own specific arguments while sharing
+common parameters where appropriate.</p>
+<dl>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>argparse.Namespace: Parsed command-line arguments containing all user-specified</dt><dd><p>options for the requested analysis mode.</p>
+</dd>
+</dl>
+</dd>
+<dt>Subcommands:</dt><dd><p>msd: Mean Square Displacement analysis for diffusion coefficients
+vh: Van Hove correlation function analysis  
+ionic-density: 3D ionic density mapping
+rdf: Radial Distribution Function calculation
+vaf: Velocity Autocorrelation Function analysis
+vdos: Vibrational Density of States calculation</p>
+</dd>
+<dt>Common Arguments:</dt><dd><ul class="simple">
+<li><p>temperature: Temperature(s) for thermodynamic analysis</p></li>
+<li><p>diffusing-elements: Element types to analyze</p></li>
+<li><p>data-dir: Directory containing input files</p></li>
+<li><p>time windows: Analysis and fitting time ranges</p></li>
+<li><p>statistical parameters: Block sizes, grid points, etc.</p></li>
+</ul>
+</dd>
+<dt>Example:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># args.mode will contain the selected subcommand</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># args.temperature will contain the temperature list</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="key-functions">
+<h3>Key Functions<a class="headerlink" href="#key-functions" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><a class="reference internal" href="#target.CPDyAna.main" title="target.CPDyAna.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">target.CPDyAna.main()</span></code></a>: Main CLI entry point</p></li>
+<li><p><a class="reference internal" href="#target.CPDyAna.Job" title="target.CPDyAna.Job"><code class="xref py py-func docutils literal notranslate"><span class="pre">target.CPDyAna.Job()</span></code></a>: Core analysis job orchestrator</p></li>
+<li><p><a class="reference internal" href="#target.CPDyAna.parser" title="target.CPDyAna.parser"><code class="xref py py-func docutils literal notranslate"><span class="pre">target.CPDyAna.parser()</span></code></a>: Command-line argument parser</p></li>
+</ul>
+</section>
+</section>
+<section id="data-processing">
+<h2>Data Processing<a class="headerlink" href="#data-processing" title="Link to this heading">¶</a></h2>
+<p>Utilities for processing and segmenting trajectory data.</p>
+<p id="module-target.data_processing">Data processing utilities for CPDyAna.</p>
+<p>This module provides functions for:
+- Finding array indices within a time range
+- Segmenting trajectory and property data
+- Evaluating and correcting position data for diffusivity analysis</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="target.data_processing.data_evaluator">
+<span class="sig-prename descclassname"><span class="pre">target.data_processing.</span></span><span class="sig-name descname"><span class="pre">data_evaluator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diffusivity_direction_choices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_elements</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_ion_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.data_processing.data_evaluator" title="Link to this definition">¶</a></dt>
+<dd><p>Processes position data for diffusivity analysis, including drift correction and selection of mobile/framework ions.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><p>diffusivity_direction_choices (list of str): Directions to analyze (e.g., [“XYZ”, “XY”, “Z”]).
+target_elements (list): Elements considered as mobile ions (e.g., [“Li”]).
+pos (ndarray): Position array (n_atoms, n_steps, 3).
+total_ion_array (list): List of element symbols for all atoms.
+steps (int): Number of time steps.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>Tuple of arrays containing:</dt><dd><ul class="simple">
+<li><p>position_data_list: Position data for each direction.</p></li>
+<li><p>drifted_rectified_structure_list: Drift-corrected positions.</p></li>
+<li><p>conductor_indices_list: Indices of mobile ions.</p></li>
+<li><p>framework_indices_list: Indices of framework ions.</p></li>
+<li><p>framework_pos_list: Positions of framework ions.</p></li>
+<li><p>mobile_pos_list: Positions of mobile ions.</p></li>
+<li><p>mobile_drifted_rectified_structure_list: Drift-corrected positions of mobile ions.</p></li>
+<li><p>framework_drifted_rectified_structure_list: Drift-corrected positions of framework ions.</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.data_processing.find_terms">
+<span class="sig-prename descclassname"><span class="pre">target.data_processing.</span></span><span class="sig-name descname"><span class="pre">find_terms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">first_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.data_processing.find_terms" title="Link to this definition">¶</a></dt>
+<dd><p>Find the first and last indices in ‘array’ where the values are within [first_value, last_value].</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><p>array (array-like): Array of time or step values.
+first_value (float): Lower bound of the range.
+last_value (float): Upper bound of the range.</p>
+</dd>
+<dt>Returns:</dt><dd><p>first_term (int or None): Index of first value &gt;= first_value.
+last_term (int or None): Index of last value &lt;= last_value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.data_processing.segmenter_func">
+<span class="sig-prename descclassname"><span class="pre">target.data_processing.</span></span><span class="sig-name descname"><span class="pre">segmenter_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">first_term</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_full</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt_full</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_full</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_full</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ke_elec_full</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_temp_full</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ion_temp_full</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tot_energy_full</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enthalpy_full</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tot_energy_ke_ion_full</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tot_energy_ke_ion_ke_elec_full</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vol_full</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pressure_full</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.data_processing.segmenter_func" title="Link to this definition">¶</a></dt>
+<dd><p>Extracts a segment of the trajectory and associated properties between first_term and last_term.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><p>first_term (int): Starting index for the segment.
+last (int): Ending index for the segment.
+pos_full, dt_full, … (arrays): Full arrays of trajectory and property data.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>Tuple of arrays: (pos, step_counts, dt, time, cell, ke_elec, cell_temp, ion_temp, </dt><dd><p>tot_energy, enthalpy, tot_energy_ke_ion, tot_energy_ke_ion_ke_elec, vol, pressure)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="id1">
+<h3>Key Functions<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><a class="reference internal" href="#target.data_processing.find_terms" title="target.data_processing.find_terms"><code class="xref py py-func docutils literal notranslate"><span class="pre">target.data_processing.find_terms()</span></code></a>: Find time window indices</p></li>
+<li><p><a class="reference internal" href="#target.data_processing.segmenter_func" title="target.data_processing.segmenter_func"><code class="xref py py-func docutils literal notranslate"><span class="pre">target.data_processing.segmenter_func()</span></code></a>: Segment trajectory data</p></li>
+<li><p><a class="reference internal" href="#target.data_processing.data_evaluator" title="target.data_processing.data_evaluator"><code class="xref py py-func docutils literal notranslate"><span class="pre">target.data_processing.data_evaluator()</span></code></a>: Process position data for analysis</p></li>
+</ul>
+</section>
+</section>
+<section id="input-output-operations">
+<h2>Input/Output Operations<a class="headerlink" href="#input-output-operations" title="Link to this heading">¶</a></h2>
+<p>Reading and parsing of Quantum ESPRESSO input and trajectory files.</p>
+<section id="input-file-reader-module-for-cpdyana">
+<span id="module-target.input_reader"></span><h3>Input File Reader Module for CPDyAna<a class="headerlink" href="#input-file-reader-module-for-cpdyana" title="Link to this heading">¶</a></h3>
+<p>This module provides functions for reading and parsing various input file formats
+used in molecular dynamics simulations, particularly those from Quantum ESPRESSO
+and other DFT/MD codes.</p>
+<p>Supported file formats:
+- .pos files: Position trajectories with atomic coordinates
+- .cel files: Unit cell parameters and lattice vectors
+- .evp files: Energy, volume, and pressure data
+- .in files: Ion definitions and atomic species information</p>
+<p>The module handles unit conversions (typically Bohr to Angstrom) and provides
+structured data arrays suitable for analysis functions.</p>
+<dl class="simple">
+<dt>Functions:</dt><dd><p>read_ion_file: Parse ion definition files
+read_cel_file: Read unit cell parameter files
+read_evp_file: Parse energy/volume/pressure files
+read_pos_file: Read position trajectory files</p>
+</dd>
+</dl>
+<p>Author: CPDyAna Development Team
+Version: 01-02-2024</p>
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="target.input_reader.read_cel_file">
+<span class="sig-prename descclassname"><span class="pre">target.input_reader.</span></span><span class="sig-name descname"><span class="pre">read_cel_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cel_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Length_conversion_factor</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.input_reader.read_cel_file" title="Link to this definition">¶</a></dt>
+<dd><p>Read unit cell parameter file containing lattice vectors and cell dimensions.</p>
+<p>The cell file contains time-dependent lattice vectors that define the
+simulation box boundaries. This is crucial for applying periodic boundary
+conditions and calculating volumes.</p>
+<dl>
+<dt>Args:</dt><dd><p>cel_file_path (str): Path to the cell parameter file (.cel format).
+conv_factor (float): Unit conversion factor (default: 1.0).</p>
+<blockquote>
+<div><p>Typically 0.529177249 for Bohr to Angstrom conversion.</p>
+</div></blockquote>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>np.ndarray: Array with shape (n_frames, 9) containing lattice vectors:</dt><dd><p>[a1_x, a1_y, a1_z, a2_x, a2_y, a2_z, a3_x, a3_y, a3_z]
+where a1, a2, a3 are the three lattice vectors for each frame.</p>
+</dd>
+</dl>
+</dd>
+<dt>Raises:</dt><dd><p>FileNotFoundError: If the cell file cannot be found.
+ValueError: If the file contains invalid cell data.</p>
+</dd>
+<dt>Example:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cell_params</span> <span class="o">=</span> <span class="n">read_cel_file</span><span class="p">(</span><span class="s1">&#39;md.cel&#39;</span><span class="p">,</span> <span class="n">conv_factor</span><span class="o">=</span><span class="mf">0.529177249</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cell shape: </span><span class="si">{</span><span class="n">cell_params</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Calculate volume for first frame</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">a3</span> <span class="o">=</span> <span class="n">cell_params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">volume</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span> <span class="n">a3</span><span class="p">)))</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.input_reader.read_evp_file">
+<span class="sig-prename descclassname"><span class="pre">target.input_reader.</span></span><span class="sig-name descname"><span class="pre">read_evp_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evp_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Length_conversion_factor</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.input_reader.read_evp_file" title="Link to this definition">¶</a></dt>
+<dd><p>Read energy, volume, and pressure file containing thermodynamic properties.</p>
+<p>The EVP file contains time-series data of various thermodynamic quantities
+including kinetic energies, total energy, enthalpy, volume, pressure, and
+temperatures for different components of the system.</p>
+<dl>
+<dt>Args:</dt><dd><p>evp_file_path (str): Path to the EVP file (.evp format).
+conv_factor (float): Unit conversion factor for energy and volume.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>tuple: Contains the following arrays:</dt><dd><ul class="simple">
+<li><p>ke_elec (np.ndarray): Electronic kinetic energy</p></li>
+<li><p>cell_temp (np.ndarray): Cell temperature</p></li>
+<li><p>ion_temp (np.ndarray): Ionic temperature</p></li>
+<li><p>tot_energy (np.ndarray): Total energy</p></li>
+<li><p>enthalpy (np.ndarray): Enthalpy</p></li>
+<li><p>tot_energy_ke_ion (np.ndarray): Total energy + ionic KE</p></li>
+<li><p>tot_energy_ke_ion_ke_elec (np.ndarray): Total energy + all KE</p></li>
+<li><p>volume (np.ndarray): Cell volume</p></li>
+<li><p>pressure (np.ndarray): Pressure</p></li>
+<li><p>n_frames (int): Number of time frames</p></li>
+<li><p>time_diff (float): Time step between frames</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt>Raises:</dt><dd><p>FileNotFoundError: If the EVP file cannot be found.
+ValueError: If the file format is invalid.</p>
+</dd>
+<dt>Example:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">evp_data</span> <span class="o">=</span> <span class="n">read_evp_file</span><span class="p">(</span><span class="s1">&#39;md.evp&#39;</span><span class="p">,</span> <span class="n">conv_factor</span><span class="o">=</span><span class="mf">0.529177249</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ke_elec</span><span class="p">,</span> <span class="n">temp</span><span class="p">,</span> <span class="n">pressure</span> <span class="o">=</span> <span class="n">evp_data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">evp_data</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">evp_data</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Average temperature: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> K&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Average pressure: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">pressure</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> GPa&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.input_reader.read_ion_file">
+<span class="sig-prename descclassname"><span class="pre">target.input_reader.</span></span><span class="sig-name descname"><span class="pre">read_ion_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ion_file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.input_reader.read_ion_file" title="Link to this definition">¶</a></dt>
+<dd><p>Read and parse ion definition file containing atomic species information.</p>
+<p>The ion file typically contains atomic symbols, masses, and other properties
+for each species in the simulation. This function extracts this information
+and returns it in a structured format.</p>
+<dl>
+<dt>Args:</dt><dd><p>ion_file_path (str): Path to the ion definition file (.in format).</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>list: List of dictionaries containing ion information with keys:</dt><dd><ul class="simple">
+<li><p>‘symbol’: Atomic symbol (e.g., ‘Li’, ‘Al’, ‘P’, ‘S’)</p></li>
+<li><p>‘mass’: Atomic mass in atomic mass units</p></li>
+<li><p>‘index’: Index in the simulation</p></li>
+<li><p>Additional properties as available</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt>Raises:</dt><dd><p>FileNotFoundError: If the ion file cannot be found.
+ValueError: If the file format is invalid or corrupted.</p>
+</dd>
+<dt>Example:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ions</span> <span class="o">=</span> <span class="n">read_ion_file</span><span class="p">(</span><span class="s1">&#39;simulation.in&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ions</span><span class="p">)</span><span class="si">}</span><span class="s2"> ion types&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">ion</span> <span class="ow">in</span> <span class="n">ions</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ion</span><span class="p">[</span><span class="s1">&#39;symbol&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">ion</span><span class="p">[</span><span class="s1">&#39;mass&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> amu&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.input_reader.read_pos_file">
+<span class="sig-prename descclassname"><span class="pre">target.input_reader.</span></span><span class="sig-name descname"><span class="pre">read_pos_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_ions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Length_conversion_factor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_time_frames</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_difference</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.input_reader.read_pos_file" title="Link to this definition">¶</a></dt>
+<dd><p>Read position trajectory file containing atomic coordinates over time.</p>
+<p>The position file contains the time evolution of atomic coordinates for all
+atoms in the simulation. This function parses the file and organizes the
+data into arrays suitable for analysis.</p>
+<dl>
+<dt>Args:</dt><dd><p>pos_file_path (str): Path to the position file (.pos format).
+ion_array (list): Ion information from read_ion_file().
+conv_factor (float): Unit conversion factor (Bohr to Angstrom).
+n_frames (int, optional): Number of frames to read. If None, read all.
+time_diff (float, optional): Time step between frames in ps.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>tuple: Contains:</dt><dd><ul class="simple">
+<li><p>positions (np.ndarray): Position array with shape (n_frames, n_atoms, 3)</p></li>
+<li><p>steps (np.ndarray): Time step numbers</p></li>
+<li><p>dt (np.ndarray): Time differences between steps</p></li>
+<li><p>time (np.ndarray): Absolute time values in picoseconds</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt>Raises:</dt><dd><p>FileNotFoundError: If the position file cannot be found.
+ValueError: If file format is invalid or inconsistent with ion data.</p>
+</dd>
+<dt>Example:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ions</span> <span class="o">=</span> <span class="n">read_ion_file</span><span class="p">(</span><span class="s1">&#39;md.in&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pos</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">time</span> <span class="o">=</span> <span class="n">read_pos_file</span><span class="p">(</span><span class="s1">&#39;md.pos&#39;</span><span class="p">,</span> <span class="n">ions</span><span class="p">,</span> <span class="mf">0.529177249</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Trajectory shape: </span><span class="si">{</span><span class="n">pos</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time range: </span><span class="si">{</span><span class="n">time</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">time</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> ps&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Access Li atom positions (assuming Li is first species)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">li_positions</span> <span class="o">=</span> <span class="n">pos</span><span class="p">[:,</span> <span class="p">:</span><span class="n">n_li_atoms</span><span class="p">,</span> <span class="p">:]</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="supported-file-types">
+<h3>Supported File Types<a class="headerlink" href="#supported-file-types" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>.pos files</strong>: Position trajectories</p></li>
+<li><p><strong>.cel files</strong>: Unit cell parameters</p></li>
+<li><p><strong>.evp files</strong>: Energy, volume, pressure data</p></li>
+<li><p><strong>.in files</strong>: Ion definitions and atomic information</p></li>
+</ul>
+</section>
+</section>
+<section id="core-calculations">
+<h2>Core Calculations<a class="headerlink" href="#core-calculations" title="Link to this heading">¶</a></h2>
+<p>Main calculation routines for MSD and diffusion analysis.</p>
+<section id="calculations-module-for-cpdyana">
+<span id="module-target.calculations"></span><h3>Calculations Module for CPDyAna<a class="headerlink" href="#calculations-module-for-cpdyana" title="Link to this heading">¶</a></h3>
+<p>This module provides the core calculation functions for molecular dynamics analysis,
+focusing on Mean Square Displacement (MSD) calculations and diffusion coefficient
+determination for both tracer and collective diffusion.</p>
+<p>The module implements efficient algorithms for:
+- MSD calculation for individual and collective particle motion
+- Linear regression analysis for diffusion coefficient extraction
+- Multi-directional diffusivity analysis (X, Y, Z, XY, XZ, YZ, XYZ)
+- Statistical block averaging for error estimation</p>
+<dl class="simple">
+<dt>Functions:</dt><dd><p>calculate_msd: Main MSD calculation orchestrator
+msd_tracer: Individual particle MSD calculation
+msd_charged: Collective/charged species MSD calculation</p>
+</dd>
+</dl>
+<p>Author: CPDyAna Development Team
+Version: 01-02-2024</p>
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="target.calculations.calc_fft">
+<span class="sig-prename descclassname"><span class="pre">target.calculations.</span></span><span class="sig-name descname"><span class="pre">calc_fft</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.calculations.calc_fft" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate FFT-based autocorrelation function for MSD computation.</p>
+<p>This function uses Fast Fourier Transform to efficiently compute the 
+autocorrelation function needed for mean square displacement calculations.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>x (numpy.ndarray): Input array of position data for one dimension</p>
+</dd>
+<dt>Returns:</dt><dd><p>numpy.ndarray: Normalized autocorrelation function values</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.calculations.calc_msd_tracer">
+<span class="sig-prename descclassname"><span class="pre">target.calculations.</span></span><span class="sig-name descname"><span class="pre">calc_msd_tracer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d_idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.calculations.calc_msd_tracer" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate tracer mean square displacement using FFT method.</p>
+<p>This function computes MSD for a single particle trajectory using
+the efficient FFT-based algorithm to avoid O(N²) complexity.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>r (numpy.ndarray): Position array of shape (time_steps, 3) for one particle
+d_idx (numpy.ndarray): Array of time lag indices</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>tuple: Contains:</dt><dd><ul class="simple">
+<li><p>MSD values for specified time lags</p></li>
+<li><p>MSD components for each spatial dimension</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.calculations.calculate_msd">
+<span class="sig-prename descclassname"><span class="pre">target.calculations.</span></span><span class="sig-name descname"><span class="pre">calculate_msd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diffusing_elements</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diffusivity_direction_choices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diffusivity_type_choices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_full</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conduct_rectified_structure_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conduct_ions_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Last_term</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_slope_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">final_slope_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.calculations.calculate_msd" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate Mean Square Displacement for specified elements and conditions.</p>
+<p>This function orchestrates MSD calculations for different elements, spatial directions,
+and diffusion types (tracer vs collective). It performs linear regression to extract
+diffusion coefficients and organizes results in a structured dictionary.</p>
+<dl>
+<dt>Args:</dt><dd><p>diffusing_elements (list): Element symbols to analyze (e.g., [‘Li’, ‘Na’]).
+diffusivity_direction_choices (list): Spatial directions for analysis</p>
+<blockquote>
+<div><p>(e.g., [‘X’, ‘Y’, ‘Z’, ‘XY’, ‘XZ’, ‘YZ’, ‘XYZ’]).</p>
+</div></blockquote>
+<dl class="simple">
+<dt>diffusivity_choices (list): Types of diffusivity calculation</dt><dd><p>([‘Tracer’] for individual particles, [‘Collective’] for charged species).</p>
+</dd>
+</dl>
+<p>pos_full (np.ndarray): Full position trajectory array.
+conduct_rectified_structure_array (np.ndarray): Unwrapped position arrays</p>
+<blockquote>
+<div><p>organized by direction and element.</p>
+</div></blockquote>
+<p>conduct_ions_array (list): Ion indices for each element and direction.
+dt (np.ndarray): Time step array in picoseconds.
+Last_term (int): Final time index for analysis.
+initial_slope_time (float): Start time for linear regression in ps.
+final_slope_time (float): End time for linear regression in ps.
+block (int): Block size for statistical averaging.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>dict: Nested dictionary with structure:</dt><dd><dl class="simple">
+<dt>{element: {direction: {diffusion_type: {</dt><dd><p>‘msd_data’: MSD values array,
+‘time_data’: Time values array,
+‘diffusion_coeff’: Diffusion coefficient in cm²/s,
+‘r_squared’: Linear regression R² value,
+‘slope’: MSD slope value,
+‘intercept’: MSD intercept value</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt>Example:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">msd_results</span> <span class="o">=</span> <span class="n">calculate_msd</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="p">[</span><span class="s1">&#39;Li&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;XYZ&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;Tracer&#39;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">pos_array</span><span class="p">,</span> <span class="n">rectified_pos</span><span class="p">,</span> <span class="n">ion_indices</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">time_steps</span><span class="p">,</span> <span class="n">last_frame</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">,</span> <span class="mi">500</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Li diffusion: </span><span class="si">{</span><span class="n">msd_results</span><span class="p">[</span><span class="s1">&#39;Li&#39;</span><span class="p">][</span><span class="s1">&#39;XYZ&#39;</span><span class="p">][</span><span class="s1">&#39;Tracer&#39;</span><span class="p">][</span><span class="s1">&#39;diffusion_coeff&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2"> cm²/s&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.calculations.disp_sum">
+<span class="sig-prename descclassname"><span class="pre">target.calculations.</span></span><span class="sig-name descname"><span class="pre">disp_sum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">delt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mobile_ion_pos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.calculations.disp_sum" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate the sum of squared displacements for a given time delta.</p>
+<p>This function computes the collective displacement term needed for
+charged MSD calculations.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>delt (int): Time step difference (time lag)
+mobile_ion_pos (numpy.ndarray): 3D array of shape (num_mobile_ions, steps, 3)</p>
+</dd>
+<dt>Returns:</dt><dd><p>float: Sum of squared collective displacements</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.calculations.msd_charged">
+<span class="sig-prename descclassname"><span class="pre">target.calculations.</span></span><span class="sig-name descname"><span class="pre">msd_charged</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">final_msd</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.calculations.msd_charged" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate collective (charged species) Mean Square Displacement.</p>
+<p>This function computes MSD for collective motion of charged species, which
+represents the center-of-mass diffusion and is relevant for ionic conductivity
+calculations. All particles of the same type move collectively.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>conduct_rectified_structure_array (np.ndarray): Unwrapped position array</dt><dd><p>with shape (n_frames, n_atoms, 3).</p>
+</dd>
+</dl>
+<p>conduct_ions_array (list): Array of ion indices for the target element.
+dt (np.ndarray): Time step array in picoseconds.
+Last_term (int): Final time index for analysis window.
+initial_slope_time (float): Start time for diffusion coefficient fitting.
+final_slope_time (float): End time for diffusion coefficient fitting.
+block (int): Block size for statistical error estimation.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>tuple: (msd_array, time_array, diffusion_coeff, r_squared, slope, intercept)</dt><dd><ul class="simple">
+<li><p>msd_array (np.ndarray): Collective MSD values vs time</p></li>
+<li><p>time_array (np.ndarray): Time values in picoseconds</p></li>
+<li><p>diffusion_coeff (float): Collective diffusion coefficient in cm²/s</p></li>
+<li><p>r_squared (float): Linear regression R² value</p></li>
+<li><p>slope (float): MSD slope in Ų/ps</p></li>
+<li><p>intercept (float): MSD intercept in Ų</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt>Note:</dt><dd><p>Collective diffusion is calculated as the MSD of the center of mass
+of all particles of the specified type.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.calculations.msd_tracer">
+<span class="sig-prename descclassname"><span class="pre">target.calculations.</span></span><span class="sig-name descname"><span class="pre">msd_tracer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.calculations.msd_tracer" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate tracer (individual particle) Mean Square Displacement.</p>
+<p>This function computes MSD for individual particle motion, which represents
+self-diffusion processes. Each particle’s displacement is calculated independently
+and then averaged to obtain the tracer diffusion coefficient.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>conduct_rectified_structure_array (np.ndarray): Unwrapped position array</dt><dd><p>with shape (n_frames, n_atoms, 3).</p>
+</dd>
+</dl>
+<p>conduct_ions_array (list): Array of ion indices for the target element.
+dt (np.ndarray): Time step array in picoseconds.
+Last_term (int): Final time index for analysis window.
+initial_slope_time (float): Start time for diffusion coefficient fitting.
+final_slope_time (float): End time for diffusion coefficient fitting.
+block (int): Block size for statistical error estimation.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>tuple: (msd_array, time_array, diffusion_coeff, r_squared, slope, intercept)</dt><dd><ul class="simple">
+<li><p>msd_array (np.ndarray): MSD values vs time</p></li>
+<li><p>time_array (np.ndarray): Time values in picoseconds</p></li>
+<li><p>diffusion_coeff (float): Tracer diffusion coefficient in cm²/s</p></li>
+<li><p>r_squared (float): Linear regression R² value</p></li>
+<li><p>slope (float): MSD slope in Ų/ps</p></li>
+<li><p>intercept (float): MSD intercept in Ų</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt>Note:</dt><dd><p>The diffusion coefficient is calculated using the Einstein relation:
+D = MSD_slope / (2 * dimensionality) with appropriate unit conversion.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="analysis-types">
+<h3>Analysis Types<a class="headerlink" href="#analysis-types" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>Mean Square Displacement</strong>: Tracer and collective diffusivity</p></li>
+<li><p><strong>Diffusion Coefficients</strong>: Multi-directional analysis (X, Y, Z, XY, XZ, YZ, XYZ)</p></li>
+<li><p><strong>Statistical Analysis</strong>: Block averaging and error estimation</p></li>
+</ul>
+</section>
+</section>
+<section id="correlation-analysis">
+<h2>Correlation Analysis<a class="headerlink" href="#correlation-analysis" title="Link to this heading">¶</a></h2>
+<p>Van Hove correlation functions and related analysis.</p>
+<dl class="py function" id="module-target.correrelation_analysis">
+<dt class="sig sig-object py" id="target.correrelation_analysis.Van_Hove_distinct">
+<span class="sig-prename descclassname"><span class="pre">target.correrelation_analysis.</span></span><span class="sig-name descname"><span class="pre">Van_Hove_distinct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">avg_step</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_skip</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ngrid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">moving_ion_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">volume</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.correrelation_analysis.Van_Hove_distinct" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate the distinct part of the Van Hove function for ion diffusion.</p>
+<p>Parameters:
+- avg_step (int): Number of steps to average over.
+- dt (numpy.ndarray): Time array.
+- rmax (float): Maximum distance for radial distribution.
+- step_skip (int): Number of steps to skip.
+- sigma (float): Standard deviation for Gaussian function.
+- ngrid (int): Number of grid points.
+- moving_ion_pos (numpy.ndarray): Position array for moving ions.
+- volume (float): System volume.
+- x1, x2, x3, y1, y2, y3, z1, z2, z3 (float): Box vectors.</p>
+<p>Returns:
+- numpy.ndarray, int, numpy.ndarray: Distance interval, reduced number of time steps, distinct part of Van Hove function.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.correrelation_analysis.Van_Hove_self">
+<span class="sig-prename descclassname"><span class="pre">target.correrelation_analysis.</span></span><span class="sig-name descname"><span class="pre">Van_Hove_self</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">avg_step</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_skip</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ngrid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">moving_ion_pos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.correrelation_analysis.Van_Hove_self" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate the self part of the Van Hove function for ion diffusion.</p>
+<p>Parameters:
+- avg_step (int): Number of steps to average over.
+- dt (numpy.ndarray): Time array.
+- rmax (float): Maximum distance for radial distribution.
+- step_skip (int): Number of steps to skip.
+- sigma (float): Standard deviation for Gaussian function.
+- ngrid (int): Number of grid points.
+- moving_ion_pos (numpy.ndarray): Position array for moving ions.</p>
+<p>Returns:
+- numpy.ndarray, int, numpy.ndarray: Distance interval, reduced number of time steps, self part of Van Hove function.</p>
+</dd></dl>
+
+<section id="correlation-types">
+<h3>Correlation Types<a class="headerlink" href="#correlation-types" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>Self Correlation</strong>: Single particle dynamics (<a class="reference internal" href="#target.correrelation_analysis.Van_Hove_self" title="target.correrelation_analysis.Van_Hove_self"><code class="xref py py-func docutils literal notranslate"><span class="pre">target.correrelation_analysis.Van_Hove_self()</span></code></a>)</p></li>
+<li><p><strong>Distinct Correlation</strong>: Pair dynamics (<a class="reference internal" href="#target.correrelation_analysis.Van_Hove_distinct" title="target.correrelation_analysis.Van_Hove_distinct"><code class="xref py py-func docutils literal notranslate"><span class="pre">target.correrelation_analysis.Van_Hove_distinct()</span></code></a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="rdf-computation">
+<h2>RDF Computation<a class="headerlink" href="#rdf-computation" title="Link to this heading">¶</a></h2>
+<p>Radial distribution function calculations with ASE integration.</p>
+<p id="module-target.compute_rdf">compute_rdf.py</p>
+<p>Compute Radial Distribution Functions (RDFs) from Quantum ESPRESSO molecular dynamics output files (.in, .pos, .cel).
+This script builds atomic trajectories using ASE, converts them to pymatgen structures, and calculates RDFs for various atom pairs using pymatgen’s efficient implementation.</p>
+<p>Flexible CLI options allow user control over RDF parameters and plotting.</p>
+<dl class="simple">
+<dt>Usage:</dt><dd><p>python compute_rdf.py –in-file LiAlPS.in –pos-file LiAlPS.pos –cel-file LiAlPS.cel
+# For more options:
+python compute_rdf.py –help</p>
+</dd>
+</dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="target.compute_rdf.build_ase_trajectory">
+<span class="sig-prename descclassname"><span class="pre">target.compute_rdf.</span></span><span class="sig-name descname"><span class="pre">build_ase_trajectory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cel_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_after_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_frames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.00193511</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.compute_rdf.build_ase_trajectory" title="Link to this definition">¶</a></dt>
+<dd><p>Build ASE trajectory frames from Quantum ESPRESSO output files.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>in_file (str): Path to the .in input file.
+pos_file (str): Path to the .pos position file.
+cel_file (str): Path to the .cel cell parameter file.
+time_after_start (float): Time in ps after which to start extracting frames.
+num_frames (int): Number of frames to extract.
+time_interval (float): Time interval between frames in ps.
+bohr_to_angstrom (float): Conversion factor from Bohr to Angstrom.</p>
+</dd>
+<dt>Returns:</dt><dd><p>list: List of ASE Atoms objects representing the trajectory frames.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.compute_rdf.compute_rdf">
+<span class="sig-prename descclassname"><span class="pre">target.compute_rdf.</span></span><span class="sig-name descname"><span class="pre">compute_rdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trajectory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rdf_plot'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_after_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">central_atoms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pair_atoms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ngrid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1.5,</span> <span class="pre">8.0)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.compute_rdf.compute_rdf" title="Link to this definition">¶</a></dt>
+<dd><p>Compute RDF for various atom pairs and generate plots.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>trajectory (list): List of ASE Atoms objects representing the trajectory.
+output_prefix (str): Prefix for output plot filenames.
+time_after_start (float): Time after start for filename generation.
+central_atoms (list): List of central atom types (default: [‘Li’, ‘Al’, ‘P’, ‘S’]).
+pair_atoms (list): List of pair atom types (default: same as central_atoms).
+ngrid (int): Number of radial grid points.
+rmax (float): Maximum distance for RDF calculation (Å).
+sigma (float): Gaussian broadening parameter.
+xlim (tuple): x-axis limits for plot.
+ylim_factor (float): Factor to multiply max RDF for y-axis limit.
+show_plot (bool): Whether to display the plot interactively.</p>
+</dd>
+<dt>Returns:</dt><dd><p>tuple: Contains r (distance array) and RDF arrays for different atom pairs.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.compute_rdf.main">
+<span class="sig-prename descclassname"><span class="pre">target.compute_rdf.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#target.compute_rdf.main" title="Link to this definition">¶</a></dt>
+<dd><p>Main function with integrated .traj conversion approach.
+Handles command-line argument parsing, file validation,
+and orchestrates the complete RDF calculation workflow from Quantum
+ESPRESSO output files.</p>
+</dd></dl>
+
+</section>
+<section id="vaf-computation">
+<h2>VAF Computation<a class="headerlink" href="#vaf-computation" title="Link to this heading">¶</a></h2>
+<p>Velocity autocorrelation function analysis.</p>
+<p id="module-target.compute_vaf">compute_vaf.py</p>
+<p>Read QE .in/.pos/.cel[/.evp], build ASE+Velocities, compute VAF with SAMOS, and plot.</p>
+<p>This script reads Quantum ESPRESSO trajectory files, constructs ASE Atoms objects with velocities,
+computes the velocity autocorrelation function (VAF) for specified elements using the SAMOS library,
+and plots/saves the results.</p>
+<dl class="simple">
+<dt>Usage example:</dt><dd><p>python vaf.py –in_file LiAlPS.in –pos_file LiAlPS.pos –cel_file LiAlPS.cel –element Li Na</p>
+</dd>
+</dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="target.compute_vaf.build_trajectory">
+<span class="sig-prename descclassname"><span class="pre">target.compute_vaf.</span></span><span class="sig-name descname"><span class="pre">build_trajectory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cel_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evp_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nframes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.00193511</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.compute_vaf.build_trajectory" title="Link to this definition">¶</a></dt>
+<dd><p>Build a trajectory as a list of ASE Atoms objects with velocities.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>in_file (str): Path to .in file (species).
+pos_file (str): Path to .pos file (positions).
+cel_file (str): Path to .cel file (cell parameters).
+evp_file (str, optional): Path to .evp file (timing).
+start (float): Start time in ps.
+nframes (int): Number of frames to use (0=all).
+stride (int): Stride for frames.
+time_interval (float): Default time between frames (ps) if no .evp.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>tuple: (frames, dt)</dt><dd><p>frames: list of ASE Atoms objects with velocities.
+dt: time step in ps.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.compute_vaf.compute_vaf">
+<span class="sig-prename descclassname"><span class="pre">target.compute_vaf.</span></span><span class="sig-name descname"><span class="pre">compute_vaf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frames</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">element</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blocks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_prefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_start_fit_ps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stepsize_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stepsize_tau</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_end_fit_ps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.compute_vaf.compute_vaf" title="Link to this definition">¶</a></dt>
+<dd><p>Compute the velocity autocorrelation function (VAF) for a given element.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>frames (list): List of ASE Atoms objects with velocities.
+dt (float): Time step in ps.
+element (str): Element symbol (e.g. ‘Li’).
+blocks (int): Number of statistical blocks.
+out_prefix (str): Output file prefix.
+in_file (str): Path to .in file (for species).
+t_start_dt (int): Start index for VAF calculation.
+stepsize_t (int): Stride for t in VAF.
+stepsize_tau (int): Stride for tau in VAF.
+t_end_fit_ps (float): End of fit in ps.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>tuple: (t, vaf, vint)</dt><dd><p>t: time array (ps)
+vaf: VAF array
+vint: VAF integral array</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.compute_vaf.convert_symbols_to_atomic_numbers">
+<span class="sig-prename descclassname"><span class="pre">target.compute_vaf.</span></span><span class="sig-name descname"><span class="pre">convert_symbols_to_atomic_numbers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">symbols</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.compute_vaf.convert_symbols_to_atomic_numbers" title="Link to this definition">¶</a></dt>
+<dd><p>Convert a list of element symbols to atomic numbers.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>symbols (list): List of element symbols (str).</p>
+</dd>
+<dt>Returns:</dt><dd><p>list: List of atomic numbers (int).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.compute_vaf.finite_diff_velocities">
+<span class="sig-prename descclassname"><span class="pre">target.compute_vaf.</span></span><span class="sig-name descname"><span class="pre">finite_diff_velocities</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos_arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">times</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.compute_vaf.finite_diff_velocities" title="Link to this definition">¶</a></dt>
+<dd><p>Compute velocities using finite differences from positions and times.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>pos_arr (np.ndarray): Array of shape (Nframes, natoms, 3) with positions.
+times (list): List of time values (ps), length Nframes.</p>
+</dd>
+<dt>Returns:</dt><dd><p>np.ndarray: Array of velocities, same shape as pos_arr.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.compute_vaf.read_cel">
+<span class="sig-prename descclassname"><span class="pre">target.compute_vaf.</span></span><span class="sig-name descname"><span class="pre">read_cel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cel_file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.compute_vaf.read_cel" title="Link to this definition">¶</a></dt>
+<dd><p>Read cell parameters from a .cel file.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>cel_file (str): Path to .cel file.</p>
+</dd>
+<dt>Returns:</dt><dd><p>list: List of 4-line blocks (cell info per frame).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.compute_vaf.read_evp">
+<span class="sig-prename descclassname"><span class="pre">target.compute_vaf.</span></span><span class="sig-name descname"><span class="pre">read_evp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evp_file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.compute_vaf.read_evp" title="Link to this definition">¶</a></dt>
+<dd><p>Read time steps from a .evp file.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>evp_file (str): Path to .evp file.</p>
+</dd>
+<dt>Returns:</dt><dd><p>list: List of times (float).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.compute_vaf.read_pos">
+<span class="sig-prename descclassname"><span class="pre">target.compute_vaf.</span></span><span class="sig-name descname"><span class="pre">read_pos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">natoms</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.compute_vaf.read_pos" title="Link to this definition">¶</a></dt>
+<dd><p>Read atomic positions from a .pos file.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>pos_file (str): Path to .pos file.
+natoms (int): Number of atoms.</p>
+</dd>
+<dt>Returns:</dt><dd><p>list: List of (natoms+1)-line blocks (positions per frame).</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="plotting-and-visualization">
+<h2>Plotting and Visualization<a class="headerlink" href="#plotting-and-visualization" title="Link to this heading">¶</a></h2>
+<p>Plotting utilities for analysis results.</p>
+<section id="plotting-and-visualization-module-for-cpdyana">
+<span id="module-target.plotting"></span><h3>Plotting and Visualization Module for CPDyAna<a class="headerlink" href="#plotting-and-visualization-module-for-cpdyana" title="Link to this heading">¶</a></h3>
+<p>This module provides comprehensive plotting functions for visualizing molecular
+dynamics analysis results. It creates publication-quality figures for various
+analysis types including MSD plots, Van Hove correlation functions, and other
+trajectory analysis visualizations.</p>
+<p>The module uses matplotlib for plotting with customizable styling, automatic
+legend generation, and support for multiple data series. All plots include
+proper axis labels, units, and can be saved in various formats.</p>
+<p>Key Features:
+- Mean Square Displacement (MSD) plots with linear fits
+- Van Hove correlation function visualizations
+- Multi-element and multi-temperature comparisons
+- Automatic color schemes and styling
+- Publication-ready output formats</p>
+<dl class="simple">
+<dt>Functions:</dt><dd><p>msd_plot: Create MSD vs time plots with diffusion coefficient fitting
+van_hove_plot: Visualize Van Hove correlation functions</p>
+</dd>
+</dl>
+<p>Author: CPDyAna Development Team
+Version: 01-02-2024</p>
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="target.plotting.int_or_float">
+<span class="sig-prename descclassname"><span class="pre">target.plotting.</span></span><span class="sig-name descname"><span class="pre">int_or_float</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.plotting.int_or_float" title="Link to this definition">¶</a></dt>
+<dd><p>Helper function to convert a string to int if possible, else float.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>val (str): Value to convert.</p>
+</dd>
+<dt>Returns:</dt><dd><p>int or float: Converted value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.plotting.main">
+<span class="sig-prename descclassname"><span class="pre">target.plotting.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#target.plotting.main" title="Link to this definition">¶</a></dt>
+<dd><p>Main entry point for plotting CLI.
+Dispatches to MSD or Van Hove plotting based on subcommand.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.plotting.msd_plot">
+<span class="sig-prename descclassname"><span class="pre">target.plotting.</span></span><span class="sig-name descname"><span class="pre">msd_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Plot_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">First_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Last_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.plotting.msd_plot" title="Link to this definition">¶</a></dt>
+<dd><p>Create Mean Square Displacement plots with linear regression fits.</p>
+<p>This function generates comprehensive MSD plots showing the time evolution
+of particle displacements along with linear fits in the diffusive regime.
+It supports multiple elements, temperatures, directions, and diffusion types
+on the same plot for comparison.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>data_source (dict or str): Either a data dictionary from CPDyAna analysis</dt><dd><p>or path to JSON file containing analysis results.</p>
+</dd>
+<dt>plot_data_list (list): List of tuples specifying data to plot. Each tuple</dt><dd><p>contains: [temperature, element, diffusion_type, direction]
+Example: [[800.0, ‘Li’, ‘Tracer’, ‘XYZ’], [1000.0, ‘Li’, ‘Tracer’, ‘XYZ’]]</p>
+</dd>
+</dl>
+<p>first_time (float): Start time for plot display in picoseconds.
+last_time (float): End time for plot display in picoseconds.
+save_path (str): Output file path for saving the plot.</p>
+</dd>
+<dt>Returns:</dt><dd><p>None: Plot is saved to specified path.</p>
+</dd>
+<dt>Raises:</dt><dd><p>FileNotFoundError: If data_source file cannot be found.
+KeyError: If requested data combinations are not available.
+ValueError: If time range is invalid.</p>
+</dd>
+<dt>Features:</dt><dd><ul class="simple">
+<li><p>Automatic color cycling for multiple data series</p></li>
+<li><p>Linear regression fits in the diffusive regime</p></li>
+<li><p>Diffusion coefficient values displayed in legend</p></li>
+<li><p>Log-log scaling option for better visualization</p></li>
+<li><p>Publication-quality formatting</p></li>
+</ul>
+</dd>
+<dt>Example:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot Li tracer diffusion at different temperatures</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plot_data</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="p">[</span><span class="mf">600.0</span><span class="p">,</span> <span class="s1">&#39;Li&#39;</span><span class="p">,</span> <span class="s1">&#39;Tracer&#39;</span><span class="p">,</span> <span class="s1">&#39;XYZ&#39;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="p">[</span><span class="mf">800.0</span><span class="p">,</span> <span class="s1">&#39;Li&#39;</span><span class="p">,</span> <span class="s1">&#39;Tracer&#39;</span><span class="p">,</span> <span class="s1">&#39;XYZ&#39;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="p">[</span><span class="mf">1000.0</span><span class="p">,</span> <span class="s1">&#39;Li&#39;</span><span class="p">,</span> <span class="s1">&#39;Tracer&#39;</span><span class="p">,</span> <span class="s1">&#39;XYZ&#39;</span><span class="p">]</span>
+<span class="gp">... </span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">msd_plot</span><span class="p">(</span><span class="s1">&#39;analysis_results.json&#39;</span><span class="p">,</span> <span class="n">plot_data</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">200.0</span><span class="p">,</span> <span class="s1">&#39;li_diffusion.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.plotting.parse_cli_args">
+<span class="sig-prename descclassname"><span class="pre">target.plotting.</span></span><span class="sig-name descname"><span class="pre">parse_cli_args</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#target.plotting.parse_cli_args" title="Link to this definition">¶</a></dt>
+<dd><p>Parse command-line arguments for MSD and Van Hove plotting.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>argparse.Namespace: Parsed arguments.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.plotting.van_hove_plot">
+<span class="sig-prename descclassname"><span class="pre">target.plotting.</span></span><span class="sig-name descname"><span class="pre">van_hove_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Plot_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(10,</span> <span class="pre">8)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.plotting.van_hove_plot" title="Link to this definition">¶</a></dt>
+<dd><p>Create Van Hove correlation function visualization plots.</p>
+<p>This function generates comprehensive plots of Van Hove correlation functions
+showing the time evolution of particle displacement distributions. It supports
+both self and distinct correlation functions with multiple time snapshots.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>data_source (dict or str): Either a data dictionary from CPDyAna analysis</dt><dd><p>or path to JSON file containing analysis results.</p>
+</dd>
+<dt>plot_data_list (list): List of tuples specifying data to plot. Each tuple</dt><dd><p>contains: [temperature, element, correlation_type]
+Example: [[800.0, ‘Li’, ‘Self’], [800.0, ‘Li’, ‘Distinct’]]</p>
+</dd>
+</dl>
+<p>save_path (str): Output file path for saving the plot.
+figsize (tuple): Figure size as (width, height) in inches.</p>
+</dd>
+<dt>Returns:</dt><dd><p>None: Plot is saved to specified path.</p>
+</dd>
+<dt>Raises:</dt><dd><p>FileNotFoundError: If data_source file cannot be found.
+KeyError: If requested correlation data is not available.</p>
+</dd>
+<dt>Features:</dt><dd><ul class="simple">
+<li><p>Multiple correlation functions on subplots</p></li>
+<li><p>Time evolution visualization with color gradients</p></li>
+<li><p>Proper normalization and scaling</p></li>
+<li><p>Distance axis in Angstroms</p></li>
+<li><p>Customizable figure layout</p></li>
+</ul>
+</dd>
+<dt>Example:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Plot both self and distinct correlations for Li at 800K</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plot_data</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="p">[</span><span class="mf">800.0</span><span class="p">,</span> <span class="s1">&#39;Li&#39;</span><span class="p">,</span> <span class="s1">&#39;Self&#39;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="p">[</span><span class="mf">800.0</span><span class="p">,</span> <span class="s1">&#39;Li&#39;</span><span class="p">,</span> <span class="s1">&#39;Distinct&#39;</span><span class="p">]</span>
+<span class="gp">... </span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">van_hove_plot</span><span class="p">(</span><span class="s1">&#39;vh_results.json&#39;</span><span class="p">,</span> <span class="n">plot_data</span><span class="p">,</span> <span class="s1">&#39;van_hove_li.png&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd>
+<dt>Note:</dt><dd><p>Van Hove correlation functions show how particle displacements are
+distributed at different time intervals, providing insights into
+diffusion mechanisms and particle dynamics.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="plot-types">
+<h3>Plot Types<a class="headerlink" href="#plot-types" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>MSD Plots</strong>: <a class="reference internal" href="#target.plotting.msd_plot" title="target.plotting.msd_plot"><code class="xref py py-func docutils literal notranslate"><span class="pre">target.plotting.msd_plot()</span></code></a></p></li>
+<li><p><strong>Van Hove Plots</strong>: <a class="reference internal" href="#target.plotting.van_hove_plot" title="target.plotting.van_hove_plot"><code class="xref py py-func docutils literal notranslate"><span class="pre">target.plotting.van_hove_plot()</span></code></a></p></li>
+<li><p><strong>Multi-panel Figures</strong>: Comparative analysis visualization</p></li>
+</ul>
+</section>
+</section>
+<section id="probability-density-analysis">
+<h2>Probability Density Analysis<a class="headerlink" href="#probability-density-analysis" title="Link to this heading">¶</a></h2>
+<p>3D ionic density mapping and spatial analysis.</p>
+<p id="module-target.probability_density">Ultimate Probability Density Calculator (Extensible Version)
+Integrates CPDyAna and SAMOS methodologies for direct use with .in, .pos, .cel, .evp files.
+Now supports advanced options: frame stride, atom masking, recentering, and custom bounding box.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="target.probability_density.build_trajectory">
+<span class="sig-prename descclassname"><span class="pre">target.probability_density.</span></span><span class="sig-name descname"><span class="pre">build_trajectory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cel_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_after_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_frames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.00193511</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.probability_density.build_trajectory" title="Link to this definition">¶</a></dt>
+<dd><p>Build an in-memory trajectory from .in, .pos, .cel files.
+Returns a list of ASE Atoms objects.
+Supports frame stride for subsampling.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.probability_density.calculate_probability_density">
+<span class="sig-prename descclassname"><span class="pre">target.probability_density.</span></span><span class="sig-name descname"><span class="pre">calculate_probability_density</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atoms_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">element</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Li'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">density</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recenter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bbox</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.probability_density.calculate_probability_density" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate the Gaussian probability density for a given element in the trajectory.
+Supports atom masking, recentering, and custom bounding box.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.probability_density.convert_symbols_to_atomic_numbers">
+<span class="sig-prename descclassname"><span class="pre">target.probability_density.</span></span><span class="sig-name descname"><span class="pre">convert_symbols_to_atomic_numbers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element_symbols</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.probability_density.convert_symbols_to_atomic_numbers" title="Link to this definition">¶</a></dt>
+<dd><p>Convert element symbols to atomic numbers.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.probability_density.divide_chunks">
+<span class="sig-prename descclassname"><span class="pre">target.probability_density.</span></span><span class="sig-name descname"><span class="pre">divide_chunks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">l</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.probability_density.divide_chunks" title="Link to this definition">¶</a></dt>
+<dd><p>Yield successive n-sized chunks from l.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.probability_density.main">
+<span class="sig-prename descclassname"><span class="pre">target.probability_density.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#target.probability_density.main" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.probability_density.parse_mask">
+<span class="sig-prename descclassname"><span class="pre">target.probability_density.</span></span><span class="sig-name descname"><span class="pre">parse_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask_str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_atoms</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.probability_density.parse_mask" title="Link to this definition">¶</a></dt>
+<dd><p>Parse a mask string like ‘0,1,2,5-10’ into a list of atom indices.</p>
+</dd></dl>
+
+<section id="output-formats">
+<h3>Output Formats<a class="headerlink" href="#output-formats" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>XSF Files</strong>: For visualization in VESTA, XCrySDen</p></li>
+<li><p><strong>Grid Data</strong>: For custom visualization and analysis</p></li>
+</ul>
+</section>
+</section>
+<section id="vdos-analysis">
+<h2>VDOS Analysis<a class="headerlink" href="#vdos-analysis" title="Link to this heading">¶</a></h2>
+<p>Vibrational Density of States calculations.</p>
+<p id="module-target.vdos">Compute and plot VDOS from .in/.pos/.cel[/.evp] using SAMOS.</p>
+<p>This script reads Quantum ESPRESSO trajectory files, constructs ASE Atoms objects with velocities,
+computes the vibrational density of states (VDOS) using the SAMOS library, and plots/saves the results.</p>
+<dl class="simple">
+<dt>Usage example:</dt><dd><p>python vdos.py –in_file LiAlPS.in –pos_file LiAlPS.pos –cel_file LiAlPS.cel –elements Li Al P S</p>
+</dd>
+</dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="target.vdos.build_trajectory">
+<span class="sig-prename descclassname"><span class="pre">target.vdos.</span></span><span class="sig-name descname"><span class="pre">build_trajectory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cel_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evp_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nframes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.00193511</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.vdos.build_trajectory" title="Link to this definition">¶</a></dt>
+<dd><p>Build a trajectory as a list of ASE Atoms objects with velocities.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>in_file (str): Path to .in file (species).
+pos_file (str): Path to .pos file (positions).
+cel_file (str): Path to .cel file (cell parameters).
+evp_file (str, optional): Path to .evp file (timing).
+start (float): Start time in ps.
+nframes (int): Number of frames to use (0=all).
+stride (int): Stride for frames.
+time_interval (float): Default time between frames (ps) if no .evp.</p>
+</dd>
+<dt>Returns:</dt><dd><p>list: List of ASE Atoms objects with velocities.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.vdos.compute_plot_vdos">
+<span class="sig-prename descclassname"><span class="pre">target.vdos.</span></span><span class="sig-name descname"><span class="pre">compute_plot_vdos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frames</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elements</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.00193511</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.vdos.compute_plot_vdos" title="Link to this definition">¶</a></dt>
+<dd><p>Compute and plot the vibrational density of states (VDOS) for the trajectory.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>frames (list): List of ASE Atoms objects with velocities.
+prefix (str): Output file prefix for plots.
+elements (list or None): List of elements to plot VDOS for (default: Li, Al, P, S).
+time_interval (float): Time interval between frames in ps.</p>
+</dd>
+<dt>Returns:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.vdos.convert_symbols_to_atomic_numbers">
+<span class="sig-prename descclassname"><span class="pre">target.vdos.</span></span><span class="sig-name descname"><span class="pre">convert_symbols_to_atomic_numbers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">symbols</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.vdos.convert_symbols_to_atomic_numbers" title="Link to this definition">¶</a></dt>
+<dd><p>Convert a list of element symbols to atomic numbers.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>symbols (list): List of element symbols (str).</p>
+</dd>
+<dt>Returns:</dt><dd><p>list: List of atomic numbers (int).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.vdos.finite_diff_velocities">
+<span class="sig-prename descclassname"><span class="pre">target.vdos.</span></span><span class="sig-name descname"><span class="pre">finite_diff_velocities</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos_arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">times</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.vdos.finite_diff_velocities" title="Link to this definition">¶</a></dt>
+<dd><p>Compute velocities using finite differences from positions and times.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>pos_arr (np.ndarray): Array of shape (Nframes, natoms, 3) with positions.
+times (list): List of time values (ps), length Nframes.</p>
+</dd>
+<dt>Returns:</dt><dd><p>np.ndarray: Array of velocities, same shape as pos_arr.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.vdos.main">
+<span class="sig-prename descclassname"><span class="pre">target.vdos.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#target.vdos.main" title="Link to this definition">¶</a></dt>
+<dd><p>Main function for VDOS computation and plotting.
+Parses command-line arguments, builds trajectory, and generates VDOS plots.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.vdos.read_cel">
+<span class="sig-prename descclassname"><span class="pre">target.vdos.</span></span><span class="sig-name descname"><span class="pre">read_cel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cel_file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.vdos.read_cel" title="Link to this definition">¶</a></dt>
+<dd><p>Read cell parameters from a .cel file.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>cel_file (str): Path to .cel file.</p>
+</dd>
+<dt>Returns:</dt><dd><p>list: List of 4-line blocks (cell info per frame).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.vdos.read_evp">
+<span class="sig-prename descclassname"><span class="pre">target.vdos.</span></span><span class="sig-name descname"><span class="pre">read_evp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">evp_file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.vdos.read_evp" title="Link to this definition">¶</a></dt>
+<dd><p>Read time steps from a .evp file.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>evp_file (str): Path to .evp file.</p>
+</dd>
+<dt>Returns:</dt><dd><p>list: List of times (float).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="target.vdos.read_pos">
+<span class="sig-prename descclassname"><span class="pre">target.vdos.</span></span><span class="sig-name descname"><span class="pre">read_pos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">natoms</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.vdos.read_pos" title="Link to this definition">¶</a></dt>
+<dd><p>Read atomic positions from a .pos file.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>pos_file (str): Path to .pos file.
+natoms (int): Number of atoms.</p>
+</dd>
+<dt>Returns:</dt><dd><p>list: List of (natoms+1)-line blocks (positions per frame).</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="utility-modules">
+<h2>Utility Modules<a class="headerlink" href="#utility-modules" title="Link to this heading">¶</a></h2>
+<section id="module-target.json_serializable">
+<span id="json-serialization"></span><h3>JSON Serialization<a class="headerlink" href="#module-target.json_serializable" title="Link to this heading">¶</a></h3>
+<section id="json-serialization-utilities-for-cpdyana">
+<h4>JSON Serialization Utilities for CPDyAna<a class="headerlink" href="#json-serialization-utilities-for-cpdyana" title="Link to this heading">¶</a></h4>
+<p>This module provides utility functions for converting complex Python data structures
+(particularly those containing NumPy arrays) into JSON-serializable formats.</p>
+<p>CPDyAna analysis functions often return nested dictionaries containing NumPy arrays,
+which cannot be directly serialized to JSON. This module handles the conversion
+by recursively traversing data structures and converting NumPy arrays to lists
+while preserving the overall structure.</p>
+<dl class="simple">
+<dt>Functions:</dt><dd><p>convert_to_serializable: Main conversion function for nested data structures</p>
+</dd>
+</dl>
+<p>Common use cases:
+- Saving analysis results to JSON files for later processing
+- Preparing data for web APIs or data exchange
+- Creating human-readable output files</p>
+<p>Author: CPDyAna Development Team
+Version: 01-02-2024</p>
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="target.json_serializable.convert_to_serializable">
+<span class="sig-prename descclassname"><span class="pre">target.json_serializable.</span></span><span class="sig-name descname"><span class="pre">convert_to_serializable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#target.json_serializable.convert_to_serializable" title="Link to this definition">¶</a></dt>
+<dd><p>Recursively convert data structures containing NumPy arrays to JSON-serializable format.</p>
+<p>This function handles nested dictionaries, lists, and NumPy arrays by converting
+them to native Python types that can be serialized to JSON. The function preserves
+the structure of nested data while ensuring all elements are JSON-compatible.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>obj: Input object to convert. Can be:</dt><dd><ul class="simple">
+<li><p>dict: Nested dictionary (values will be recursively converted)</p></li>
+<li><p>list/tuple: List or tuple (elements will be recursively converted)</p></li>
+<li><p>np.ndarray: NumPy array (converted to list)</p></li>
+<li><p>np.number: NumPy scalar (converted to Python number)</p></li>
+<li><p>Other types: Returned unchanged if JSON-serializable</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>JSON-serializable object with the same structure as input but with
+NumPy arrays converted to lists and NumPy scalars to Python numbers.</p>
+</dd>
+<dt>Raises:</dt><dd><p>TypeError: If object contains non-serializable types that cannot be converted.</p>
+</dd>
+<dt>Example:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+<span class="gp">... </span>    <span class="s1">&#39;msd&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">]),</span>
+<span class="gp">... </span>    <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span>
+<span class="gp">... </span>    <span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;temp&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="mf">800.0</span><span class="p">)},</span>
+<span class="gp">... </span>    <span class="s1">&#39;elements&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Li&#39;</span><span class="p">,</span> <span class="s1">&#39;Na&#39;</span><span class="p">]</span>
+<span class="gp">... </span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">serializable</span> <span class="o">=</span> <span class="n">convert_to_serializable</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;results.json&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">serializable</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt>Note:</dt><dd><ul class="simple">
+<li><p>NumPy arrays are converted to nested lists preserving dimensionality</p></li>
+<li><p>NumPy scalars (np.float64, np.int32, etc.) become Python float/int</p></li>
+<li><p>The function handles arbitrary nesting depth</p></li>
+<li><p>Original data structure is not modified (deep copy behavior)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-target.const">
+<span id="constants"></span><h3>Constants<a class="headerlink" href="#module-target.const" title="Link to this heading">¶</a></h3>
+<section id="physical-constants-and-unit-conversions-for-cpdyana">
+<h4>Physical Constants and Unit Conversions for CPDyAna<a class="headerlink" href="#physical-constants-and-unit-conversions-for-cpdyana" title="Link to this heading">¶</a></h4>
+<p>This module defines fundamental physical constants and unit conversion factors
+used throughout the CPDyAna molecular dynamics analysis package.</p>
+<p>Constants are organized by category:
+- Length conversions (Bohr, Angstrom, meters)
+- Time conversions (atomic units, picoseconds, seconds) 
+- Energy conversions (Hartree, eV, Joules)
+- Diffusion coefficient conversions
+- Physical constants (Boltzmann constant, electron charge, etc.)</p>
+<p>All values are given in SI base units unless otherwise specified.</p>
+<dl class="simple">
+<dt>Usage:</dt><dd><p>from target.const import BOHR_TO_ANGSTROM, KB_BOLTZMANN</p>
+</dd>
+</dl>
+<p>Author: CPDyAna Development Team
+Version: 01-02-2024</p>
+</section>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">CPDyAna</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024, Vinay Maithani.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/docs/target.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
