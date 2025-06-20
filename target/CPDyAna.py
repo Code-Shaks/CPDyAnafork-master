@@ -169,6 +169,7 @@ def Job(temperature, diffusing_elements, diffusivity_direction_choices, diffusiv
             
             # Initialize MSD data dictionary
             msd_data_dict = {}
+            ngp_data_dict = {}
             
             # Calculate Mean Square Displacement if requested
             if mode == "msd":
@@ -177,6 +178,10 @@ def Job(temperature, diffusing_elements, diffusivity_direction_choices, diffusiv
                                           conduct_ions_array, dt, Last_term, initial_slope_time, 
                                           final_slope_time, block)
             
+            if mode == "ngp":
+                ngp_data_dict = cal.calculate_ngp([ele], diffusivity_direction_choices, 
+                                         pos_full, conduct_rectified_structure_array, 
+                                         conduct_ions_array, dt)
             # Initialize correlation function dictionary
             evaluated_corr_dict = {}
             
@@ -239,8 +244,8 @@ def Job(temperature, diffusing_elements, diffusivity_direction_choices, diffusiv
 
             # Store processed data in dictionaries with (temperature, element) keys
             temp_input_dict[(temp, ele)] = {'evaluated_data': ele_dict, 'evaluated_corr': evaluated_corr_dict}
-            temp_output_dict[(temp, ele)] = {'dt_dict': dt, 'msd_data': msd_data_dict, 'evaluated_corr': evaluated_corr_dict}
-            
+            temp_output_dict[(temp, ele)] = {'dt_dict': dt, 'msd_data': msd_data_dict, 'ngp_data': ngp_data_dict, 'evaluated_corr': evaluated_corr_dict}
+
     return temp_input_dict, temp_output_dict
 
 def parser():
@@ -286,6 +291,7 @@ def parser():
 
     # Define subcommand parsers
     msd = sub.add_parser("msd", help="Mean Square Displacement analysis")
+    ngp = sub.add_parser("ngp", help="Non-Gaussian Parameter analysis for dynamic heterogeneity")
     vh = sub.add_parser("vh", help="Van Hove correlation function analysis")
     ionic_density = sub.add_parser("ionic-density", help="3D ionic density mapping")
     rdf = sub.add_parser("rdf", help="Radial Distribution Function calculation")
@@ -293,7 +299,7 @@ def parser():
     vdos = sub.add_parser("vdos", help="Vibrational Density of States calculation")
 
     # Add common arguments for MSD and Van Hove analyses
-    for sp in (msd, vh):
+    for sp in (msd, vh, ngp):
         sp.add_argument(
             "-T", "--temperature",
             nargs="+", type=float,
@@ -420,6 +426,28 @@ def parser():
         "--save-path",
         default="van_hove_plot.png",
         help="File path to save Van Hove plot (default: 'van_hove_plot.png')"
+    )
+    # Non-Gaussian Parameter analysis arguments
+    ngp.add_argument(
+        "--plot-data",
+        action="append", nargs="+",
+        default=None,
+        help="Specific data to plot as tuples: T element direction. If omitted, plot all."
+    )
+    ngp.add_argument(
+        "--first-time",
+        type=float, default=2.0,
+        help="Start time for NGP plot display in picoseconds (default: 2.0)"
+    )
+    ngp.add_argument(
+        "--last-time",
+        type=float, default=200.0,
+        help="End time for NGP plot display in picoseconds (default: 200.0)"
+    )
+    ngp.add_argument(
+        "--save-path",
+        default="NGP.jpg",
+        help="File path to save NGP plot (default: 'NGP.jpg')"
     )
 
     # Ionic density analysis arguments
@@ -632,7 +660,7 @@ def main():
     a = parser()
 
     # Handle MSD and Van Hove correlation analyses
-    if a.mode in ("msd", "vh"):
+    if a.mode in ("msd", "vh", "ngp"):
         # Discover input files in the data directory
         pos_files = sorted(glob.glob(os.path.join(a.data_dir, "*.pos")))
         cel_files = sorted(glob.glob(os.path.join(a.data_dir, "*.cel")))
@@ -690,6 +718,23 @@ def main():
         print(f"Generating MSD plot with {len(pdata)} data series...")
         p.msd_plot(data_source, pdata, a.first_time, a.last_time, save_path=a.save_path)
         print(f"MSD plot saved to: {a.save_path}")
+    
+    elif a.mode == "ngp":
+        # Determine which data to plot
+        if a.plot_data is None:
+            # Plot all combinations if not specified
+            Plot_data_ngp = []
+            for (temp, ele) in [(t, e) for t in a.temperature for e in a.diffusing_elements]:
+                for direction in a.diffusivity_direction_choices:
+                    Plot_data_ngp.append([temp, ele, direction])
+            pdata = Plot_data_ngp
+        else:
+            # Use user-specified plot data
+            pdata = [[float(x[0]), x[1], x[2]] for x in a.plot_data]
+        
+        print(f"Generating NGP plot with {len(pdata)} data series...")
+        p.ngp_plot(data_source, pdata, a.first_time, a.last_time, save_path=a.save_path)
+        print(f"NGP plot saved to: {a.save_path}")
 
     # Generate Van Hove correlation plots
     elif a.mode == "vh":

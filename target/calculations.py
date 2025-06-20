@@ -330,3 +330,121 @@ def calculate_msd(diffusing_elements, diffusivity_direction_choices, diffusivity
                 result_dict[element].setdefault(key_diff_err, []).append(diffusivity_sem)
     
     return result_dict
+
+def calc_ngp_tracer(r, d, d_idx):
+    """
+    Calculate Non-Gaussian Parameter (NGP) for tracer diffusion.
+    
+    The NGP, alpha_2(t), measures dynamic heterogeneity in particle diffusion
+    as per the formula: alpha_2(t) = [d * <[r(t)-r(0)]^4>] / [(d+2) * <[r(t)-r(0)]^2>^2] - 1
+    
+    Parameters
+    ----------
+    r : np.ndarray
+        Position array of shape (time_steps, 3) for one particle.
+    d : int
+        Dimensionality of the system (1, 2, or 3 based on direction).
+    d_idx : np.ndarray
+        Array of time lag indices.
+    
+    Returns
+    -------
+    np.ndarray
+        Array of NGP values for specified time lags.
+    """
+    step = r.shape[0]
+    ngp = np.zeros(len(d_idx))
+    
+    for i, delta in enumerate(d_idx):
+        # Calculate displacements for all possible time origins
+        disp = r[delta:, :] - r[:-delta, :]
+        # Calculate r^2 and r^4 for the displacement
+        r2 = np.sum(disp**2, axis=1)  # Shape: (step - delta,)
+        r4 = r2**2  # Fourth power of displacement magnitude
+        
+        # Compute averages over time origins
+        mean_r2 = np.mean(r2)
+        mean_r4 = np.mean(r4)
+        
+        # Compute NGP using the formula
+        if mean_r2 > 0:
+            numerator = d * mean_r4
+            denominator = (d + 2) * (mean_r2**2)
+            ngp[i] = (numerator / denominator) - 1
+        else:
+            ngp[i] = 0.0  # Avoid division by zero
+    
+    return ngp
+
+def calculate_ngp(diffusing_elements, diffusivity_direction_choices, pos_full, conduct_rectified_structure_array, conduct_ions_array, dt):
+    """
+    Calculate Non-Gaussian Parameter (NGP) for specified elements and directions.
+    
+    This function computes the NGP to measure dynamic heterogeneity in particle diffusion
+    for different elements and spatial directions. Results are organized in a structured dictionary.
+    
+    Parameters
+    ----------
+    diffusing_elements : list
+        Element symbols to analyze (e.g., ['Li', 'Na']).
+    diffusivity_direction_choices : list
+        Spatial directions for analysis (e.g., ['X', 'Y', 'Z', 'XY', 'XZ', 'YZ', 'XYZ']).
+    pos_full : np.ndarray
+        Full position trajectory array.
+    conduct_rectified_structure_array : np.ndarray
+        Unwrapped position arrays organized by direction and element.
+    conduct_ions_array : list
+        Ion indices for each element and direction.
+    dt : np.ndarray
+        Time step array in picoseconds.
+    
+    Returns
+    -------
+    dict
+        Nested dictionary with structure:
+        {element: {direction: {
+            'ngp_data': NGP values array,
+            'time_data': Time values array
+        }}}
+    
+    Example
+    -------
+    >>> ngp_results = calculate_ngp(
+    ...     ['Li'], ['XYZ'],
+    ...     pos_array, rectified_pos, ion_indices, time_steps
+    ... )
+    >>> print(f"Li NGP: {ngp_results['Li']['XYZ']['ngp_data'][:5]}")
+    """
+    result_dict = {}
+    
+    # Loop over each diffusing element
+    for ele in range(len(diffusing_elements)):
+        element = diffusing_elements[ele]
+        result_dict[element] = {}
+        
+        # Loop over each spatial direction
+        for direction_idx, direction in enumerate(diffusivity_direction_choices):
+            # Determine dimensionality for NGP calculation
+            d = {'XYZ': 3, 'XY': 2, 'YZ': 2, 'ZX': 2, 'X': 1, 'Y': 1, 'Z': 1}[direction]
+            suffix = '' if direction == 'XYZ' else f'_{direction}'
+            posit = conduct_rectified_structure_array[direction_idx, :, :, :]
+            step_counts = len(posit[0, :, 0])
+            print(f"[DEBUG] posit shape for NGP: {posit.shape}")
+            print(f"[DEBUG] step_counts for NGP: {step_counts}")
+            
+            # Calculate NGP for each particle and average
+            num_mobile_ions = posit.shape[0]
+            ngp_ions = np.empty([0, len(np.arange(1, step_counts, 1))])
+            for i in range(num_mobile_ions):
+                ngp_i = calc_ngp_tracer(posit[i, :, :], d, np.arange(1, step_counts, 1))
+                ngp_ions = np.append(ngp_ions, ngp_i.reshape(1, len(np.arange(1, step_counts, 1))), axis=0)
+            ngp_array = np.average(ngp_ions, axis=0)
+            
+            print(f"[DEBUG] NGP array length: {len(ngp_array)}")
+            print(f"[DEBUG] dt length for NGP: {len(dt)}")
+            
+            # Store results in nested dictionary structure
+            key_ngp = f"NGP_array{suffix}"
+            result_dict[element].setdefault(key_ngp, []).append(ngp_array)
+    
+    return result_dict
