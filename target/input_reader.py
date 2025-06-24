@@ -27,6 +27,245 @@ Version: 01-02-2024
 
 import numpy as np
 import pandas as pd
+import os
+import glob
+
+from samos_modules.samos_io import read_lammps_dump
+
+from ase import Atoms
+from ase.io import read, write
+
+def detect_trajectory_format(data_dir):
+    """
+    Automatically detect trajectory file formats in the data directory.
+    
+    Returns:
+        dict: Format information with file paths
+    """
+    format_info = {
+        'format': None,
+        'pos_files': [],
+        'cel_files': [],
+        'evp_files': [],
+        'ion_files': [],
+        'lammps_files': []
+    }
+    
+    # Check for LAMMPS trajectory files
+    lammps_patterns = ['*.lammpstrj', '*.dump', '*.lmp']
+    for pattern in lammps_patterns:
+        lammps_files = sorted(glob.glob(os.path.join(data_dir, pattern)))
+        if lammps_files:
+            format_info['format'] = 'lammps'
+            format_info['lammps_files'] = lammps_files
+            return format_info
+    
+    # Check for Quantum ESPRESSO files
+    qe_files = {
+        'pos': sorted(glob.glob(os.path.join(data_dir, "*.pos"))),
+        'cel': sorted(glob.glob(os.path.join(data_dir, "*.cel"))),
+        'evp': sorted(glob.glob(os.path.join(data_dir, "*.evp"))),
+        'ion': sorted(glob.glob(os.path.join(data_dir, "*.in")))
+    }
+    
+    if all(qe_files.values()):
+        format_info['format'] = 'quantum_espresso'
+        format_info.update({f'{k}_files': v for k, v in qe_files.items()})
+        return format_info
+    
+    # Check for generic formats supported by ASE
+    ase_patterns = ['*.xyz', '*.extxyz', '*.traj']
+    for pattern in ase_patterns:
+        ase_files = sorted(glob.glob(os.path.join(data_dir, pattern)))
+        if ase_files:
+            format_info['format'] = 'ase_compatible'
+            format_info['trajectory_files'] = ase_files
+            return format_info
+    
+    return format_info
+
+def read_lammps_trajectory(lammps_file, elements=None, timestep=None,
+                           thermo_file=None, Conv_factor=1.0):
+    """
+    Read LAMMPS trajectory and convert to CPDyAna format.
+    
+    Args:
+        lammps_file (str): Path to LAMMPS dump file
+        elements (list): Element symbols for atom types
+        timestep (float): Time step in picoseconds
+        thermo_file (str): Optional thermodynamic output file
+        Conv_factor (float): Unit conversion factor
+        
+    Returns:
+        tuple: (positions, steps, dt, time, cell_params, thermo_data)
+    """
+    print(f"\n=== LAMMPS FILE PROCESSING DEBUG ===")
+    print(f"Reading LAMMPS file: {lammps_file}")
+    print(f"Element types provided: {elements}")
+    print(f"Timestep: {timestep} ps")
+    
+    # Use SAMOS I/O to read LAMMPS trajectory, passing a flag to retrieve sorted atom IDs
+    trajectory, sorted_atom_ids = read_lammps_dump(
+        lammps_file,
+        types=elements,
+        timestep=timestep,
+        thermo_file=thermo_file,
+        f_conv=Conv_factor,
+        e_conv=Conv_factor,
+        quiet=False,
+        return_sorted_atom_ids=True  # Custom flag to return sorted atom IDs
+    )
+    
+    # Extract trajectory data
+    positions = trajectory.get_positions()  # Shape: (n_frames, n_atoms, 3)
+    cells = trajectory.get_cells()  # Shape: (n_frames, 3, 3)
+    
+    # Create array for unwrapped positions
+    unwrapped = np.copy(positions)
+    
+    # Create array to track total shifts for each atom
+    n_frames, n_atoms, _ = positions.shape
+    shifts = np.zeros((n_atoms, 3))
+    print(f"Unwrapping {n_frames} frames for {n_atoms} atoms...")
+    
+    # Unwrap positions
+    for frame in range(1, n_frames):
+        for atom in range(n_atoms):
+            # Calculate displacement from previous frame
+            disp = positions[frame, atom] - positions[frame-1, atom]
+            # Check for boundary crossings in each dimension
+            for dim in range(3):
+                box_length = cells[frame, dim, dim]  # Box length in this dimension
+                # If displacement is more than half box length, it's a boundary crossing
+                if abs(disp[dim]) > box_length/2:
+                    # Calculate shift (positive or negative box length)
+                    shift = -np.sign(disp[dim]) * box_length
+                    # Track the total shift for this atom
+                    shifts[atom, dim] += shift
+            # Apply accumulated shifts to get unwrapped position
+            unwrapped[frame, atom] = positions[frame, atom] + shifts[atom]
+    print(f"Unwrapping complete. Maximum displacement: {np.max(np.linalg.norm(shifts, axis=1)):.2f} Å")
+    
+    # Print displacement information
+    total_displacement = np.linalg.norm(unwrapped[-1] - unwrapped[0], axis=1)
+    print(f"Mean total displacement (unwrapped): {np.mean(total_displacement):.3f} Å")
+    print(f"Max total displacement (unwrapped): {np.max(total_displacement):.3f} Å")
+    
+    # Print trajectory information
+    print(f"\n=== TRAJECTORY STATISTICS ===")
+    print(f"Number of frames: {n_frames}")
+    print(f"Number of atoms: {n_atoms}")
+    print(f"Total trajectory duration: {n_frames * timestep:.3f} ps")
+    
+    # Debug output for cell parameters and atomic positions for ALL frames
+    print(f"\n=== CELL PARAMETERS AND ATOMIC POSITIONS FOR ALL FRAMES ===")
+    for frame in range(n_frames):
+        print(f"\nFrame {frame} (Timestep: {frame * timestep if timestep else frame}):")
+        print(f"Cell parameters:")
+        print(cells[frame])
+        print(f"Atomic positions (first 5 and last 5 atoms to confirm ascending atom ID order):")
+        display_limit = min(5, n_atoms)  # Limit to first 5 atoms
+        for atom_idx in range(display_limit):
+            atom_id = sorted_atom_ids[atom_idx]  # Use actual sorted atom ID from file
+            pos = positions[frame, atom_idx, :]  # Positions for current frame
+            print(f"Atom ID {atom_id}: Position = {pos}")
+        if n_atoms > 10:  # Show last 5 atoms if there are more than 10 atoms
+            for atom_idx in range(max(display_limit, n_atoms - 5), n_atoms):
+                atom_id = sorted_atom_ids[atom_idx]  # Use actual sorted atom ID from file
+                pos = positions[frame, atom_idx, :]  # Positions for current frame
+                print(f"Atom ID {atom_id}: Position = {pos}")
+        else:
+            print(f"(Fewer than 10 atoms, showing all available above)")
+        print(f"Note: Atom IDs are extracted from the LAMMPS file and sorted in ascending order in the trajectory array.")
+    
+    # Print volume information
+    volumes = [np.linalg.det(cell) for cell in cells]
+    print(f"\n=== CELL VOLUMES ===")
+    print(f"Initial volume: {volumes[0]:.3f} Å³")
+    print(f"Final volume: {volumes[-1]:.3f} Å³")
+    print(f"Volume change: {(volumes[-1]-volumes[0])/volumes[0]*100:.3f}%")
+    
+    # Print atomic position samples (already included, but kept for completeness)
+    print(f"\n=== ATOMIC POSITIONS SAMPLE ===")
+    print(f"First atom, first frame: {positions[0,0,:]}")
+    print(f"First atom, last frame: {positions[-1,0,:]}")
+    if n_atoms > 1:
+        print(f"Last atom, first frame: {positions[0,-1,:]}")
+        print(f"Last atom, last frame: {positions[-1,-1,:]}")
+    
+    # Print atom displacement statistics
+    displacements = positions[-1] - positions[0]  # Last frame - first frame
+    total_disp = np.linalg.norm(displacements, axis=1)
+    print(f"\n=== ATOM DISPLACEMENT STATISTICS ===")
+    print(f"Mean atom displacement: {np.mean(total_disp):.3f} Å")
+    print(f"Max atom displacement: {np.max(total_disp):.3f} Å")
+    print(f"Min atom displacement: {np.min(total_disp):.3f} Å")
+    
+    # Reshape positions to match CPDyAna format (n_atoms, n_frames, 3)
+    pos_cpdyana = np.transpose(unwrapped, (1, 0, 2))  # Use unwrapped positions here
+    
+    # Flatten cell parameters to match .cel file format
+    cell_params = np.array([cell.flatten() for cell in cells])
+    
+    # Generate time arrays
+    if timestep:
+        time_array = np.arange(n_frames) * timestep
+        dt_array = np.diff(time_array)
+    else:
+        time_array = np.arange(n_frames)
+        dt_array = np.ones(n_frames - 1)
+    
+    # Extract thermodynamic data if available
+    thermo_data = {}
+    if hasattr(trajectory, 'get_pot_energies'):
+        try:
+            thermo_data['potential_energy'] = trajectory.get_pot_energies()
+            print(f"\n=== ENERGY DATA AVAILABLE ===")
+        except:
+            pass
+    if hasattr(trajectory, 'get_stress'):
+        try:
+            thermo_data['stress'] = trajectory.get_stress()
+            print(f"\n=== STRESS DATA AVAILABLE ===")
+        except:
+            pass
+    
+    print(f"\n=== PROCESSING COMPLETE ===")
+    xyz_traj = []
+    for i in range(n_frames):
+        coords = pos_cpdyana[:, i, :]
+        cell = cell_params[i].reshape(3, 3)
+        atoms = Atoms(["X"] * pos_cpdyana.shape[0],
+                      positions=coords,
+                      cell=cell,
+                      pbc=True)
+        atoms.info['step'] = time_array[i]
+        xyz_traj.append(atoms)
+
+    debug_path = os.path.join(os.path.dirname(lammps_file), "cpdyana_debug.xyz")
+    write(debug_path, xyz_traj, format="extxyz")
+    print(f"Intermediate CPDyAna XYZ written to {debug_path}")
+    return (pos_cpdyana, n_frames, dt_array, time_array,
+            cell_params, thermo_data, volumes)
+
+def read_ion_file_universal(ion_file_or_elements):
+    """
+    Universal ion reader that handles both .in files and element lists.
+    
+    Args:
+        ion_file_or_elements: Either path to .in file or list of elements
+        
+    Returns:
+        list: Ion symbols
+    """
+    if isinstance(ion_file_or_elements, str):
+        # Original QE .in file reader
+        return read_ion_file(ion_file_or_elements)
+    elif isinstance(ion_file_or_elements, list):
+        # Direct element list from LAMMPS
+        return ion_file_or_elements
+    else:
+        raise ValueError("Invalid ion file or elements specification")
 
 def read_ion_file(ion_file):
     """
