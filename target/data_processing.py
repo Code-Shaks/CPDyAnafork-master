@@ -35,113 +35,111 @@ def segmenter_func(first_term, last, pos_full, dt_full, time_full, cell_full, ke
                    tot_energy_ke_ion_full, tot_energy_ke_ion_ke_elec_full, vol_full, pressure_full):
     """
     Extracts a segment of the trajectory and associated properties between first_term and last_term.
-
-    Parameters:
-        first_term (int): Starting index for the segment.
-        last (int): Ending index for the segment.
-        pos_full, dt_full, ... (arrays): Full arrays of trajectory and property data.
-
-    Returns:
-        Tuple of arrays: (pos, step_counts, dt, time, cell, ke_elec, cell_temp, ion_temp, 
-                          tot_energy, enthalpy, tot_energy_ke_ion, tot_energy_ke_ion_ke_elec, vol, pressure)
     """
-    # Adjust last_term based on a 0.7 fraction of the number of steps, if needed
-    last_term = int(last / 0.7) if last <= int(0.7 * len(pos_full[0, :, 0])) else int(last)
-    pos = pos_full[:, first_term:last_term, :]
-    step_counts = len(pos[0, :, 0])
-    dt = dt_full[first_term:last_term - 1]
-    time = time_full[first_term:last_term]
-    cell = cell_full[first_term:last_term, :]
-    ke_elec = ke_elec_full[first_term:last_term]
-    cell_temp = cell_temp_full[first_term:last_term]
-    ion_temp = ion_temp_full[first_term:last_term]
-    tot_energy = tot_energy_full[first_term:last_term]
-    enthalpy = enthalpy_full[first_term:last_term]
-    tot_energy_ke_ion = tot_energy_ke_ion_full[first_term:last_term]
-    tot_energy_ke_ion_ke_elec = tot_energy_ke_ion_ke_elec_full[first_term:last_term]
-    vol = vol_full[first_term:last_term]
-    pressure = pressure_full[first_term:last_term]
+    # Ensure indices are valid and within bounds
+    n_frames = pos_full.shape[1]
+    first_term = max(0, first_term)
+    last_term = min(last, n_frames - 1)
+    if last_term <= first_term:
+        last_term = n_frames - 1
+
+    pos = pos_full[:, first_term:last_term+1, :]
+    step_counts = pos.shape[1]
+    dt = dt_full[first_term:last_term] if len(dt_full) >= last_term else dt_full[first_term:]
+    time = time_full[first_term:last_term+1]
+    cell = cell_full[first_term:last_term+1, :]
+    ke_elec = ke_elec_full[first_term:last_term+1]
+    cell_temp = cell_temp_full[first_term:last_term+1]
+    ion_temp = ion_temp_full[first_term:last_term+1]
+    tot_energy = tot_energy_full[first_term:last_term+1]
+    enthalpy = enthalpy_full[first_term:last_term+1]
+    tot_energy_ke_ion = tot_energy_ke_ion_full[first_term:last_term+1]
+    tot_energy_ke_ion_ke_elec = tot_energy_ke_ion_ke_elec_full[first_term:last_term+1]
+    vol = vol_full[first_term:last_term+1]
+    pressure = pressure_full[first_term:last_term+1]
     return (pos, step_counts, dt, time, cell, ke_elec, cell_temp, ion_temp, 
             tot_energy, enthalpy, tot_energy_ke_ion, tot_energy_ke_ion_ke_elec, vol, pressure)
 
 # Function to evaluate and correct position data for diffusivity analysis
 def data_evaluator(diffusivity_direction_choices, target_elements, pos, total_ion_array, steps):
     """
-    Processes position data for diffusivity analysis, including drift correction and selection of mobile/framework ions.
-
+    Evaluates and prepares position data for diffusivity analysis.
+    
     Parameters:
-        diffusivity_direction_choices (list of str): Directions to analyze (e.g., ["XYZ", "XY", "Z"]).
-        target_elements (list): Elements considered as mobile ions (e.g., ["Li"]).
-        pos (ndarray): Position array (n_atoms, n_steps, 3).
-        total_ion_array (list): List of element symbols for all atoms.
-        steps (int): Number of time steps.
-
+        diffusivity_direction_choices (list): List of directions for diffusion analysis ('X', 'Y', 'Z', etc.)
+        target_elements (list): List of elements to extract
+        pos (numpy.ndarray): Position array with shape (n_atoms, n_frames, 3)
+        total_ion_array (list): List of atom types/elements
+        steps (int): Number of time steps
+        
     Returns:
-        Tuple of arrays containing:
-            - position_data_list: Position data for each direction.
-            - drifted_rectified_structure_list: Drift-corrected positions.
-            - conductor_indices_list: Indices of mobile ions.
-            - framework_indices_list: Indices of framework ions.
-            - framework_pos_list: Positions of framework ions.
-            - mobile_pos_list: Positions of mobile ions.
-            - mobile_drifted_rectified_structure_list: Drift-corrected positions of mobile ions.
-            - framework_drifted_rectified_structure_list: Drift-corrected positions of framework ions.
+        tuple: Various arrays needed for diffusion analysis
     """
-    position_data_list, drifted_rectified_structure_list = [], []
-    conductor_indices_list, framework_indices_list = [], []
-    framework_pos_list, mobile_pos_list = [], []
-    mobile_drifted_rectified_structure_list, framework_drifted_rectified_structure_list = [], []
+    n_atoms = pos.shape[0]
+    n_frames = pos.shape[1]
+    n_directions = len(diffusivity_direction_choices)
     
-    for direction in diffusivity_direction_choices:
-        # Initialize position data for this direction
-        position_data = np.zeros((len(total_ion_array), steps, 3))
-        # Select the relevant components based on direction
-        if direction == "XYZ":
-            position_data = pos
-        elif direction == "XY":
-            position_data[:, :, 0:2] = pos[:, :, 0:2]
-        elif direction == "YZ":
-            position_data[:, :, 1:3] = pos[:, :, 1:3]
-        elif direction == "ZX":
-            position_data[:, :, [0, 2]] = pos[:, :, [0, 2]]
-        elif direction == "X":
-            position_data[:, :, 0] = pos[:, :, 0]
-        elif direction == "Y":
-            position_data[:, :, 1] = pos[:, :, 1]
-        elif direction == "Z":
-            position_data[:, :, 2] = pos[:, :, 2]
-        
-        # Calculate displacement from initial positions
-        disp = position_data - position_data[:, [0], :]
-        # Identify mobile (conductor) and framework ions
-        conductor_indices = [i for i, element in enumerate(total_ion_array) if element in target_elements]
-        framework_indices = [i for i in range(len(total_ion_array)) if i not in conductor_indices]
-        
-        framework_disp = disp[framework_indices, :, :]
-        framework_pos = position_data[framework_indices, :, :]
-        mobile_pos = position_data[conductor_indices, :, :]
-        
-        # Compute average drift of the framework and correct all displacements
-        drift = np.average(framework_disp, axis=0)
-        corrected_displacements = disp - drift
-        drifted_rectified_structure = position_data[:, [0], :] + corrected_displacements
-        
-        # Extract drift-corrected positions for mobile and framework ions
-        mobile_drifted_rectified_structure = drifted_rectified_structure[conductor_indices, :, :]
-        framework_drifted_rectified_structure = drifted_rectified_structure[framework_indices, :, :]
-        
-        # Collect results for this direction
-        position_data_list.append(position_data)
-        drifted_rectified_structure_list.append(drifted_rectified_structure)
-        conductor_indices_list.append(conductor_indices)
-        framework_indices_list.append(framework_indices)
-        framework_pos_list.append(framework_pos)
-        mobile_pos_list.append(mobile_pos)
-        mobile_drifted_rectified_structure_list.append(mobile_drifted_rectified_structure)
-        framework_drifted_rectified_structure_list.append(framework_drifted_rectified_structure)
+    # Create arrays to hold results
+    pos_array = np.zeros((n_directions, n_atoms, n_frames, 3))
+    rectified_structure_array = np.zeros((n_directions, n_atoms, n_frames, 3))
+    conduct_ions_array = [[] for _ in range(n_directions)]
+    frame_ions_array = [[] for _ in range(n_directions)]
+    frame_pos_array = np.zeros((n_directions, n_atoms, n_frames, 3))
+    conduct_pos_array = np.zeros((n_directions, n_atoms, n_frames, 3))
+    conduct_rectified_structure_array = np.zeros((n_directions, n_atoms, n_frames, 3))
+    frame_rectified_structure_array = np.zeros((n_directions, n_atoms, n_frames, 3))
     
-    return (np.array(position_data_list), np.array(drifted_rectified_structure_list), 
-            np.array(conductor_indices_list, dtype=object), np.array(framework_indices_list, dtype=object), 
-            np.array(framework_pos_list), np.array(mobile_pos_list), 
-            np.array(mobile_drifted_rectified_structure_list), 
-            np.array(framework_drifted_rectified_structure_list))
+    # Process each direction
+    for i, direction in enumerate(diffusivity_direction_choices):
+        # Calculate masks for selected directions
+        dim_mask = np.zeros(3, dtype=bool)
+        if 'X' in direction:
+            dim_mask[0] = True
+        if 'Y' in direction:
+            dim_mask[1] = True
+        if 'Z' in direction:
+            dim_mask[2] = True
+        
+        # Initialize arrays for this direction
+        pos_array[i, :, :, :] = pos
+        rectified_structure_array[i, :, :, :] = pos
+        
+        # Create element-specific arrays
+        conduct_indices = []
+        frame_indices = []
+        
+        # Select atoms of target elements
+        for j, element in enumerate(total_ion_array):
+            if element in target_elements:
+                conduct_indices.append(j)
+            else:
+                frame_indices.append(j)
+        
+        conduct_ions_array[i] = conduct_indices
+        frame_ions_array[i] = frame_indices
+        
+        if conduct_indices:  # Only proceed if we found matching atoms
+            # Extract position data for ions of interest
+            if frame_indices:  # If there are frame atoms
+                frame_pos_array[i, :len(frame_indices), :, :] = pos[frame_indices, :, :]
+            
+            # Extract position data for conducting ions
+            conduct_pos_array[i, :len(conduct_indices), :, :] = pos[conduct_indices, :, :]
+            
+            # Copy the rectified structures
+            conduct_rectified_structure_array[i, :len(conduct_indices), :, :] = pos[conduct_indices, :, :]
+            if frame_indices:
+                frame_rectified_structure_array[i, :len(frame_indices), :, :] = pos[frame_indices, :, :]
+            
+            # Apply directional mask if needed
+            if not all(dim_mask):
+                # Zero out dimensions not in the selected direction
+                for dim in range(3):
+                    if not dim_mask[dim]:
+                        conduct_rectified_structure_array[i, :len(conduct_indices), :, dim] = 0.0
+                        if frame_indices:
+                            frame_rectified_structure_array[i, :len(frame_indices), :, dim] = 0.0
+    
+    return (pos_array, rectified_structure_array, conduct_ions_array, frame_ions_array,
+            frame_pos_array, conduct_pos_array, conduct_rectified_structure_array,
+            frame_rectified_structure_array)
