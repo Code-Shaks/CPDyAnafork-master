@@ -38,7 +38,6 @@ from ase.io import read, write
 def detect_trajectory_format(data_dir):
     """
     Automatically detect trajectory file formats in the data directory.
-    
     Returns:
         dict: Format information with file paths
     """
@@ -50,7 +49,7 @@ def detect_trajectory_format(data_dir):
         'ion_files': [],
         'lammps_files': []
     }
-    
+
     # Check for LAMMPS trajectory files
     lammps_patterns = ['*.lammpstrj', '*.dump', '*.lmp']
     for pattern in lammps_patterns:
@@ -59,7 +58,7 @@ def detect_trajectory_format(data_dir):
             format_info['format'] = 'lammps'
             format_info['lammps_files'] = lammps_files
             return format_info
-    
+
     # Check for Quantum ESPRESSO files
     qe_files = {
         'pos': sorted(glob.glob(os.path.join(data_dir, "*.pos"))),
@@ -67,12 +66,12 @@ def detect_trajectory_format(data_dir):
         'evp': sorted(glob.glob(os.path.join(data_dir, "*.evp"))),
         'ion': sorted(glob.glob(os.path.join(data_dir, "*.in")))
     }
-    
+
     if all(qe_files.values()):
         format_info['format'] = 'quantum_espresso'
         format_info.update({f'{k}_files': v for k, v in qe_files.items()})
         return format_info
-    
+
     # Check for generic formats supported by ASE
     ase_patterns = ['*.xyz', '*.extxyz', '*.traj']
     for pattern in ase_patterns:
@@ -81,172 +80,245 @@ def detect_trajectory_format(data_dir):
             format_info['format'] = 'ase_compatible'
             format_info['trajectory_files'] = ase_files
             return format_info
-    
+
     return format_info
 
-def read_lammps_trajectory(lammps_file, elements=None, timestep=None,
-                           thermo_file=None, Conv_factor=1.0):
+def generate_analysis_recommendations(times, time_difference, n_frames, inp_array):
     """
-    Read LAMMPS trajectory and convert to CPDyAna format.
+    Generate smart analysis parameter recommendations based on trajectory characteristics.
+    """
+    total_time = times[-1] - times[0]
+    equilibration_time = max(10.0, total_time * 0.1)  # 10% or min 10 ps
+    analysis_start = equilibration_time
+    analysis_end = times[-1]
+    slope_start = equilibration_time + 5.0
+    slope_end = times[-1] - 5.0
     
-    Args:
-        lammps_file (str): Path to LAMMPS dump file
-        elements (list): Element symbols for atom types
-        timestep (float): Time step in picoseconds
-        thermo_file (str): Optional thermodynamic output file
-        Conv_factor (float): Unit conversion factor
-        
-    Returns:
-        tuple: (positions, steps, dt, time, cell_params, thermo_data)
+    # Frame indices for analysis
+    start_frame = int(analysis_start / time_difference)
+    end_frame = int(analysis_end / time_difference)
+    analysis_frames = end_frame - start_frame
+    
+    print("\n=== ANALYSIS PARAMETER RECOMMENDATIONS ===")
+    print("FOR MSD/VH/NGP ANALYSIS:")
+    print(f" --initial-time {analysis_start:.1f}")
+    print(f" --final-time {analysis_end:.1f}")
+    print(f" --initial-slope-time {slope_start:.1f}")
+    print(f" --final-slope-time {slope_end:.1f}")
+    print(f" --lammps-timestep {time_difference:.6f}")
+    
+    # Get unique elements
+    unique_elements = list(set(inp_array))
+    print(f" --diffusing-elements {' '.join(unique_elements[:3])}")  # First 3 elements
+    print(f" --lammps-elements {' '.join(unique_elements)}")
+    
+    print("\nFOR RDF ANALYSIS:")
+    print(f" --time-after-start {equilibration_time:.1f}")
+    print(f" --time-interval {time_difference:.6f}")
+    print(f" --num-frames {min(500, analysis_frames)}")
+    print(f" --central-atom {' '.join(unique_elements)}")
+    
+    print("\nFOR VAF/VDOS ANALYSIS:")
+    print(f" --start {equilibration_time:.1f}")
+    print(f" --nframes {analysis_frames}")
+    print(f" --stride 1")
+    print(f" --time-interval {time_difference:.6f}")
+
+def export_verification_trajectory(positions, cells, inp_array, times, output_path="cpdyana_verification.xyz"):
     """
-    print(f"\n=== LAMMPS FILE PROCESSING DEBUG ===")
+    Export verification trajectory for quality assurance.
+    """
+    print(f"\n=== EXPORTING VERIFICATION TRAJECTORY ===")
+    atoms_list = []
+    export_frames = min(len(positions), 100)  # First 100 frames
+    
+    for i in range(export_frames):
+        atoms = Atoms(symbols=inp_array,
+                     positions=positions[i],
+                     cell=cells[i],
+                     pbc=True)
+        atoms.info['time'] = times[i]
+        atoms.info['step'] = i
+        atoms_list.append(atoms)
+    
+    write(output_path, atoms_list, format='extxyz')
+    print(f"Verification trajectory (first {export_frames} frames) saved as '{output_path}'")
+
+def has_type_column(lammps_file):
+    # Read the first 100 lines to find the header
+    with open(lammps_file, 'r') as f:
+        for line in f:
+            if line.startswith('ITEM: ATOMS'):
+                # Example: ITEM: ATOMS id type xu yu zu
+                header = line.strip().split()[2:]
+                return 'type' in header
+    return False
+
+def read_lammps_trajectory(lammps_file, elements=None, timestep=None,
+                          thermo_file=None, Conv_factor=1.0, element_mapping=None,
+                          export_verification=False, show_recommendations=False):
+    """
+    Enhanced LAMMPS trajectory reader with test_parser improvements.
+    
+    New features:
+    - Comprehensive trajectory arrays dictionary
+    - Smart equilibration time calculation
+    - Optional trajectory verification export
+    - Analysis parameter recommendations
+    - Better thermodynamic data handling
+    """
+    
+    print(f"\n=== ENHANCED LAMMPS TRAJECTORY PROCESSING ===")
     print(f"Reading LAMMPS file: {lammps_file}")
     print(f"Element types provided: {elements}")
     print(f"Timestep: {timestep} ps")
+    print(f"Element mapping provided: {element_mapping}")
     
-    # Use SAMOS I/O to read LAMMPS trajectory, passing a flag to retrieve sorted atom IDs
-    trajectory, sorted_atom_ids = read_lammps_dump(
-        lammps_file,
-        types=elements,
+    # Use SAMOS I/O to read LAMMPS trajectory
+    has_type = has_type_column(lammps_file)
+    # Only pass types if 'type' column is present
+    kwargs = dict(
+        filename=lammps_file,
         timestep=timestep,
         thermo_file=thermo_file,
         f_conv=Conv_factor,
         e_conv=Conv_factor,
-        quiet=False,
-        return_sorted_atom_ids=True  # Custom flag to return sorted atom IDs
+        quiet=False
     )
+    if has_type and elements:
+        kwargs['types'] = elements
     
+    trajectory = read_lammps_dump(**kwargs)    
     # Extract trajectory data
     positions = trajectory.get_positions()  # Shape: (n_frames, n_atoms, 3)
     cells = trajectory.get_cells()  # Shape: (n_frames, 3, 3)
-    
-    # Create array for unwrapped positions
-    unwrapped = np.copy(positions)
-    
-    # Create array to track total shifts for each atom
     n_frames, n_atoms, _ = positions.shape
-    shifts = np.zeros((n_atoms, 3))
-    print(f"Unwrapping {n_frames} frames for {n_atoms} atoms...")
     
-    # Unwrap positions
-    for frame in range(1, n_frames):
-        for atom in range(n_atoms):
-            # Calculate displacement from previous frame
-            disp = positions[frame, atom] - positions[frame-1, atom]
-            # Check for boundary crossings in each dimension
-            for dim in range(3):
-                box_length = cells[frame, dim, dim]  # Box length in this dimension
-                # If displacement is more than half box length, it's a boundary crossing
-                if abs(disp[dim]) > box_length/2:
-                    # Calculate shift (positive or negative box length)
-                    shift = -np.sign(disp[dim]) * box_length
-                    # Track the total shift for this atom
-                    shifts[atom, dim] += shift
-            # Apply accumulated shifts to get unwrapped position
-            unwrapped[frame, atom] = positions[frame, atom] + shifts[atom]
-    print(f"Unwrapping complete. Maximum displacement: {np.max(np.linalg.norm(shifts, axis=1)):.2f} Å")
-    
-    # Print displacement information
-    total_displacement = np.linalg.norm(unwrapped[-1] - unwrapped[0], axis=1)
-    print(f"Mean total displacement (unwrapped): {np.mean(total_displacement):.3f} Å")
-    print(f"Max total displacement (unwrapped): {np.max(total_displacement):.3f} Å")
-    
-    # Print trajectory information
-    print(f"\n=== TRAJECTORY STATISTICS ===")
+    print(f"Trajectory shape: {positions.shape} (frames, atoms, xyz)")
     print(f"Number of frames: {n_frames}")
     print(f"Number of atoms: {n_atoms}")
-    print(f"Total trajectory duration: {n_frames * timestep:.3f} ps")
     
-    # Debug output for cell parameters and atomic positions for ALL frames
-    print(f"\n=== CELL PARAMETERS AND ATOMIC POSITIONS FOR ALL FRAMES ===")
-    for frame in range(n_frames):
-        print(f"\nFrame {frame} (Timestep: {frame * timestep if timestep else frame}):")
-        print(f"Cell parameters:")
-        print(cells[frame])
-        print(f"Atomic positions (first 5 and last 5 atoms to confirm ascending atom ID order):")
-        display_limit = min(5, n_atoms)  # Limit to first 5 atoms
-        for atom_idx in range(display_limit):
-            atom_id = sorted_atom_ids[atom_idx]  # Use actual sorted atom ID from file
-            pos = positions[frame, atom_idx, :]  # Positions for current frame
-            print(f"Atom ID {atom_id}: Position = {pos}")
-        if n_atoms > 10:  # Show last 5 atoms if there are more than 10 atoms
-            for atom_idx in range(max(display_limit, n_atoms - 5), n_atoms):
-                atom_id = sorted_atom_ids[atom_idx]  # Use actual sorted atom ID from file
-                pos = positions[frame, atom_idx, :]  # Positions for current frame
-                print(f"Atom ID {atom_id}: Position = {pos}")
-        else:
-            print(f"(Fewer than 10 atoms, showing all available above)")
-        print(f"Note: Atom IDs are extracted from the LAMMPS file and sorted in ascending order in the trajectory array.")
+    # Enhanced time array generation
+    try:
+        times = trajectory.get_times()
+        print(f"Time array from trajectory: {times[:5]}...{times[-5:]}")
+    except AttributeError:
+        if timestep is None:
+            raise ValueError("Timestep not provided and trajectory.get_times() is not available")
+        times = np.arange(n_frames) * timestep
+        print(f"Generated time array with timestep {timestep} ps")
     
-    # Print volume information
-    volumes = [np.linalg.det(cell) for cell in cells]
-    print(f"\n=== CELL VOLUMES ===")
-    print(f"Initial volume: {volumes[0]:.3f} Å³")
-    print(f"Final volume: {volumes[-1]:.3f} Å³")
-    print(f"Volume change: {(volumes[-1]-volumes[0])/volumes[0]*100:.3f}%")
+    # Calculate time parameters
+    dt_full = np.diff(times) if len(times) > 1 else np.array([timestep or 0.001])
+    time_difference = dt_full[0] if len(dt_full) > 0 else (timestep or 0.001)
     
-    # Print atomic position samples (already included, but kept for completeness)
-    print(f"\n=== ATOMIC POSITIONS SAMPLE ===")
-    print(f"First atom, first frame: {positions[0,0,:]}")
-    print(f"First atom, last frame: {positions[-1,0,:]}")
-    if n_atoms > 1:
-        print(f"Last atom, first frame: {positions[0,-1,:]}")
-        print(f"Last atom, last frame: {positions[-1,-1,:]}")
+    print(f"Time range: {times[0]:.3f} to {times[-1]:.3f} ps")
+    print(f"Time step: {time_difference:.6f} ps ({time_difference*1000:.3f} fs)")
+    print(f"Total simulation time: {times[-1] - times[0]:.3f} ps")
     
-    # Print atom displacement statistics
-    displacements = positions[-1] - positions[0]  # Last frame - first frame
-    total_disp = np.linalg.norm(displacements, axis=1)
-    print(f"\n=== ATOM DISPLACEMENT STATISTICS ===")
-    print(f"Mean atom displacement: {np.mean(total_disp):.3f} Å")
-    print(f"Max atom displacement: {np.max(total_disp):.3f} Å")
-    print(f"Min atom displacement: {np.min(total_disp):.3f} Å")
+    # Enhanced element mapping
+    try:
+        atom_types = trajectory.get_atom_types()
+        print(f"Retrieved atom types from trajectory: {set(atom_types)}")
+    except AttributeError:
+        print("Warning: Could not retrieve atom types from trajectory")
+        atom_types = None
     
-    # Reshape positions to match CPDyAna format (n_atoms, n_frames, 3)
-    pos_cpdyana = np.transpose(unwrapped, (1, 0, 2))  # Use unwrapped positions here
-    
-    # Flatten cell parameters to match .cel file format
-    cell_params = np.array([cell.flatten() for cell in cells])
-    
-    # Generate time arrays
-    if timestep:
-        time_array = np.arange(n_frames) * timestep
-        dt_array = np.diff(time_array)
+    # Create element array using enhanced mapping
+    if element_mapping and atom_types is not None:
+        print("Using element mapping to assign elements...")
+        inp_array = []
+        for atom_type in atom_types:
+            element = element_mapping.get(atom_type, 'H')
+            inp_array.append(element)
+        print(f"Element assignment complete. Sample: {inp_array[:10]}...")
+        print(f"Element distribution: {dict(zip(*np.unique(inp_array, return_counts=True)))}")
+    elif elements and len(elements) == n_atoms:
+        print("Using provided elements array (length matches atom count)")
+        inp_array = elements
+    elif elements:
+        print(f"Element count mismatch: Expected {n_atoms}, got {len(elements)}")
+        print("Extending element list to match atom count...")
+        inp_array = []
+        element_count = len(elements)
+        for i in range(n_atoms):
+            element_idx = i % element_count
+            inp_array.append(elements[element_idx])
+        print(f"Extended element assignment complete")
     else:
-        time_array = np.arange(n_frames)
-        dt_array = np.ones(n_frames - 1)
+        print("⚠️ Warning: No elements or mapping provided. Defaulting to 'H' for all atoms.")
+        inp_array = ['H'] * n_atoms
     
-    # Extract thermodynamic data if available
+    # Enhanced position unwrapping
+    print(f"Unwrapping {n_frames} frames for {n_atoms} atoms...")
+    unwrapped = np.copy(positions)
+    shifts = np.zeros((n_atoms, 3))
+
+    for frame in range(1, n_frames):
+        for atom in range(n_atoms):
+            disp = positions[frame, atom] - positions[frame-1, atom]
+            for dim in range(3):
+                # Use the correct box length for each frame and dimension
+                box_length = cells[frame, dim, dim]
+                # If the jump is more than half the box, it's a wrap
+                if disp[dim] > box_length / 2:
+                    shifts[atom, dim] -= box_length
+                elif disp[dim] < -box_length / 2:
+                    shifts[atom, dim] += box_length
+            unwrapped[frame, atom] = positions[frame, atom] + shifts[atom]
+    print("Position unwrapping complete.")
+
+    # Use unwrapped positions for further processing
+    positions = unwrapped
+    
+    # Convert to CPDyAna format
+    pos_full = np.transpose(unwrapped, (1, 0, 2))  # (atoms, frames, xyz)
+    cell_param_full = cells.reshape(n_frames, 9)  # Flatten 3x3 to 9-element vectors
+    
+    # Enhanced thermodynamic data generation
+    print("\n=== CREATING ENHANCED TRAJECTORY ARRAYS ===")
+    
+    # Time arrays
+    t_full = times
+    steps_full = np.arange(n_frames)
+    
+    # Mock thermodynamic data with realistic defaults
+    ke_elec_full = np.zeros(n_frames)
+    cell_temp_full = np.ones(n_frames) * 300.0  # Default 300K
+    ion_temp_full = np.ones(n_frames) * 300.0
+    tot_energy_full = np.zeros(n_frames)
+    enthalpy_full = np.zeros(n_frames)
+    tot_energy_ke_ion_full = np.zeros(n_frames)
+    tot_energy_ke_ion_ke_elec_full = np.zeros(n_frames)
+    
+    # Enhanced volume calculation
+    vol_full = np.array([np.linalg.det(cell) for cell in cells])
+    pressure_full = np.zeros(n_frames)
+    
+    print(f"pos_full shape: {pos_full.shape} (atoms, frames, xyz)")
+    print(f"cell_param_full shape: {cell_param_full.shape} (frames, 9_params)")
+    print(f"Volume range: {vol_full.min():.2f} to {vol_full.max():.2f} Å³")
+    
+    # Analysis parameter recommendations
+    if show_recommendations:
+        generate_analysis_recommendations(times, time_difference, n_frames, inp_array)
+    
+    # Optional trajectory verification export
+    if export_verification:
+        export_verification_trajectory(positions, cells, inp_array, times)
+    
+    # Extract thermodynamic data
     thermo_data = {}
     if hasattr(trajectory, 'get_pot_energies'):
         try:
             thermo_data['potential_energy'] = trajectory.get_pot_energies()
-            print(f"\n=== ENERGY DATA AVAILABLE ===")
-        except:
-            pass
-    if hasattr(trajectory, 'get_stress'):
-        try:
-            thermo_data['stress'] = trajectory.get_stress()
-            print(f"\n=== STRESS DATA AVAILABLE ===")
         except:
             pass
     
-    print(f"\n=== PROCESSING COMPLETE ===")
-    xyz_traj = []
-    for i in range(n_frames):
-        coords = pos_cpdyana[:, i, :]
-        cell = cell_params[i].reshape(3, 3)
-        atoms = Atoms(["X"] * pos_cpdyana.shape[0],
-                      positions=coords,
-                      cell=cell,
-                      pbc=True)
-        atoms.info['step'] = time_array[i]
-        xyz_traj.append(atoms)
-
-    debug_path = os.path.join(os.path.dirname(lammps_file), "cpdyana_debug.xyz")
-    write(debug_path, xyz_traj, format="extxyz")
-    print(f"Intermediate CPDyAna XYZ written to {debug_path}")
-    return (pos_cpdyana, n_frames, dt_array, time_array,
-            cell_params, thermo_data, volumes)
+    volumes = [np.linalg.det(cell) for cell in cells]
+    
+    print(f"\n=== ENHANCED PROCESSING COMPLETE ===")
+    return (pos_full, n_frames, dt_full, t_full, cell_param_full, thermo_data, volumes, inp_array)
 
 def read_ion_file_universal(ion_file_or_elements):
     """

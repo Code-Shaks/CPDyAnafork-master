@@ -178,6 +178,17 @@ class Trajectory(AttributedArray):
         if timestep_fs is not None:
             new.set_timestep(timestep_fs)
         return new
+    
+    def get_atom_types(self):
+        """Return the LAMMPS atom types if available."""
+        if hasattr(self, 'atom_types') and self.atom_types is not None:
+            return self.atom_types
+        else:
+            raise AttributeError("Atom types not available in trajectory")
+    
+    def set_atom_types(self, atom_types):
+        """Set the LAMMPS atom types."""
+        self.atom_types = np.array(atom_types)
 
     def _save_atoms(self, folder_name):
         from os.path import join

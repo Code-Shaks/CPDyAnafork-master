@@ -48,6 +48,7 @@ import glob
 import os
 import sys
 import subprocess
+from turtle import pos
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -58,144 +59,82 @@ from ase.io import write
 from ase import Atoms
 
 # Internal module imports for analysis functionality
+from samos_modules.samos_trajectory import Trajectory
 from target import correrelation_analysis as corr
 from target import input_reader as inp
 from target import calculations as cal
 from target import json_serializable as js
 from target import plotting as p
 from target import data_processing as dp
+from target import data_processing_lammps as dpl
 from target import probability_density as prob
 from target import compute_rdf as rdf
 from target import compute_vaf
 
-def Job(temperature, diffusing_elements, diffusivity_direction_choices, 
-                 diffusivity_choices, correlation, data_dir, Conv_factor, 
-                 initial_time, final_time, initial_slope_time, final_slope_time, 
-                 block, rmax, step_skip, sigma, ngrid, mode=None, 
-                 lammps_elements=None, lammps_timestep=None):
+def Job(temperature, diffusing_elements, diffusivity_direction_choices,
+        diffusivity_choices, correlation, data_dir, Conv_factor,
+        initial_time, final_time, initial_slope_time, final_slope_time,
+        block, rmax, step_skip, sigma, ngrid, mode=None,
+        lammps_elements=None, lammps_timestep=None, element_mapping=None,
+        export_verification=False, show_recommendations=True, lammps_units="metal"):
     """
     Main analysis job function for MSD, Van Hove, and related molecular dynamics analyses.
-
-    This function orchestrates the complete analysis workflow:
-    1. Reads input files (trajectory, cell parameters, energies, ion definitions)
-    2. Processes and segments data based on time windows
-    3. Performs element-specific analysis for each temperature
-    4. Calculates MSD or Van Hove correlation functions based on mode
-    5. Returns structured dictionaries with input and output data
-
-    Args:
-        temperature (list of float): List of temperatures in Kelvin for analysis.
-        diffusing_elements (list of str): Element symbols to analyze (e.g., ['Li', 'Na']).
-        diffusivity_direction_choices (list of str): Spatial directions for diffusivity 
-            analysis (e.g., ['X', 'Y', 'Z', 'XY', 'XYZ']).
-        diffusivity_choices (list of str): Types of diffusivity to calculate 
-            (e.g., ['Tracer', 'Collective']).
-        correlation (list of str): Correlation function types 
-            (e.g., ['Self', 'Distinct']).
-        pos_file (list of str): Paths to position trajectory files (.pos).
-        cel_file (list of str): Paths to cell parameter files (.cel).
-        evp_file (list of str): Paths to energy/volume/pressure files (.evp).
-        ion_file (list of str): Paths to ion definition files (.in).
-        Conv_factor (float): Unit conversion factor (typically 0.529177249 
-            for Bohr to Angstrom conversion).
-        initial_time (float): Start time for analysis window in picoseconds.
-        final_time (float): End time for analysis window in picoseconds.
-        initial_slope_time (float): Start time for slope calculation in MSD analysis.
-        final_slope_time (float): End time for slope calculation in MSD analysis.
-        block (int): Block size for statistical averaging.
-        rmax (float): Maximum radial distance for correlation function analysis in Angstroms.
-        step_skip (int): Number of time steps to skip between analysis frames.
-        sigma (float): Gaussian broadening parameter for correlation functions.
-        ngrid (int): Number of grid points for spatial discretization.
-        mode (str, optional): Analysis mode ('msd' for Mean Square Displacement, 
-            'vh' for Van Hove correlation functions).
-
-    Returns:
-        tuple: A tuple containing two dictionaries:
-            - temp_input_dict (dict): Input data organized by (temperature, element) keys,
-              containing processed trajectory data and structural information.
-            - temp_output_dict (dict): Output data organized by (temperature, element) keys,
-              containing analysis results (MSD data, correlation functions, time steps).
-
-    Raises:
-        FileNotFoundError: If any of the input files cannot be found.
-        ValueError: If time windows or parameters are invalid.
-        
-    Note:
-        The function handles multiple temperatures and elements simultaneously,
-        with results organized in nested dictionaries for easy access and plotting.
+    Updated: Supports LAMMPS, QE, and ASE formats with element validation and mapping.
     """
-    # # Initialize dictionaries to store input and output data
-    # temp_input_dict, temp_output_dict = {}, {}
-    
-    # # Process each temperature condition
-    # for temp_count, temp in enumerate(temperature):
-    #     # Read input files for current temperature
-    #     inp_array = inp.read_ion_file(ion_file[temp_count])
-    #     cell_param_full = inp.read_cel_file(cel_file[temp_count], Conv_factor)
-        
-    #     # Extract thermodynamic properties from EVP file
-    #     (ke_elec_full, cell_temp_full, ion_temp_full, tot_energy_full, enthalpy_full, 
-    #      tot_energy_ke_ion_full, tot_energy_ke_ion_ke_elec_full, vol_full, pressure_full, 
-    #      n_frames, time_diff) = inp.read_evp_file(evp_file[temp_count], Conv_factor)
-        
-    #     # Read trajectory data
-    #     pos_full, steps_full, dt_full, t_full = inp.read_pos_file(pos_file[temp_count], inp_array, 
-    #                                                           Conv_factor, n_frames, time_diff)
-        
-    #     # Determine analysis time window boundaries
-    #     First_term, Last_term = dp.find_terms(t_full.tolist(), initial_time, final_time)
-        
-    #     # Segment all data arrays to analysis time window
-    #     (pos, steps, dt, t, cell_param, ke_elec, cell_temp, ion_temp, tot_energy, 
-    #      enthalpy, tot_energy_ke_ion, tot_energy_ke_ion_ke_elec, vol, pressure) = dp.segmenter_func(
-    #         First_term, Last_term, pos_full, dt_full, t_full, cell_param_full, ke_elec_full, 
-    #         cell_temp_full, ion_temp_full, tot_energy_full, enthalpy_full, 
-    #         tot_energy_ke_ion_full, tot_energy_ke_ion_ke_elec_full, vol_full, pressure_full)
-
-    # Detect trajectory format
-    format_info = inp.detect_trajectory_format(data_dir)
-    
+    # Initialize dictionaries to store input and output data
     temp_input_dict, temp_output_dict = {}, {}
     
+   
+    # Detect trajectory format
+    format_info = inp.detect_trajectory_format(data_dir)
+    if format_info['format'] is None:
+        raise ValueError("No recognized trajectory files found in data directory")
+
+    original_conv_factor = Conv_factor
+    if format_info['format'] == 'lammps' and Conv_factor == 0.529177249:  # Default QE value
+        # Set appropriate conversion factors based on LAMMPS units
+        if lammps_units in ['metal', 'real']:
+            # metal and real units already use Angstroms, so no conversion needed
+            Conv_factor = 1.0
+        elif lammps_units == 'si':
+            # SI units are in meters, convert to Angstroms (1 m = 10^10 Å)
+            Conv_factor = 1e10
+        elif lammps_units == 'lj':
+            # LJ units have no physical dimension, keep as 1.0
+            Conv_factor = 1.0
+            
+        if Conv_factor != original_conv_factor:
+            print(f"LAMMPS {lammps_units} units detected: Automatically adjusted conversion factor from {original_conv_factor} to {Conv_factor}")
+    
+    # Process each temperature condition
     for temp_count, temp in enumerate(temperature):
-        
         if format_info['format'] == 'lammps':
-            # Process LAMMPS trajectories
             lammps_file = format_info['lammps_files'][temp_count]
             
-            # Read LAMMPS trajectory
-            (pos_full, n_frames, dt_full, t_full, cell_param_full, 
-             thermo_data, volumes) = inp.read_lammps_trajectory(
-                lammps_file, 
+            # Enhanced LAMMPS trajectory reading with new options
+            (pos_full, n_frames, dt_full, t_full, cell_param_full,
+            thermo_data, volumes, inp_array) = inp.read_lammps_trajectory(
+                lammps_file,
                 elements=lammps_elements,
                 timestep=lammps_timestep,
-                Conv_factor=Conv_factor
+                Conv_factor=Conv_factor,
+                element_mapping=element_mapping,
+                export_verification=export_verification,  # Pass the parameter
+                show_recommendations=show_recommendations  # Pass the parameter
             )
-
-            xyz_traj = []
-            for i in range(n_frames):
-                coords = pos_full[:, i, :]
-                cell = cell_param_full[i].reshape(3, 3)
-                atoms = Atoms(["X"] * pos_full.shape[0],
-                            positions=coords,
-                            cell=cell,
-                            pbc=True)
-                atoms.info['step'] = t_full[i]
-                xyz_traj.append(atoms)
-
-            debug_path = os.path.join(data_dir, "cpdyana_debug.xyz")
-            write(debug_path, xyz_traj, format="extxyz")
-            print(f"Intermediate CPDyAna XYZ written to {debug_path}")
-
-            # Create compatible ion array
-            if lammps_elements:
-                inp_array = lammps_elements
-            else:
-                # Default to first n_atoms elements
-                inp_array = ['H'] * pos_full.shape[0]  # Fallback
             
-            # Create mock thermodynamic data for compatibility
+            # Define n_atoms from pos_full shape
+            n_atoms = pos_full.shape[0]
+            
+            # Enhanced element validation
+            unique_elements = set(inp_array)
+            missing_elements = [ele for ele in diffusing_elements if ele not in unique_elements]
+            if missing_elements:
+                raise ValueError(f"Error: Diffusing elements {missing_elements} not found in the system. "
+                                f"Available elements are {list(unique_elements)}. "
+                                f"Please check --diffusing-elements and --lammps-elements arguments.")
+            
+            # Enhanced thermodynamic data creation
             ke_elec_full = np.zeros(n_frames)
             cell_temp_full = np.full(n_frames, temp)
             ion_temp_full = np.full(n_frames, temp)
@@ -205,39 +144,35 @@ def Job(temperature, diffusing_elements, diffusivity_direction_choices,
             tot_energy_ke_ion_ke_elec_full = np.zeros(n_frames)
             vol_full = np.array(volumes)
             pressure_full = np.zeros(n_frames)
-            print(f"\n=== TRAJECTORY ANALYSIS PREPARATION ===")
+            
+            print(f"\n=== ENHANCED TRAJECTORY ANALYSIS PREPARATION ===")
             print(f"Position array shape: {pos_full.shape} (atoms, frames, xyz)")
             print(f"Cell parameter array shape: {cell_param_full.shape} (frames, params)")
             print(f"Time range: {t_full[0]:.3f} - {t_full[-1]:.3f} ps")
             print(f"Analysis window: {initial_time} - {final_time} ps")
             print(f"Slope calculation: {initial_slope_time} - {final_slope_time} ps")
-            
+
         elif format_info['format'] == 'quantum_espresso':
             # Original QE processing
             inp_array = inp.read_ion_file(format_info['ion_files'][temp_count])
             cell_param_full = inp.read_cel_file(format_info['cel_files'][temp_count], Conv_factor)
-            
             (ke_elec_full, cell_temp_full, ion_temp_full, tot_energy_full, enthalpy_full,
              tot_energy_ke_ion_full, tot_energy_ke_ion_ke_elec_full, vol_full, pressure_full,
              n_frames, time_diff) = inp.read_evp_file(format_info['evp_files'][temp_count], Conv_factor)
-            
             pos_full, steps_full, dt_full, t_full = inp.read_pos_file(
                 format_info['pos_files'][temp_count], inp_array,
                 Conv_factor, n_frames, time_diff)
-                
+        
         elif format_info['format'] == 'ase_compatible':
             # Use ASE for other formats
             trajectory_file = format_info['trajectory_files'][temp_count]
             positions = read_positions_with_ase(trajectory_file)
-            
             # Convert ASE format to CPDyAna format
             pos_full = np.transpose(positions, (1, 0, 2))
             n_frames = positions.shape[0]
-            
             # Generate mock data for missing information
             dt_full = np.ones(n_frames - 1) * (lammps_timestep or 0.001)
             t_full = np.arange(n_frames) * (lammps_timestep or 0.001)
-            
             # Mock thermodynamic and cell data
             cell_param_full = np.tile(np.eye(3).flatten(), (n_frames, 1))
             ke_elec_full = np.zeros(n_frames)
@@ -249,33 +184,47 @@ def Job(temperature, diffusing_elements, diffusivity_direction_choices,
             tot_energy_ke_ion_ke_elec_full = np.zeros(n_frames)
             vol_full = np.ones(n_frames)
             pressure_full = np.zeros(n_frames)
-            
             inp_array = lammps_elements or ['H'] * pos_full.shape[0]
         
         else:
             raise ValueError(f"Unsupported trajectory format: {format_info['format']}")
-        
-        # Continue with existing analysis pipeline...
-        # (Rest of the function remains the same as original Job function)
-        
-        # Determine analysis time window boundaries
-        First_term, Last_term = dp.find_terms(t_full.tolist(), initial_time, final_time)
-        
-        # Segment all data arrays to analysis time window
-        (pos, steps, dt, t, cell_param, ke_elec, cell_temp, ion_temp, tot_energy,
-         enthalpy, tot_energy_ke_ion, tot_energy_ke_ion_ke_elec, vol, pressure) = dp.segmenter_func(
-            First_term, Last_term, pos_full, dt_full, t_full, cell_param_full, ke_elec_full,
-            cell_temp_full, ion_temp_full, tot_energy_full, enthalpy_full,
-            tot_energy_ke_ion_full, tot_energy_ke_ion_ke_elec_full, vol_full, pressure_full)
-        
+
+        # Continue with existing analysis pipeline
+        if format_info['format'] == 'lammps':
+            # Use LAMMPS-specific processing
+            dt_value = dt_full[0] if len(dt_full) > 0 else lammps_timestep or 1.0
+            n_timesteps = len(t_full)
+            First_term, Last_term = dpl.find_terms_lammps(dt_value, n_timesteps, initial_time, final_time)
+            
+            # Use LAMMPS-specific segmenter
+            (pos, steps, dt, t, cell_param, ke_elec, cell_temp, ion_temp, tot_energy,
+             enthalpy, tot_energy_ke_ion, tot_energy_ke_ion_ke_elec, vol, pressure) = dpl.segmenter_func_lammps(
+                First_term, Last_term, pos_full, dt_value, n_timesteps, cell_full=cell_param_full)
+        else:
+            # Original QE processing
+            First_term, Last_term = dp.find_terms(t_full.tolist(), initial_time, final_time)
+            # Segment all data arrays to analysis time window
+            (pos, steps, dt, t, cell_param, ke_elec, cell_temp, ion_temp, tot_energy,
+             enthalpy, tot_energy_ke_ion, tot_energy_ke_ion_ke_elec, vol, pressure) = dp.segmenter_func(
+                First_term, Last_term, pos_full, dt_full, t_full, cell_param_full, ke_elec_full,
+                cell_temp_full, ion_temp_full, tot_energy_full, enthalpy_full,
+                tot_energy_ke_ion_full, tot_energy_ke_ion_ke_elec_full, vol_full, pressure_full)
+
         # Process each diffusing element
         for ele in diffusing_elements:
             # Extract element-specific trajectory data
-            (pos_array, rectified_structure_array, conduct_ions_array, frame_ions_array, 
-             frame_pos_array, conduct_pos_array, conduct_rectified_structure_array, 
-             frame_rectified_structure_array) = dp.data_evaluator(diffusivity_direction_choices, 
-                                                               [ele], pos, inp_array, steps)
-            
+            if format_info['format'] == 'lammps':
+                # Use LAMMPS-optimized data evaluation
+                (pos_array, rectified_structure_array, conduct_ions_array, frame_ions_array,
+                 frame_pos_array, conduct_pos_array, conduct_rectified_structure_array,
+                 frame_rectified_structure_array) = dpl.data_evaluator_lammps(diffusivity_direction_choices,
+                                                                          [ele], pos, inp_array, steps)
+            else:
+                # Original QE data evaluation
+                (pos_array, rectified_structure_array, conduct_ions_array, frame_ions_array,
+                 frame_pos_array, conduct_pos_array, conduct_rectified_structure_array,
+                 frame_rectified_structure_array) = dp.data_evaluator(diffusivity_direction_choices,
+                                                                     [ele], pos, inp_array, steps)
             # Organize element data by direction for easy access
             ele_dict = {direction: {
                 'pos_array': pos_array[i, :, :, :],
@@ -287,32 +236,39 @@ def Job(temperature, diffusing_elements, diffusivity_direction_choices,
                 'conduct_rectified_structure_array': conduct_rectified_structure_array[i, :, :, :],
                 'frame_rectified_structure_array': frame_rectified_structure_array[i, :, :, :]
             } for i, direction in enumerate(diffusivity_direction_choices)}
-            
+
             # Initialize MSD data dictionary
             msd_data_dict = {}
             ngp_data_dict = {}
-            
+
             # Calculate Mean Square Displacement if requested
             if mode == "msd":
-                msd_data_dict = cal.calculate_msd([ele], diffusivity_direction_choices, diffusivity_choices, 
-                                          pos_full, conduct_rectified_structure_array, 
-                                          conduct_ions_array, dt, Last_term, initial_slope_time, 
-                                          final_slope_time, block)
-            
+                if format_info['format'] == 'lammps':
+    # Pass LAMMPS-specific parameters
+                    msd_data_dict = cal.calculate_msd([ele], diffusivity_direction_choices, diffusivity_choices,
+                                                    pos_full, conduct_rectified_structure_array,
+                                                    conduct_ions_array, t, Last_term, initial_slope_time,
+                                                    final_slope_time, block, is_lammps=True, 
+                                                    dt_value=dt_value, lammps_units=lammps_units)
+                else:
+                    # Original QE MSD calculation
+                    msd_data_dict = cal.calculate_msd([ele], diffusivity_direction_choices, diffusivity_choices,
+                                                    pos_full, conduct_rectified_structure_array,
+                                                    conduct_ions_array, t, Last_term, initial_slope_time,
+                                                    final_slope_time, block)
             if mode == "ngp":
-                ngp_data_dict = cal.calculate_ngp([ele], diffusivity_direction_choices, 
-                                         pos_full, conduct_rectified_structure_array, 
-                                         conduct_ions_array, dt, initial_time, final_time)
+                ngp_data_dict = cal.calculate_ngp([ele], diffusivity_direction_choices,
+                                                  pos_full, conduct_rectified_structure_array,
+                                                  conduct_ions_array, dt, initial_time, final_time)
+
             # Initialize correlation function dictionary
             evaluated_corr_dict = {}
-            
             # Calculate Van Hove correlation functions if requested
             if mode == "vh":
                 for correlation_type in ['Self', 'Distinct']:
                     if correlation_type == 'Self':
-                        # Calculate self-correlation (single particle dynamics)
                         dist_interval, reduced_nt, grt = corr.Van_Hove_self(
-                            avg_step=min(100, len(dt)//4),  # Adaptive averaging
+                            avg_step=min(100, len(dt)//4),
                             dt=dt,
                             rmax=rmax,
                             step_skip=step_skip,
@@ -326,19 +282,14 @@ def Job(temperature, diffusing_elements, diffusivity_direction_choices,
                             'reduced_nt': reduced_nt
                         }
                     elif correlation_type == 'Distinct':
-                        # Calculate distinct correlation (pair dynamics)
-                        # Compute average cell parameters for volume calculation
                         avg_cell = np.mean(cell_param, axis=0)
                         volume = np.linalg.det(avg_cell.reshape(3, 3))
-                        
-                        # Extract cell vectors for periodic boundary conditions
                         x1, x2, x3 = avg_cell[0], avg_cell[1], avg_cell[2]
                         y1, y2, y3 = avg_cell[3], avg_cell[4], avg_cell[5]
                         z1, z2, z3 = avg_cell[6], avg_cell[7], avg_cell[8]
-                        
                         try:
                             dist_interval, reduced_nt, grt = corr.Van_Hove_distinct(
-                                avg_step=min(50, len(dt)//8),  # More conservative averaging for distinct
+                                avg_step=min(50, len(dt)//8),
                                 dt=dt,
                                 rmax=rmax,
                                 step_skip=step_skip,
@@ -356,7 +307,6 @@ def Job(temperature, diffusing_elements, diffusivity_direction_choices,
                                 'reduced_nt': reduced_nt
                             }
                         except Exception:
-                            # Handle cases where distinct correlation calculation fails
                             evaluated_corr_dict[correlation_type] = {
                                 'grt': [],
                                 'dist_interval': [],
@@ -365,7 +315,7 @@ def Job(temperature, diffusing_elements, diffusivity_direction_choices,
 
             # Store processed data in dictionaries with (temperature, element) keys
             temp_input_dict[(temp, ele)] = {'evaluated_data': ele_dict, 'evaluated_corr': evaluated_corr_dict}
-            temp_output_dict[(temp, ele)] = {'dt_dict': dt, 'msd_data': msd_data_dict, 'ngp_data': ngp_data_dict, 
+            temp_output_dict[(temp, ele)] = {'dt_dict': dt, 'msd_data': msd_data_dict, 'ngp_data': ngp_data_dict,
                                              'evaluated_corr': evaluated_corr_dict}
 
     return temp_input_dict, temp_output_dict
@@ -422,6 +372,22 @@ def parser():
 
     # Add common arguments for MSD and Van Hove analyses
     for sp in (msd, vh, ngp):
+        sp.add_argument(
+        "--export-verification",
+        action="store_true",
+        help="Export verification XYZ trajectory (first 100 frames)"
+        )
+        sp.add_argument(
+            "--show-recommendations",
+            action="store_true", 
+            help="Display analysis parameter recommendations based on trajectory"
+        )
+        sp.add_argument(
+            "--enhanced-processing",
+            action="store_true",
+            default=True,
+            help="Use enhanced LAMMPS processing with test_parser improvements (default: True)"
+        )
         sp.add_argument(
             "--lammps-elements", 
             nargs="+", 
@@ -772,110 +738,38 @@ def parser():
     return p.parse_args()
 
 def main():
-    """
-    Main entry point for the CPDyAna command-line interface.
-
-    This function serves as the central dispatcher that:
-    1. Parses command-line arguments to determine analysis mode
-    2. Validates input files and directory structure  
-    3. Dispatches to appropriate analysis functions based on mode
-    4. Handles file I/O operations and subprocess calls
-    5. Manages error handling and user feedback
-
-    The function supports multiple analysis modes:
-    - **msd**: Mean Square Displacement analysis with plotting
-    - **vh**: Van Hove correlation function analysis with plotting  
-    - **ionic-density**: 3D ionic density map generation
-    - **rdf**: Radial Distribution Function calculation
-    - **vaf**: Velocity Autocorrelation Function analysis
-    - **vdos**: Vibrational Density of States calculation
-
-    For MSD and Van Hove modes, the function:
-    - Calls the main Job() function to perform analysis
-    - Saves results to JSON format for data persistence
-    - Generates publication-quality plots
-
-    For other modes, the function:
-    - Validates required input files (.pos, .in, .cel, optionally .evp)
-    - Calls specialized analysis modules via subprocess
-    - Handles multiple file sets in batch mode
-
-    Raises:
-        SystemExit: If required files are missing or file counts don't match
-        subprocess.CalledProcessError: If subprocess analysis fails
-        FileNotFoundError: If data directory or files cannot be found
-
-    Note:
-        The function automatically discovers input files based on extensions
-        in the specified data directory and processes them in sorted order.
-    """
-    # Parse command-line arguments
     a = parser()
 
-    # Handle MSD and Van Hove correlation analyses
     if a.mode in ("msd", "vh", "ngp"):
-        # # Discover input files in the data directory
-        # pos_files = sorted(glob.glob(os.path.join(a.data_dir, "*.pos")))
-        # cel_files = sorted(glob.glob(os.path.join(a.data_dir, "*.cel")))
-        # evp_files = sorted(glob.glob(os.path.join(a.data_dir, "*.evp")))
-        # ion_files = sorted(glob.glob(os.path.join(a.data_dir, "*.in")))
-
-        # # Validate that all required file types are present
-        # if not (pos_files and cel_files and evp_files and ion_files):
-        #     sys.exit("ERROR: Missing required data files in data directory. "
-        #             "Need: .pos (positions), .cel (cell), .evp (energy), .in (ions)")
-        
-        # # Ensure equal number of each file type for consistent analysis
-        # if not (len(pos_files) == len(cel_files) == len(evp_files) == len(ion_files)):
-        #     sys.exit("ERROR: Mismatch in number of input files. "
-        #             f"Found: {len(pos_files)} .pos, {len(cel_files)} .cel, "
-        #             f"{len(evp_files)} .evp, {len(ion_files)} .in files")
-
-        # # Execute main analysis job
-        # print(f"Starting {a.mode.upper()} analysis...")
-        # print(f"Processing {len(pos_files)} file sets for {len(a.temperature)} temperature(s)")
-        # print(f"Analyzing elements: {', '.join(a.diffusing_elements)}")
-        
-        # Temp_inp_data, Temp_out_data = Job(
-        #     a.temperature, a.diffusing_elements, a.diffusivity_direction_choices,
-        #     a.diffusivity_choices, a.correlation, pos_files, cel_files, evp_files, ion_files,
-        #     a.Conv_factor, a.initial_time, a.final_time, a.initial_slope_time,
-        #     a.final_slope_time, a.block, a.rmax, a.step_skip, a.sigma, a.ngrid, a.mode
-        # )
-        # Auto-detect trajectory format
         format_info = inp.detect_trajectory_format(a.data_dir)
-        
         if format_info['format'] is None:
             sys.exit("ERROR: No recognized trajectory files found in data directory")
-        
         print(f"Detected trajectory format: {format_info['format']}")
-        
-        # Process element mapping for LAMMPS
+
+        # Process element mapping for LAMMPS - FIXED
         element_map = {}
         if hasattr(a, 'element_mapping') and a.element_mapping:
             for mapping in a.element_mapping:
                 try:
                     type_id, element = mapping.split(':')
                     element_map[int(type_id)] = element
+                    print(f"Mapped LAMMPS type {type_id} to element {element}")
                 except ValueError:
                     print(f"Warning: Invalid element mapping '{mapping}', skipping")
-        
-        # Validate LAMMPS-specific requirements
-        if format_info['format'] == 'lammps':
-            if not a.lammps_timestep:
-                sys.exit("ERROR: --lammps-timestep required for LAMMPS trajectories")
-            
-            if not a.lammps_elements and not element_map:
-                print("Warning: No element information provided for LAMMPS trajectory")
-                print("Using default hydrogen atoms - specify --lammps-elements or --element-mapping")
-        
-        # Execute enhanced analysis job
+
+        # Pass enhanced options to Job function
         Temp_inp_data, Temp_out_data = Job(
             a.temperature, a.diffusing_elements, a.diffusivity_direction_choices,
             a.diffusivity_choices, a.correlation, a.data_dir,
             a.Conv_factor, a.initial_time, a.final_time, a.initial_slope_time,
-            a.final_slope_time, a.block, a.rmax, a.step_skip, a.sigma, a.ngrid, 
-            a.mode, lammps_elements=a.lammps_elements, lammps_timestep=a.lammps_timestep
+            a.final_slope_time, a.block, a.rmax, a.step_skip, a.sigma, a.ngrid,
+            a.mode, 
+            lammps_elements=a.lammps_elements, 
+            lammps_timestep=a.lammps_timestep,
+            element_mapping=element_map,
+            export_verification=getattr(a, 'export_verification', False),
+            show_recommendations=getattr(a, 'show_recommendations', False),
+            lammps_units=getattr(a, 'lammps_units', 'metal')
         )
 
         # Save results to JSON file for persistence and data sharing
@@ -888,28 +782,26 @@ def main():
         else:
             data_source = Temp_out_data
 
-    # Generate MSD plots
-    if a.mode == "msd":
-        # Determine which data to plot
-        if a.plot_data is None:
-            # Plot all combinations if not specified
-            Plot_data_tracer = []
-            for (temp, ele) in [(t, e) for t in a.temperature for e in a.diffusing_elements]:
-                for direction in a.diffusivity_direction_choices:
-                    for diff_type in a.diffusivity_choices:
-                        Plot_data_tracer.append([temp, ele, diff_type, direction])
-            pdata = Plot_data_tracer
-        else:
-            # Use user-specified plot data
-            pdata = [[float(x[0]), x[1], x[2], x[3]] for x in a.plot_data]
-        
-        print(f"Generating MSD plot with {len(pdata)} data series...")
-        p.msd_plot(data_source, pdata, a.first_time, a.last_time, save_path=a.save_path)
-        print(f"MSD plot saved to: {a.save_path}")
-    
-    elif a.mode == "ngp":
+        # Generate MSD plots
+        if a.mode == "msd":
+            # Determine which data to plot
             if a.plot_data is None:
-                Plot_data_ngp = [[temp, ele, direction] for temp in a.temperature 
+                # Plot all combinations if not specified
+                Plot_data_tracer = []
+                for (temp, ele) in [(t, e) for t in a.temperature for e in a.diffusing_elements]:
+                    for direction in a.diffusivity_direction_choices:
+                        for diff_type in a.diffusivity_choices:
+                            Plot_data_tracer.append([temp, ele, diff_type, direction])
+                pdata = Plot_data_tracer
+            else:
+                # Use user-specified plot data
+                pdata = [[float(x[0]), x[1], x[2], x[3]] for x in a.plot_data]
+            print(f"Generating MSD plot with {len(pdata)} data series...")
+            p.msd_plot(data_source, pdata, a.first_time, a.last_time, save_path=a.save_path)
+            print(f"MSD plot saved to: {a.save_path}")
+        elif a.mode == "ngp":
+            if a.plot_data is None:
+                Plot_data_ngp = [[temp, ele, direction] for temp in a.temperature
                                  for ele in a.diffusing_elements for direction in a.diffusivity_direction_choices]
                 pdata = Plot_data_ngp
             else:
@@ -917,26 +809,24 @@ def main():
             print(f"Generating NGP plot with {len(pdata)} data series...")
             p.ngp_plot(data_source, pdata, a.first_time, a.last_time, save_path=a.save_path)
             print(f"NGP plot saved to: {a.save_path}")
-
-    # Generate Van Hove correlation plots
-    elif a.mode == "vh":
-        # Determine which correlation data to plot
-        if a.plot_data is None:
-            pdata = []
-            for (T, ele), blob in Temp_out_data.items():
-                for corr_type in blob["evaluated_corr"]:
-                    pdata.append([T, ele, corr_type])
-        else:
-            pdata = [[float(x[0]), x[1], x[2]] for x in a.plot_data]
-
-        print(f"Generating Van Hove plot with {len(pdata)} correlation functions...")
-        p.van_hove_plot(
-            data_source,
-            pdata,
-            save_path=a.save_path,
-            figsize=tuple(a.figsize)
-        )
-        print(f"Van Hove plot saved to: {a.save_path}")
+        # Generate Van Hove correlation plots
+        elif a.mode == "vh":
+            # Determine which correlation data to plot
+            if a.plot_data is None:
+                pdata = []
+                for (T, ele), blob in Temp_out_data.items():
+                    for corr_type in blob["evaluated_corr"]:
+                        pdata.append([T, ele, corr_type])
+            else:
+                pdata = [[float(x[0]), x[1], x[2]] for x in a.plot_data]
+            print(f"Generating Van Hove plot with {len(pdata)} correlation functions...")
+            p.van_hove_plot(
+                data_source,
+                pdata,
+                save_path=a.save_path,
+                figsize=tuple(a.figsize)
+            )
+            print(f"Van Hove plot saved to: {a.save_path}")
 
     # Handle ionic density mapping
     elif a.mode == "ionic-density":
@@ -944,17 +834,14 @@ def main():
         pos_files = sorted(glob.glob(os.path.join(a.data_dir, "*.pos")))
         ion_files = sorted(glob.glob(os.path.join(a.data_dir, "*.in")))
         cel_files = sorted(glob.glob(os.path.join(a.data_dir, "*.cel")))
-
         if not pos_files or not ion_files:
             sys.exit("ERROR: Missing .pos or .in files for ionic density analysis")
         if not cel_files:
             sys.exit("ERROR: Ionic density analysis requires .cel files for unit cell information")
         if len(pos_files) != len(ion_files) or len(pos_files) != len(cel_files):
             sys.exit("ERROR: Number of .pos, .in, and .cel files must match")
-
         print(f"Starting ionic density analysis for element: {a.element}")
         print(f"Processing {len(pos_files)} file sets...")
-
         results = {}
         # Process each file set
         for i, (pos_file, ion_file, cel_file) in enumerate(zip(pos_files, ion_files, cel_files)):
@@ -962,7 +849,6 @@ def main():
             pos_file = os.path.abspath(pos_file)
             ion_file = os.path.abspath(ion_file)
             cel_file = os.path.abspath(cel_file)
-
             # Check file existence
             missing_files = []
             for f in [pos_file, ion_file, cel_file]:
@@ -971,11 +857,9 @@ def main():
             if missing_files:
                 print(f"Skipping file set {i+1}: Missing files {missing_files}")
                 continue
-
             # Generate unique output filename
             base_name = os.path.splitext(os.path.basename(pos_file))[0]
             output_file = f"{base_name}_density.xsf"
-
             try:
                 # Build subprocess command for density calculation
                 cmd = [
@@ -993,7 +877,6 @@ def main():
                     "--density", str(a.density),
                     "--step-skip", str(getattr(a, "step_skip", 1))
                 ]
-                
                 # Add optional arguments if provided
                 if hasattr(a, "mask") and a.mask:
                     cmd += ["--mask", a.mask]
@@ -1001,20 +884,17 @@ def main():
                     cmd += ["--recenter"]
                 if hasattr(a, "bbox") and a.bbox:
                     cmd += ["--bbox", a.bbox]
-
                 print(f"Processing file set {i+1}/{len(pos_files)}: {base_name}")
                 subprocess.run(cmd, check=True, text=True,
                                cwd=os.path.dirname(os.path.abspath(__file__)))
                 results[base_name] = {"density_file": output_file}
-                print(f"  → Density file created: {output_file}")
-                
+                print(f" → Density file created: {output_file}")
             except subprocess.CalledProcessError as e:
-                print(f"  → Failed to process {base_name}: {e}")
+                print(f" → Failed to process {base_name}: {e}")
                 continue
             except Exception as e:
-                print(f"  → Unexpected error for {base_name}: {e}")
+                print(f" → Unexpected error for {base_name}: {e}")
                 continue
-
         print(f"Ionic density analysis completed. Generated {len(results)} density files.")
 
     # Handle Radial Distribution Function analysis
@@ -1023,7 +903,6 @@ def main():
         pos_files = sorted(glob.glob(os.path.join(a.data_dir, "*.pos")))
         ion_files = sorted(glob.glob(os.path.join(a.data_dir, "*.in")))
         cel_files = sorted(glob.glob(os.path.join(a.data_dir, "*.cel")))
-
         if not pos_files or not ion_files:
             sys.exit("ERROR: Missing .pos or .in files for RDF analysis")
         if len(pos_files) != len(ion_files):
@@ -1031,73 +910,61 @@ def main():
         if not cel_files:
             sys.exit("ERROR: RDF analysis requires .cel files for unit cell information")
         if len(cel_files) != len(pos_files):
-            sys.exit("ERROR: Number of .cel files must match .pos files")    
-
+            sys.exit("ERROR: Number of .cel files must match .pos files")
         print(f"Starting RDF analysis...")
         print(f"Central atoms: {', '.join(a.central_atom)}")
         print(f"Processing {len(pos_files)} file sets...")
-
         results = {}
         # Process each file set for RDF calculation
         for i, (pos_file, ion_file, cel_file) in enumerate(zip(pos_files, ion_files, cel_files)):
             try:
                 base_name = os.path.splitext(os.path.basename(pos_file))[0]
                 output_prefix = f"rdf_plot_{base_name}"
-
                 print(f"Processing file set {i+1}/{len(pos_files)}: {base_name}")
-
                 # Build ASE trajectory from input files
                 extracted_frames = rdf.build_ase_trajectory(
                     ion_file, pos_file, cel_file,
                     time_after_start=getattr(a, "time_after_start", 60),
                     num_frames=getattr(a, "num_frames", 100),
-                    time_interval=getattr(a, "time_interval", 0.00193511),
+                    time_interval=getattr(a, "time_interval", 0.00193511)
                 )
-
                 # Compute RDF with user-specified parameters
                 rdf.compute_rdf(
                     extracted_frames,
                     output_prefix=output_prefix,
                     time_after_start=getattr(a, "time_after_start", 60),
-                    central_atoms=getattr(a, "central_atoms", ['Li', 'Al', 'P', 'S']),
+                    central_atoms=getattr(a, "central_atom", ['Li', 'Al', 'P', 'S']),
                     pair_atoms=getattr(a, "pair_atoms", None),
                     ngrid=getattr(a, "ngrid", 1001),
                     rmax=getattr(a, "rmax", 10.0),
                     sigma=getattr(a, "sigma", 0.2),
                     xlim=tuple(getattr(a, "xlim", [1.5, 8.0]))
                 )
-
                 results[base_name] = {"rdf_plots": f"{output_prefix}_*.png"}
-                print(f"  → RDF plots created with prefix: {output_prefix}")
-                
+                print(f" → RDF plots created with prefix: {output_prefix}")
             except Exception as e:
-                print(f"  → Failed to process {base_name}: {e}")
+                print(f" → Failed to process {base_name}: {e}")
                 continue
-
         print(f"RDF analysis completed for {len(results)} file sets.")
 
     # Handle Velocity Autocorrelation Function analysis
-    if a.mode == "vaf":
+    elif a.mode == "vaf":
         # Discover and validate input files
         pos_files = sorted(glob.glob(os.path.join(a.data_dir, "*.pos")))
         ion_files = sorted(glob.glob(os.path.join(a.data_dir, "*.in")))
         cel_files = sorted(glob.glob(os.path.join(a.data_dir, "*.cel")))
         evp_files = sorted(glob.glob(os.path.join(a.data_dir, "*.evp")))
-
         if not pos_files or not ion_files or not cel_files:
             sys.exit("ERROR: Missing required files (.pos, .in, .cel) for VAF analysis")
         if not (len(pos_files) == len(ion_files) == len(cel_files)):
             sys.exit("ERROR: Mismatch in number of .pos, .in, .cel files")
-
         print(f"Starting VAF analysis for elements: {', '.join(a.element)}")
         print(f"Processing {len(pos_files)} file sets...")
-
         results = {}
         # Process each file set for VAF calculation
         for i, (pos_file, ion_file, cel_file) in enumerate(zip(pos_files, ion_files, cel_files)):
             base_name = os.path.splitext(os.path.basename(pos_file))[0]
             evp_file = evp_files[i] if i < len(evp_files) else None
-
             # Build subprocess command for VAF analysis
             cmd = [
                 sys.executable, os.path.join(os.path.dirname(__file__), "compute_vaf.py"),
@@ -1106,11 +973,9 @@ def main():
                 "--cel-file", cel_file,
                 "--element"
             ] + a.element
-
             # Add EVP file if available for accurate time steps
             if evp_file:
                 cmd += ["--evp-file", evp_file]
-                
             # Add analysis parameters
             cmd += [
                 "--start", str(a.start),
@@ -1124,44 +989,38 @@ def main():
                 "--stepsize-t", str(a.stepsize_t),
                 "--stepsize-tau", str(a.stepsize_tau)
             ]
-
             print(f"Processing file set {i+1}/{len(pos_files)}: {base_name}")
             try:
                 subprocess.run(cmd, check=True)
                 results[base_name] = {"vaf_output_prefix": f"{a.out_prefix}_{base_name}"}
-                print(f"  → VAF analysis completed with prefix: {a.out_prefix}_{base_name}")
+                print(f" → VAF analysis completed with prefix: {a.out_prefix}_{base_name}")
             except subprocess.CalledProcessError as e:
-                print(f"  → VAF analysis failed for {base_name}: {e}")
+                print(f" → VAF analysis failed for {base_name}: {e}")
                 continue
             except Exception as e:
-                print(f"  → Unexpected error in VAF analysis for {base_name}: {e}")
+                print(f" → Unexpected error in VAF analysis for {base_name}: {e}")
                 continue
-
         print(f"VAF analysis completed for {len(results)} file sets.")
 
     # Handle Vibrational Density of States analysis
-    if a.mode == "vdos":
+    elif a.mode == "vdos":
         # Discover and validate input files
         pos_files = sorted(glob.glob(os.path.join(a.data_dir, "*.pos")))
         ion_files = sorted(glob.glob(os.path.join(a.data_dir, "*.in")))
         cel_files = sorted(glob.glob(os.path.join(a.data_dir, "*.cel")))
         evp_files = sorted(glob.glob(os.path.join(a.data_dir, "*.evp")))
-
         if not pos_files or not ion_files or not cel_files:
             print("ERROR: Missing required files (.pos, .in, .cel) for VDOS analysis")
             return
         if not (len(pos_files) == len(ion_files) == len(cel_files)):
             print("ERROR: Mismatch in number of .pos, .in, .cel files")
             return
-
         print(f"Starting VDOS analysis for elements: {', '.join(a.elements)}")
         print(f"Processing {len(pos_files)} file sets...")
-
         # Process each file set for VDOS calculation
         for i, (pos_file, ion_file, cel_file) in enumerate(zip(pos_files, ion_files, cel_files)):
             base_name = os.path.splitext(os.path.basename(pos_file))[0]
             evp_file = evp_files[i] if i < len(evp_files) else None
-            
             # Build subprocess command for VDOS analysis
             cmd = [
                 sys.executable, os.path.join(os.path.dirname(__file__), "vdos.py"),
@@ -1175,21 +1034,18 @@ def main():
                 "--time_interval", str(a.time_interval),
                 "--elements"
             ] + a.elements
-            
             # Add EVP file if available
             if evp_file:
                 cmd += ["--evp_file", evp_file]
-                
             print(f"Processing file set {i+1}/{len(pos_files)}: {base_name}")
             try:
                 subprocess.run(cmd, check=True)
-                print(f"  → VDOS analysis completed with prefix: {a.out_prefix}_{base_name}")
+                print(f" → VDOS analysis completed with prefix: {a.out_prefix}_{base_name}")
             except subprocess.CalledProcessError as e:
-                print(f"  → VDOS analysis failed for {base_name}: {e}")
+                print(f" → VDOS analysis failed for {base_name}: {e}")
                 continue
-                
         print("VDOS analysis completed.")
-        return
+    return
 
 # Entry point for script execution
 if __name__ == "__main__":

@@ -453,15 +453,12 @@ def get_thermo_props(fname):
     return header, arr, ts_index
 
 
-def read_lammps_dump(filename, elements=None,
-                     elements_file=None, types=None, timestep=None,
-                     mass_types=None,
-                     thermo_file=None, thermo_pe=None, thermo_stress=None,
-                     save_extxyz=False, outfile=None,
-                     ignore_forces=False, ignore_velocities=False,
+def read_lammps_dump(filename, elements=None, elements_file=None, types=None, timestep=None,
+                     mass_types=None, thermo_file=None, thermo_pe=None, thermo_stress=None,
+                     save_extxyz=False, outfile=None, ignore_forces=False, ignore_velocities=False,
                      skip=0, f_conv=1.0, e_conv=1.0, s_conv=1.0,
-                     additional_keywords_dump=[], quiet=False,
-                     istep=1):
+                     additional_keywords_dump=[], quiet=False, istep=1,
+                     return_sorted_atom_ids=False):
     """
     Read LAMMPS dump file and convert to ASE trajectory format.
 
@@ -557,6 +554,7 @@ def read_lammps_dump(filename, elements=None,
         if ignore_velocities:
             has_vel = False
         # these are read as strings
+        atom_types_for_trajectory = None
         body = np.array([f.readline().split() for _ in range(nat_must)])
         atomids = np.array(body[:, atomid_idx], dtype=int)
         sorting_key = atomids.argsort()
@@ -566,6 +564,7 @@ def read_lammps_dump(filename, elements=None,
                 raise ValueError("types specified but not found in file")
             types_in_body = np.array(body[:, type_idx][sorting_key], dtype=int)
             print("types in body: {}".format(', '.join(sorted(map(str, set(types_in_body))))))
+            atom_types_for_trajectory = types_in_body.copy()  # Store for trajectory
             types_in_body -= 1  # 1-based to 0-based indexing
             symbols = np.array(types, dtype=str)[types_in_body]
         elif element_idx is not None:
@@ -690,6 +689,8 @@ def read_lammps_dump(filename, elements=None,
     except KeyError:
         traj = Trajectory(types=symbols, cells=cells)
         traj.set_positions(positions)
+    if atom_types_for_trajectory is not None:
+        traj.atom_types = atom_types_for_trajectory
     if has_vel:
         traj.set_velocities(velocities)
     if has_frc:
@@ -736,7 +737,6 @@ def read_lammps_dump(filename, elements=None,
         path_to_save = outfile or filename + '.traj'
         traj.save(path_to_save)
     return traj
-
 
 if __name__ == '__main__':
     from argparse import ArgumentParser
