@@ -327,7 +327,7 @@ def Job(temperature, diffusing_elements, diffusivity_direction_choices,
         lammps_elements=None, lammps_timestep=None, element_mapping=None,
         export_verification=False, show_recommendations=True, lammps_units="metal"):
     """
-    Main analysis job function for MSD and related analyses, using SAMOS for LAMMPS.
+    Main analysis job function for MSD and related analyses, using UNIFIED calculation approach.
     """
     # Initialize dictionaries to store input and output data
     temp_input_dict, temp_output_dict = {}, {}
@@ -375,30 +375,38 @@ def Job(temperature, diffusing_elements, diffusivity_direction_choices,
                 export_verification=export_verification,
                 show_recommendations=show_recommendations
             )
+            
             # Define n_atoms from pos_full shape
             n_atoms = pos_full.shape[0]
+            
             # Enhanced element validation with mapping consideration
             unique_elements = set(inp_array)
-            # If element mapping is provided, ensure it matches the diffusing elements
-            if element_mapping:
-                mapped_elements = set(element_mapping.values())
-                missing_elements = [ele for ele in diffusing_elements if ele not in mapped_elements]
-                if missing_elements:
-                    raise ValueError(f"Error: Diffusing elements {missing_elements} not found in the provided element mapping. "
-                                     f"Available mapped elements are {list(mapped_elements)}. "
-                                     f"Please check --diffusing-elements and --element-mapping arguments.")
-                # Override inp_array with mapped elements if necessary
-                if len(unique_elements) == 1 and 'H' in unique_elements and len(mapped_elements) > 0:
-                    print("Warning: Default element 'H' detected, overriding with mapped elements from --element-mapping.")
-                    # Assume all atoms are of the first mapped type if no detailed type info is available
-                    inp_array = [list(mapped_elements)[0]] * n_atoms
-                    unique_elements = mapped_elements
-            else:
-                missing_elements = [ele for ele in diffusing_elements if ele not in unique_elements]
-                if missing_elements:
+            print(f"Elements found in trajectory: {unique_elements}")
+            
+            # Validate that requested diffusing elements are available
+            missing_elements = [ele for ele in diffusing_elements if ele not in unique_elements]
+            if missing_elements:
+                if element_mapping:
+                    mapped_elements = set(element_mapping.values())
+                    if len(unique_elements) == 1 and 'H' in unique_elements and len(mapped_elements) > 0:
+                        print("Warning: Default element 'H' detected, overriding with mapped elements from --element-mapping.")
+                        # Distribute atoms among mapped elements based on element mapping
+                        inp_array = []
+                        for i in range(n_atoms):
+                            # Simple distribution - in practice, this should use actual atom types
+                            element_idx = i % len(list(mapped_elements))
+                            inp_array.append(list(mapped_elements)[element_idx])
+                        unique_elements = mapped_elements
+                    else:
+                        raise ValueError(f"Error: Diffusing elements {missing_elements} not found in the system. "
+                                       f"Available elements are {list(unique_elements)}. "
+                                       f"Element mapping provided: {element_mapping}. "
+                                       f"Please check --diffusing-elements and --element-mapping arguments.")
+                else:
                     raise ValueError(f"Error: Diffusing elements {missing_elements} not found in the system. "
-                                     f"Available elements are {list(unique_elements)}. "
-                                     f"Please check --diffusing-elements and --lammps-elements arguments.")
+                                   f"Available elements are {list(unique_elements)}. "
+                                   f"Please check --diffusing-elements and --lammps-elements arguments.")
+            
             # Enhanced thermodynamic data creation
             ke_elec_full = np.zeros(n_frames)
             cell_temp_full = np.full(n_frames, temp)
@@ -409,21 +417,24 @@ def Job(temperature, diffusing_elements, diffusivity_direction_choices,
             tot_energy_ke_ion_ke_elec_full = np.zeros(n_frames)
             vol_full = np.array(volumes)
             pressure_full = np.zeros(n_frames)
-            print(f"\n=== ENHANCED TRAJECTORY ANALYSIS PREPARATION ===")
+            
+            print(f"\n=== UNIFIED TRAJECTORY ANALYSIS PREPARATION ===")
             print(f"Position array shape: {pos_full.shape} (atoms, frames, xyz)")
             print(f"Cell parameter array shape: {cell_param_full.shape} (frames, params)")
             print(f"Time range: {t_full[0]:.3f} - {t_full[-1]:.3f} ps")
             print(f"Analysis window: {initial_time} - {final_time} ps")
             print(f"Slope calculation: {initial_slope_time} - {final_slope_time} ps")
-            # Use LAMMPS-specific processing
+            
+            # Use LAMMPS-specific processing for data segmentation
             dt_value = dt_full[0] if len(dt_full) > 0 else lammps_timestep or 1.0
             n_timesteps = len(t_full)
             First_term, Last_term = dpl.find_terms_lammps(dt_value, n_timesteps, initial_time, final_time)
             (pos, steps, dt, t, cell_param, ke_elec, cell_temp, ion_temp, tot_energy,
              enthalpy, tot_energy_ke_ion, tot_energy_ke_ion_ke_elec, vol, pressure) = dpl.segmenter_func_lammps(
                 First_term, Last_term, pos_full, dt_value, n_timesteps, cell_full=cell_param_full)
+                
         elif format_info['format'] == 'quantum_espresso':
-            # Original QE processing
+            # Original QE processing (unchanged)
             inp_array = inp.read_ion_file(format_info['ion_files'][temp_count])
             cell_param_full = inp.read_cel_file(format_info['cel_files'][temp_count], Conv_factor)
             (ke_elec_full, cell_temp_full, ion_temp_full, tot_energy_full, enthalpy_full,
@@ -432,6 +443,7 @@ def Job(temperature, diffusing_elements, diffusivity_direction_choices,
             pos_full, steps_full, dt_full, t_full = inp.read_pos_file(
                 format_info['pos_files'][temp_count], inp_array,
                 Conv_factor, n_frames, time_diff)
+            
             # Use QE-specific processing
             First_term, Last_term = dp.find_terms(t_full.tolist(), initial_time, final_time)
             (pos, steps, dt, t, cell_param, ke_elec, cell_temp, ion_temp, tot_energy,
@@ -439,41 +451,16 @@ def Job(temperature, diffusing_elements, diffusivity_direction_choices,
                 First_term, Last_term, pos_full, dt_full, t_full, cell_param_full, ke_elec_full,
                 cell_temp_full, ion_temp_full, tot_energy_full, enthalpy_full,
                 tot_energy_ke_ion_full, tot_energy_ke_ion_ke_elec_full, vol_full, pressure_full)
-        elif format_info['format'] == 'ase_compatible':
-            # Use ASE for other formats
-            trajectory_file = format_info['trajectory_files'][temp_count]
-            positions = read_positions_with_ase(trajectory_file)
-            # Convert ASE format to CPDyAna format
-            pos_full = np.transpose(positions, (1, 0, 2))
-            n_frames = positions.shape[0]
-            # Generate mock data for missing information
-            dt_full = np.ones(n_frames - 1) * (lammps_timestep or 0.001)
-            t_full = np.arange(n_frames) * (lammps_timestep or 0.001)
-            # Mock thermodynamic and cell data
-            cell_param_full = np.tile(np.eye(3).flatten(), (n_frames, 1))
-            ke_elec_full = np.zeros(n_frames)
-            cell_temp_full = np.full(n_frames, temp)
-            ion_temp_full = np.full(n_frames, temp)
-            tot_energy_full = np.zeros(n_frames)
-            enthalpy_full = np.zeros(n_frames)
-            tot_energy_ke_ion_full = np.zeros(n_frames)
-            tot_energy_ke_ion_ke_elec_full = np.zeros(n_frames)
-            vol_full = np.ones(n_frames)
-            pressure_full = np.zeros(n_frames)
-            inp_array = lammps_elements or ['H'] * pos_full.shape[0]
-            # Use general processing for ASE
-            First_term, Last_term = dp.find_terms(t_full.tolist(), initial_time, final_time)
-            (pos, steps, dt, t, cell_param, ke_elec, cell_temp, ion_temp, tot_energy,
-             enthalpy, tot_energy_ke_ion, tot_energy_ke_ion_ke_elec, vol, pressure) = dp.segmenter_func(
-                First_term, Last_term, pos_full, dt_full, t_full, cell_param_full, ke_elec_full,
-                cell_temp_full, ion_temp_full, tot_energy_full, enthalpy_full,
-                tot_energy_ke_ion_full, tot_energy_ke_ion_ke_elec_full, vol_full, pressure_full)
+                
+            # Set dt_value for unified calculation
+            dt_value = dt_full[0] if len(dt_full) > 0 else 1.0
+            
         else:
             raise ValueError(f"Unsupported trajectory format: {format_info['format']}")
         
         # Process each diffusing element
         for ele in diffusing_elements:
-            # Extract element-specific trajectory data
+            # Extract element-specific trajectory data using appropriate method
             if format_info['format'] == 'lammps':
                 (pos_array, rectified_structure_array, conduct_ions_array, frame_ions_array,
                  frame_pos_array, conduct_pos_array, conduct_rectified_structure_array,
@@ -483,7 +470,7 @@ def Job(temperature, diffusing_elements, diffusivity_direction_choices,
                 (pos_array, rectified_structure_array, conduct_ions_array, frame_ions_array,
                  frame_pos_array, conduct_pos_array, conduct_rectified_structure_array,
                  frame_rectified_structure_array) = dp.data_evaluator(diffusivity_direction_choices,
-                                                                     [ele], pos, inp_array, steps)
+                                                                      [ele], pos, inp_array, steps)
             
             # Organize element data by direction for easy access
             ele_dict = {direction: {
@@ -499,32 +486,28 @@ def Job(temperature, diffusing_elements, diffusivity_direction_choices,
             
             # Initialize MSD data dictionary
             msd_data_dict = {}
-            ngp_data_dict = {}
             
-            # Calculate Mean Square Displacement if requested, using SAMOS method for LAMMPS
+            # Calculate Mean Square Displacement using UNIFIED method
             if mode == "msd":
-                if format_info['format'] == 'lammps':
-                    # Use SAMOS methodology via calculations.py, passing the updated inp_array for atom types
-                    msd_data_dict = cal.calculate_msd([ele], diffusivity_direction_choices, diffusivity_choices,
-                                                      pos_full, conduct_rectified_structure_array,
-                                                      conduct_ions_array, t, Last_term, initial_slope_time,
-                                                      final_slope_time, block, is_lammps=True,
-                                                      dt_value=dt_value, lammps_units=lammps_units,
-                                                      atom_types=inp_array)
-                else:
-                    # Original QE MSD calculation remains unchanged
-                    msd_data_dict = cal.calculate_msd([ele], diffusivity_direction_choices, diffusivity_choices,
-                                                      pos_full, conduct_rectified_structure_array,
-                                                      conduct_ions_array, t, Last_term, initial_slope_time,
-                                                      final_slope_time, block)
+                print(f"=== UNIFIED MSD CALCULATION FOR {ele} ===")
+                msd_data_dict = cal.calculate_msd([ele], diffusivity_direction_choices, diffusivity_choices,
+                                                  pos_full, conduct_rectified_structure_array,
+                                                  conduct_ions_array, t, Last_term, initial_slope_time,
+                                                  final_slope_time, block, 
+                                                  is_lammps=(format_info['format'] == 'lammps'),
+                                                  dt_value=dt_value, lammps_units=lammps_units,
+                                                  atom_types=inp_array, cell_param_full=cell_param_full)
+            
+            # Initialize other analysis dictionaries
+            ngp_data_dict = {}
+            evaluated_corr_dict = {}
+            
             if mode == "ngp":
-                # NGP calculation remains unchanged for both LAMMPS and QE
                 ngp_data_dict = cal.calculate_ngp([ele], diffusivity_direction_choices,
                                                   pos_full, conduct_rectified_structure_array,
                                                   conduct_ions_array, dt, initial_time, final_time)
-            # Initialize correlation function dictionary
-            evaluated_corr_dict = {}
-            # Calculate Van Hove correlation functions if requested
+            
+            # Van Hove correlation functions (unchanged)
             if mode == "vh":
                 for correlation_type in ['Self', 'Distinct']:
                     if correlation_type == 'Self':
