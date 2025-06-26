@@ -155,52 +155,47 @@ def has_type_column(lammps_file):
     return False
 
 def read_lammps_trajectory(lammps_file, elements=None, timestep=None,
-                          thermo_file=None, Conv_factor=1.0, element_mapping=None,
-                          export_verification=False, show_recommendations=False):
+                           thermo_file=None, Conv_factor=1.0, element_mapping=None,
+                           export_verification=False, show_recommendations=False):
     """
-    Enhanced LAMMPS trajectory reader with test_parser improvements.
-    
-    New features:
-    - Comprehensive trajectory arrays dictionary
-    - Smart equilibration time calculation
-    - Optional trajectory verification export
-    - Analysis parameter recommendations
-    - Better thermodynamic data handling
+    Enhanced LAMMPS trajectory reader using SAMOS's methodology for MSD calculation.
     """
-    
-    print(f"\n=== ENHANCED LAMMPS TRAJECTORY PROCESSING ===")
+    print(f"\n=== ENHANCED LAMMPS TRAJECTORY PROCESSING WITH SAMOS ===")
     print(f"Reading LAMMPS file: {lammps_file}")
     print(f"Element types provided: {elements}")
     print(f"Timestep: {timestep} ps")
     print(f"Element mapping provided: {element_mapping}")
-    
+
     # Use SAMOS I/O to read LAMMPS trajectory
+    from samos.io.lammps import read_lammps_dump
     has_type = has_type_column(lammps_file)
+    
     # Only pass types if 'type' column is present
     kwargs = dict(
         filename=lammps_file,
-        timestep=timestep,
+        timestep=timestep * 1000 if timestep else None,  # Convert ps to fs for SAMOS
         thermo_file=thermo_file,
         f_conv=Conv_factor,
         e_conv=Conv_factor,
         quiet=False
     )
+    
     if has_type and elements:
         kwargs['types'] = elements
     
-    trajectory = read_lammps_dump(**kwargs)    
+    trajectory = read_lammps_dump(**kwargs)
+    
     # Extract trajectory data
     positions = trajectory.get_positions()  # Shape: (n_frames, n_atoms, 3)
     cells = trajectory.get_cells()  # Shape: (n_frames, 3, 3)
     n_frames, n_atoms, _ = positions.shape
-    
     print(f"Trajectory shape: {positions.shape} (frames, atoms, xyz)")
     print(f"Number of frames: {n_frames}")
     print(f"Number of atoms: {n_atoms}")
     
-    # Enhanced time array generation
+    # Time array generation (SAMOS uses femtoseconds internally)
     try:
-        times = trajectory.get_times()
+        times = trajectory.get_times() / 1000.0  # Convert fs to ps for CPDyAna
         print(f"Time array from trajectory: {times[:5]}...{times[-5:]}")
     except AttributeError:
         if timestep is None:
@@ -211,14 +206,13 @@ def read_lammps_trajectory(lammps_file, elements=None, timestep=None,
     # Calculate time parameters
     dt_full = np.diff(times) if len(times) > 1 else np.array([timestep or 0.001])
     time_difference = dt_full[0] if len(dt_full) > 0 else (timestep or 0.001)
-    
     print(f"Time range: {times[0]:.3f} to {times[-1]:.3f} ps")
     print(f"Time step: {time_difference:.6f} ps ({time_difference*1000:.3f} fs)")
     print(f"Total simulation time: {times[-1] - times[0]:.3f} ps")
     
-    # Enhanced element mapping
+    # Element mapping using SAMOS's extracted types
     try:
-        atom_types = trajectory.get_atom_types()
+        atom_types = trajectory.get_types()
         print(f"Retrieved atom types from trajectory: {set(atom_types)}")
     except AttributeError:
         print("Warning: Could not retrieve atom types from trajectory")
@@ -249,40 +243,17 @@ def read_lammps_trajectory(lammps_file, elements=None, timestep=None,
         print("⚠️ Warning: No elements or mapping provided. Defaulting to 'H' for all atoms.")
         inp_array = ['H'] * n_atoms
     
-    # Enhanced position unwrapping
-    print(f"Unwrapping {n_frames} frames for {n_atoms} atoms...")
-    unwrapped = np.copy(positions)
-    shifts = np.zeros((n_atoms, 3))
-
-    for frame in range(1, n_frames):
-        for atom in range(n_atoms):
-            disp = positions[frame, atom] - positions[frame-1, atom]
-            for dim in range(3):
-                # Use the correct box length for each frame and dimension
-                box_length = cells[frame, dim, dim]
-                # If the jump is more than half the box, it's a wrap
-                if disp[dim] > box_length / 2:
-                    shifts[atom, dim] -= box_length
-                elif disp[dim] < -box_length / 2:
-                    shifts[atom, dim] += box_length
-            unwrapped[frame, atom] = positions[frame, atom] + shifts[atom]
-    print("Position unwrapping complete.")
-
-    # Use unwrapped positions for further processing
-    positions = unwrapped
+    # SAMOS handles unwrapped positions internally if specified in dump file
+    print("Using SAMOS's position handling (unwrapping if specified in dump).")
     
-    # Convert to CPDyAna format
-    pos_full = np.transpose(unwrapped, (1, 0, 2))  # (atoms, frames, xyz)
+    # Convert to CPDyAna format for compatibility with other functions
+    pos_full = np.transpose(positions, (1, 0, 2))  # (atoms, frames, xyz)
     cell_param_full = cells.reshape(n_frames, 9)  # Flatten 3x3 to 9-element vectors
     
-    # Enhanced thermodynamic data generation
+    # Thermodynamic data generation
     print("\n=== CREATING ENHANCED TRAJECTORY ARRAYS ===")
-    
-    # Time arrays
     t_full = times
     steps_full = np.arange(n_frames)
-    
-    # Mock thermodynamic data with realistic defaults
     ke_elec_full = np.zeros(n_frames)
     cell_temp_full = np.ones(n_frames) * 300.0  # Default 300K
     ion_temp_full = np.ones(n_frames) * 300.0
@@ -290,11 +261,8 @@ def read_lammps_trajectory(lammps_file, elements=None, timestep=None,
     enthalpy_full = np.zeros(n_frames)
     tot_energy_ke_ion_full = np.zeros(n_frames)
     tot_energy_ke_ion_ke_elec_full = np.zeros(n_frames)
-    
-    # Enhanced volume calculation
     vol_full = np.array([np.linalg.det(cell) for cell in cells])
     pressure_full = np.zeros(n_frames)
-    
     print(f"pos_full shape: {pos_full.shape} (atoms, frames, xyz)")
     print(f"cell_param_full shape: {cell_param_full.shape} (frames, 9_params)")
     print(f"Volume range: {vol_full.min():.2f} to {vol_full.max():.2f} Å³")
@@ -316,7 +284,6 @@ def read_lammps_trajectory(lammps_file, elements=None, timestep=None,
             pass
     
     volumes = [np.linalg.det(cell) for cell in cells]
-    
     print(f"\n=== ENHANCED PROCESSING COMPLETE ===")
     return (pos_full, n_frames, dt_full, t_full, cell_param_full, thermo_data, volumes, inp_array)
 
