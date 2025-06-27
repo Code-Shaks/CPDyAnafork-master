@@ -1081,72 +1081,106 @@ def main():
 
     # Handle ionic density mapping
     elif a.mode == "ionic-density":
-        # Discover and validate input files
-        pos_files = sorted(glob.glob(os.path.join(a.data_dir, "*.pos")))
-        ion_files = sorted(glob.glob(os.path.join(a.data_dir, "*.in")))
-        cel_files = sorted(glob.glob(os.path.join(a.data_dir, "*.cel")))
-        if not pos_files or not ion_files:
-            sys.exit("ERROR: Missing .pos or .in files for ionic density analysis")
-        if not cel_files:
-            sys.exit("ERROR: Ionic density analysis requires .cel files for unit cell information")
-        if len(pos_files) != len(ion_files) or len(pos_files) != len(cel_files):
-            sys.exit("ERROR: Number of .pos, .in, and .cel files must match")
-        print(f"Starting ionic density analysis for element: {a.element}")
-        print(f"Processing {len(pos_files)} file sets...")
-        results = {}
-        # Process each file set
-        for i, (pos_file, ion_file, cel_file) in enumerate(zip(pos_files, ion_files, cel_files)):
-            # Convert to absolute paths for subprocess calls
-            pos_file = os.path.abspath(pos_file)
-            ion_file = os.path.abspath(ion_file)
-            cel_file = os.path.abspath(cel_file)
-            # Check file existence
-            missing_files = []
-            for f in [pos_file, ion_file, cel_file]:
-                if not os.path.exists(f):
-                    missing_files.append(f)
-            if missing_files:
-                print(f"Skipping file set {i+1}: Missing files {missing_files}")
-                continue
-            # Generate unique output filename
-            base_name = os.path.splitext(os.path.basename(pos_file))[0]
+    # Detect trajectory format
+        format_info = inp.detect_trajectory_format(a.data_dir)
+        if format_info['format'] == 'lammps':
+            # LAMMPS support
+            lammps_files = format_info.get('lammps_files', [])
+            if not lammps_files:
+                # fallback: try to find .lammpstrj file
+                lammps_files = glob.glob(os.path.join(a.data_dir, "*.lammpstrj"))
+            if not lammps_files:
+                sys.exit("ERROR: No LAMMPS trajectory file found in data directory for ionic density analysis")
+            lammps_file = os.path.abspath(lammps_files[0])
+            base_name = os.path.splitext(os.path.basename(lammps_file))[0]
             output_file = f"{base_name}_density.xsf"
+            cmd = [
+                sys.executable, "-m", "target.probability_density",
+                "--lammps-file", lammps_file,
+                "--output", output_file,
+                "--element", a.element,
+                "--sigma", str(a.sigma),
+                "--n-sigma", str(a.n_sigma),
+                "--density", str(a.density),
+                "--step-skip", str(getattr(a, "step_skip", 1)),
+                "--num-frames", str(a.num_frames)
+            ]
+            if hasattr(a, "mask") and a.mask:
+                cmd += ["--mask", a.mask]
+            if hasattr(a, "recenter") and a.recenter:
+                cmd += ["--recenter"]
+            if hasattr(a, "bbox") and a.bbox:
+                cmd += ["--bbox", a.bbox]
+            print(f"Processing LAMMPS file for ionic density: {base_name}")
             try:
-                # Build subprocess command for density calculation
-                cmd = [
-                    sys.executable, "-m", "target.probability_density",
-                    "--in-file", ion_file,
-                    "--pos-file", pos_file,
-                    "--cel-file", cel_file,
-                    "--output", output_file,
-                    "--time-after-start", str(a.time_after_start),
-                    "--num-frames", str(a.num_frames),
-                    "--time-interval", str(a.time_interval),
-                    "--element", a.element,
-                    "--sigma", str(a.sigma),
-                    "--n-sigma", str(a.n_sigma),
-                    "--density", str(a.density),
-                    "--step-skip", str(getattr(a, "step_skip", 1))
-                ]
-                # Add optional arguments if provided
-                if hasattr(a, "mask") and a.mask:
-                    cmd += ["--mask", a.mask]
-                if hasattr(a, "recenter") and a.recenter:
-                    cmd += ["--recenter"]
-                if hasattr(a, "bbox") and a.bbox:
-                    cmd += ["--bbox", a.bbox]
-                print(f"Processing file set {i+1}/{len(pos_files)}: {base_name}")
                 subprocess.run(cmd, check=True, text=True,
-                               cwd=os.path.dirname(os.path.abspath(__file__)))
-                results[base_name] = {"density_file": output_file}
+                            cwd=os.path.dirname(os.path.abspath(__file__)))
                 print(f" → Density file created: {output_file}")
             except subprocess.CalledProcessError as e:
                 print(f" → Failed to process {base_name}: {e}")
-                continue
             except Exception as e:
                 print(f" → Unexpected error for {base_name}: {e}")
-                continue
-        print(f"Ionic density analysis completed. Generated {len(results)} density files.")
+        else:
+            # Existing QE logic (unchanged)
+            pos_files = sorted(glob.glob(os.path.join(a.data_dir, "*.pos")))
+            ion_files = sorted(glob.glob(os.path.join(a.data_dir, "*.in")))
+            cel_files = sorted(glob.glob(os.path.join(a.data_dir, "*.cel")))
+            if not pos_files or not ion_files:
+                sys.exit("ERROR: Missing .pos or .in files for ionic density analysis")
+            if not cel_files:
+                sys.exit("ERROR: Ionic density analysis requires .cel files for unit cell information")
+            if len(pos_files) != len(ion_files) or len(pos_files) != len(cel_files):
+                sys.exit("ERROR: Number of .pos, .in, and .cel files must match")
+            print(f"Starting ionic density analysis for element: {a.element}")
+            print(f"Processing {len(pos_files)} file sets...")
+            results = {}
+            for i, (pos_file, ion_file, cel_file) in enumerate(zip(pos_files, ion_files, cel_files)):
+                pos_file = os.path.abspath(pos_file)
+                ion_file = os.path.abspath(ion_file)
+                cel_file = os.path.abspath(cel_file)
+                missing_files = []
+                for f in [pos_file, ion_file, cel_file]:
+                    if not os.path.exists(f):
+                        missing_files.append(f)
+                if missing_files:
+                    print(f"Skipping file set {i+1}: Missing files {missing_files}")
+                    continue
+                base_name = os.path.splitext(os.path.basename(pos_file))[0]
+                output_file = f"{base_name}_density.xsf"
+                try:
+                    cmd = [
+                        sys.executable, "-m", "target.probability_density",
+                        "--in-file", ion_file,
+                        "--pos-file", pos_file,
+                        "--cel-file", cel_file,
+                        "--output", output_file,
+                        "--time-after-start", str(a.time_after_start),
+                        "--num-frames", str(a.num_frames),
+                        "--time-interval", str(a.time_interval),
+                        "--element", a.element,
+                        "--sigma", str(a.sigma),
+                        "--n-sigma", str(a.n_sigma),
+                        "--density", str(a.density),
+                        "--step-skip", str(getattr(a, "step_skip", 1))
+                    ]
+                    if hasattr(a, "mask") and a.mask:
+                        cmd += ["--mask", a.mask]
+                    if hasattr(a, "recenter") and a.recenter:
+                        cmd += ["--recenter"]
+                    if hasattr(a, "bbox") and a.bbox:
+                        cmd += ["--bbox", a.bbox]
+                    print(f"Processing file set {i+1}/{len(pos_files)}: {base_name}")
+                    subprocess.run(cmd, check=True, text=True,
+                                cwd=os.path.dirname(os.path.abspath(__file__)))
+                    results[base_name] = {"density_file": output_file}
+                    print(f" → Density file created: {output_file}")
+                except subprocess.CalledProcessError as e:
+                    print(f" → Failed to process {base_name}: {e}")
+                    continue
+                except Exception as e:
+                    print(f" → Unexpected error for {base_name}: {e}")
+                    continue
+            print(f"Ionic density analysis completed. Generated {len(results)} density files.")
 
     # Handle Radial Distribution Function analysis
     elif a.mode == "rdf":
