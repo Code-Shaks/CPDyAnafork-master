@@ -157,80 +157,81 @@ def has_type_column(lammps_file):
 def read_lammps_trajectory(lammps_file, elements=None, timestep=None,
                            thermo_file=None, Conv_factor=1.0, element_mapping=None,
                            export_verification=False, show_recommendations=False):
-    """
-    Enhanced LAMMPS trajectory reader using SAMOS's methodology for MSD calculation.
-    """
     print(f"\n=== ENHANCED LAMMPS TRAJECTORY PROCESSING WITH SAMOS ===")
     print(f"Reading LAMMPS file: {lammps_file}")
     print(f"Element types provided: {elements}")
     print(f"Timestep: {timestep} ps")
     print(f"Element mapping provided: {element_mapping}")
 
-    # Use SAMOS I/O to read LAMMPS trajectory
-    from samos.io.lammps import read_lammps_dump
+    # Check if the LAMMPS dump file has a 'type' column
     has_type = has_type_column(lammps_file)
     
-    # Only pass types if 'type' column is present
+    # Prepare keyword arguments for read_lammps_dump
     kwargs = dict(
         filename=lammps_file,
-        timestep=timestep * 1000 if timestep else None,  # Convert ps to fs for SAMOS
+        timestep=timestep * 1000 if timestep else None,  # Convert ps to fs
         thermo_file=thermo_file,
         f_conv=Conv_factor,
         e_conv=Conv_factor,
         quiet=False
     )
     
-    if has_type and elements:
+    # Assign types based on element_mapping or elements
+    if has_type and element_mapping:
+        # Convert mapping dict {1:'Li', 2:'La', ...} to list ['Li', 'La', ...]
+        # Ensure order is by type number (1-based)
+        max_type = max(element_mapping)
+        types_list = [element_mapping[i] for i in range(1, max_type+1)]
+        kwargs['types'] = types_list
+        print("Using element mapping for types in trajectory reading (converted to list)")
+    elif has_type and elements:
         kwargs['types'] = elements
-    
+        print("Using elements list for types in trajectory reading")
+
+    # Read the trajectory using SAMOS
     trajectory = read_lammps_dump(**kwargs)
     
     # Extract trajectory data
     positions = trajectory.get_positions()  # Shape: (n_frames, n_atoms, 3)
-    cells = trajectory.get_cells()  # Shape: (n_frames, 3, 3)
+    cells = trajectory.get_cells()          # Shape: (n_frames, 3, 3)
     n_frames, n_atoms, _ = positions.shape
     print(f"Trajectory shape: {positions.shape} (frames, atoms, xyz)")
     print(f"Number of frames: {n_frames}")
     print(f"Number of atoms: {n_atoms}")
+
+    unwrapped = np.copy(positions)
+    shifts = np.zeros((n_atoms, 3))
+    for frame in range(1, n_frames):
+        for atom in range(n_atoms):
+            disp = positions[frame, atom] - positions[frame-1, atom]
+            for dim in range(3):
+                box_length = cells[frame, dim, dim]
+                if abs(disp[dim]) > box_length / 2:
+                    shift = -np.sign(disp[dim]) * box_length
+                    shifts[atom, dim] += shift
+            unwrapped[frame, atom] = positions[frame, atom] + shifts[atom]
     
-    # Time array generation (SAMOS uses femtoseconds internally)
-    try:
-        times = trajectory.get_times() / 1000.0  # Convert fs to ps for CPDyAna
-        print(f"Time array from trajectory: {times[:5]}...{times[-5:]}")
-    except AttributeError:
-        if timestep is None:
-            raise ValueError("Timestep not provided and trajectory.get_times() is not available")
-        times = np.arange(n_frames) * timestep
-        print(f"Generated time array with timestep {timestep} ps")
+    positions = unwrapped
+    print("Positions have been unwrapped for MSD analysis.")
     
-    # Calculate time parameters
-    dt_full = np.diff(times) if len(times) > 1 else np.array([timestep or 0.001])
-    time_difference = dt_full[0] if len(dt_full) > 0 else (timestep or 0.001)
-    print(f"Time range: {times[0]:.3f} to {times[-1]:.3f} ps")
-    print(f"Time step: {time_difference:.6f} ps ({time_difference*1000:.3f} fs)")
-    print(f"Total simulation time: {times[-1] - times[0]:.3f} ps")
-    
-    # Element mapping using SAMOS's extracted types
+    # Get atom types from the trajectory (already mapped by SAMOS)
     try:
         atom_types = trajectory.get_types()
         print(f"Retrieved atom types from trajectory: {set(atom_types)}")
     except AttributeError:
         print("Warning: Could not retrieve atom types from trajectory")
-        atom_types = None
+        atom_types = ['H'] * n_atoms
     
-    # Create element array using enhanced mapping
-    if element_mapping and atom_types is not None:
-        print("Using element mapping to assign elements...")
-        inp_array = []
-        for atom_type in atom_types:
-            element = element_mapping.get(atom_type, 'H')
-            inp_array.append(element)
-        print(f"Element assignment complete. Sample: {inp_array[:10]}...")
-        print(f"Element distribution: {dict(zip(*np.unique(inp_array, return_counts=True)))}")
-    elif elements and len(elements) == n_atoms:
+    # Use atom_types directly as inp_array (no re-mapping needed)
+    inp_array = atom_types
+    print(f"Element assignment complete. Sample: {inp_array[:10]}...")
+    print(f"Element distribution: {dict(zip(*np.unique(inp_array, return_counts=True)))}")
+    
+    # Fallback logic for element assignment if necessary
+    if elements and len(elements) == n_atoms and not (has_type and element_mapping):
         print("Using provided elements array (length matches atom count)")
         inp_array = elements
-    elif elements:
+    elif elements and not (has_type and element_mapping):
         print(f"Element count mismatch: Expected {n_atoms}, got {len(elements)}")
         print("Extending element list to match atom count...")
         inp_array = []
@@ -239,20 +240,20 @@ def read_lammps_trajectory(lammps_file, elements=None, timestep=None,
             element_idx = i % element_count
             inp_array.append(elements[element_idx])
         print(f"Extended element assignment complete")
-    else:
-        print("⚠️ Warning: No elements or mapping provided. Defaulting to 'H' for all atoms.")
+    elif not (elements or element_mapping):
+        print("Warning: No elements or mapping provided. Defaulting to 'H' for all atoms.")
         inp_array = ['H'] * n_atoms
+         
+    # Convert to CPDyAna format
+    pos_full = np.transpose(positions, (1, 0, 2))  # Shape: (atoms, frames, xyz)
+    cell_param_full = cells.reshape(n_frames, 9)   # Flatten 3x3 to 9-element vectors
     
-    # SAMOS handles unwrapped positions internally if specified in dump file
-    print("Using SAMOS's position handling (unwrapping if specified in dump).")
-    
-    # Convert to CPDyAna format for compatibility with other functions
-    pos_full = np.transpose(positions, (1, 0, 2))  # (atoms, frames, xyz)
-    cell_param_full = cells.reshape(n_frames, 9)  # Flatten 3x3 to 9-element vectors
+    # Generate time array (fixing the undefined 'times' variable)
+    dt_full = np.array([timestep] * (n_frames - 1)) if timestep else np.ones(n_frames - 1)
+    t_full = np.concatenate(([0], np.cumsum(dt_full)))  # Cumulative time starting at 0
     
     # Thermodynamic data generation
     print("\n=== CREATING ENHANCED TRAJECTORY ARRAYS ===")
-    t_full = times
     steps_full = np.arange(n_frames)
     ke_elec_full = np.zeros(n_frames)
     cell_temp_full = np.ones(n_frames) * 300.0  # Default 300K
@@ -269,11 +270,12 @@ def read_lammps_trajectory(lammps_file, elements=None, timestep=None,
     
     # Analysis parameter recommendations
     if show_recommendations:
-        generate_analysis_recommendations(times, time_difference, n_frames, inp_array)
+        # Assuming time_difference should be dt_full[0]
+        generate_analysis_recommendations(t_full, dt_full[0] if len(dt_full) > 0 else 1.0, n_frames, inp_array)
     
     # Optional trajectory verification export
     if export_verification:
-        export_verification_trajectory(positions, cells, inp_array, times)
+        export_verification_trajectory(positions, cells, inp_array, t_full)
     
     # Extract thermodynamic data
     thermo_data = {}

@@ -509,6 +509,13 @@ def Job(temperature, diffusing_elements, diffusivity_direction_choices,
             
             # Van Hove correlation functions (unchanged)
             if mode == "vh":
+                if format_info['format'] == 'lammps':
+                    # unwrapped & drift-corrected coordinates returned by
+                    # data_processing_lammps.data_evaluator_lammps
+                    vh_pos = conduct_rectified_structure_array[0]
+                else:
+                    # original path for QE
+                    vh_pos = conduct_pos_array[0]
                 for correlation_type in ['Self', 'Distinct']:
                     if correlation_type == 'Self':
                         dist_interval, reduced_nt, grt = corr.Van_Hove_self(
@@ -518,7 +525,7 @@ def Job(temperature, diffusing_elements, diffusivity_direction_choices,
                             step_skip=step_skip,
                             sigma=sigma,
                             ngrid=ngrid,
-                            moving_ion_pos=conduct_pos_array[0]
+                            moving_ion_pos=vh_pos
                         )
                         evaluated_corr_dict[correlation_type] = {
                             'grt': grt.tolist(),
@@ -539,7 +546,7 @@ def Job(temperature, diffusing_elements, diffusivity_direction_choices,
                                 step_skip=step_skip,
                                 sigma=sigma,
                                 ngrid=ngrid,
-                                moving_ion_pos=conduct_pos_array[0],
+                                moving_ion_pos=vh_pos,
                                 volume=volume,
                                 x1=x1, x2=x2, x3=x3,
                                 y1=y1, y2=y2, y3=y3,
