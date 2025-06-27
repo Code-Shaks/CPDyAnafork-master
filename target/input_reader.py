@@ -228,22 +228,23 @@ def read_lammps_trajectory(lammps_file, elements=None, timestep=None,
     print(f"Element distribution: {dict(zip(*np.unique(inp_array, return_counts=True)))}")
     
     # Fallback logic for element assignment if necessary
-    if elements and len(elements) == n_atoms and not (has_type and element_mapping):
-        print("Using provided elements array (length matches atom count)")
-        inp_array = elements
-    elif elements and not (has_type and element_mapping):
-        print(f"Element count mismatch: Expected {n_atoms}, got {len(elements)}")
-        print("Extending element list to match atom count...")
-        inp_array = []
-        element_count = len(elements)
-        for i in range(n_atoms):
-            element_idx = i % element_count
-            inp_array.append(elements[element_idx])
-        print(f"Extended element assignment complete")
-    elif not (elements or element_mapping):
-        print("Warning: No elements or mapping provided. Defaulting to 'H' for all atoms.")
-        inp_array = ['H'] * n_atoms
-         
+    if not has_type:
+        if elements and len(elements) == n_atoms:
+            print("Using provided elements array (length matches atom count)")
+            inp_array = elements
+        elif elements:
+            print(f"Element count mismatch: Expected {n_atoms}, got {len(elements)}")
+            print("Extending element list to match atom count...")
+            inp_array = []
+            element_count = len(elements)
+            for i in range(n_atoms):
+                element_idx = i % element_count
+                inp_array.append(elements[element_idx])
+            print(f"Extended element assignment complete")
+        else:
+            print("Warning: No elements or mapping provided. Defaulting to 'H' for all atoms.")
+            inp_array = ['H'] * n_atoms
+
     # Convert to CPDyAna format
     pos_full = np.transpose(positions, (1, 0, 2))  # Shape: (atoms, frames, xyz)
     cell_param_full = cells.reshape(n_frames, 9)   # Flatten 3x3 to 9-element vectors
