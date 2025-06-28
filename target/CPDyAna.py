@@ -892,6 +892,18 @@ def parser():
         help="Directory containing trajectory files (.pos, .in, .cel) - REQUIRED"
     )
     rdf.add_argument(
+    "--lammps-elements", nargs="+",
+    help="Element symbols for LAMMPS atom types (e.g., Li La Ti O)"
+    )
+    rdf.add_argument(
+        "--element-mapping", nargs="+",
+        help="LAMMPS type to element mapping (e.g., 1:Li 2:La 3:Ti 4:O)"
+    )
+    rdf.add_argument(
+        "--lammps-timestep", type=float,
+        help="LAMMPS timestep in picoseconds"
+    )
+    rdf.add_argument(
         "--time-after-start", type=float, default=60,
         help="Equilibration time in picoseconds before RDF analysis starts (default: 60)"
     )
@@ -904,8 +916,8 @@ def parser():
         help="Number of frames for RDF statistical averaging (default: 100)"
     )
     rdf.add_argument(
-        "--central-atom", nargs="+", default=['Li','Al','P','S'],
-        help="Central atom types for RDF calculation (default: ['Li', 'Al', 'P', 'S'])"
+        "--central-atom", nargs="+", default=None,
+        help="Central atom types for RDF calculation"
     )
     rdf.add_argument('--pair-atoms', nargs='+', default=None,
                         help='Pair atom types for RDF (default: same as central-atoms)')
@@ -1209,53 +1221,91 @@ def main():
 
     # Handle Radial Distribution Function analysis
     elif a.mode == "rdf":
-        # Discover and validate input files
-        pos_files = sorted(glob.glob(os.path.join(a.data_dir, "*.pos")))
-        ion_files = sorted(glob.glob(os.path.join(a.data_dir, "*.in")))
-        cel_files = sorted(glob.glob(os.path.join(a.data_dir, "*.cel")))
-        if not pos_files or not ion_files:
-            sys.exit("ERROR: Missing .pos or .in files for RDF analysis")
-        if len(pos_files) != len(ion_files):
-            sys.exit("ERROR: Number of .pos and .in files must match")
-        if not cel_files:
-            sys.exit("ERROR: RDF analysis requires .cel files for unit cell information")
-        if len(cel_files) != len(pos_files):
-            sys.exit("ERROR: Number of .cel files must match .pos files")
-        print(f"Starting RDF analysis...")
-        print(f"Central atoms: {', '.join(a.central_atom)}")
-        print(f"Processing {len(pos_files)} file sets...")
-        results = {}
-        # Process each file set for RDF calculation
-        for i, (pos_file, ion_file, cel_file) in enumerate(zip(pos_files, ion_files, cel_files)):
+        format_info = inp.detect_trajectory_format(a.data_dir)
+        if format_info['format'] == 'lammps':
+            lammps_files = format_info.get('lammps_files', [])
+            if not lammps_files:
+                lammps_files = glob.glob(os.path.join(a.data_dir, "*.lammpstrj"))
+            if not lammps_files:
+                sys.exit("ERROR: No LAMMPS trajectory file found in data directory for RDF analysis")
+            lammps_file = os.path.abspath(lammps_files[0])
+            output_prefix = "rdf_plot_lammps"
+            cmd = [
+                sys.executable, "-m", "target.compute_rdf",
+                "--lammps-file", lammps_file,
+                "--output-prefix", output_prefix,
+                "--central-atoms"
+            ] + a.central_atom
+            if a.pair_atoms:
+                cmd += ["--pair-atoms"] + a.pair_atoms
+            cmd += [
+                "--ngrid", str(a.ngrid),
+                "--rmax", str(a.rmax),
+                "--sigma", str(a.sigma),
+                "--xlim", str(a.xlim[0]), str(a.xlim[1]),
+                "--num-frames", str(a.num_frames)
+            ]
+            # Pass LAMMPS-specific arguments
+            if a.lammps_elements:
+                cmd += ["--lammps-elements"] + a.lammps_elements
+            if a.element_mapping:
+                cmd += ["--element-mapping"] + a.element_mapping
+            if a.lammps_timestep:
+                cmd += ["--lammps-timestep", str(a.lammps_timestep)]
+            print(f"Processing LAMMPS file for RDF: {lammps_file}")
             try:
-                base_name = os.path.splitext(os.path.basename(pos_file))[0]
-                output_prefix = f"rdf_plot_{base_name}"
-                print(f"Processing file set {i+1}/{len(pos_files)}: {base_name}")
-                # Build ASE trajectory from input files
-                extracted_frames = rdf.build_ase_trajectory(
-                    ion_file, pos_file, cel_file,
-                    time_after_start=getattr(a, "time_after_start", 60),
-                    num_frames=getattr(a, "num_frames", 100),
-                    time_interval=getattr(a, "time_interval", 0.00193511)
-                )
-                # Compute RDF with user-specified parameters
-                rdf.compute_rdf(
-                    extracted_frames,
-                    output_prefix=output_prefix,
-                    time_after_start=getattr(a, "time_after_start", 60),
-                    central_atoms=getattr(a, "central_atom", ['Li', 'Al', 'P', 'S']),
-                    pair_atoms=getattr(a, "pair_atoms", None),
-                    ngrid=getattr(a, "ngrid", 1001),
-                    rmax=getattr(a, "rmax", 10.0),
-                    sigma=getattr(a, "sigma", 0.2),
-                    xlim=tuple(getattr(a, "xlim", [1.5, 8.0]))
-                )
-                results[base_name] = {"rdf_plots": f"{output_prefix}_*.png"}
-                print(f" → RDF plots created with prefix: {output_prefix}")
-            except Exception as e:
-                print(f" → Failed to process {base_name}: {e}")
-                continue
-        print(f"RDF analysis completed for {len(results)} file sets.")
+                subprocess.run(cmd, check=True, text=True,
+                            cwd=os.path.dirname(os.path.abspath(__file__)))
+                print(f"→ RDF plots created with prefix: {output_prefix}")
+            except subprocess.CalledProcessError as e:
+                print(f"→ Failed to process LAMMPS RDF: {e}")
+        # Discover and validate input files
+        else:
+            pos_files = sorted(glob.glob(os.path.join(a.data_dir, "*.pos")))
+            ion_files = sorted(glob.glob(os.path.join(a.data_dir, "*.in")))
+            cel_files = sorted(glob.glob(os.path.join(a.data_dir, "*.cel")))
+            if not pos_files or not ion_files:
+                sys.exit("ERROR: Missing .pos or .in files for RDF analysis")
+            if len(pos_files) != len(ion_files):
+                sys.exit("ERROR: Number of .pos and .in files must match")
+            if not cel_files:
+                sys.exit("ERROR: RDF analysis requires .cel files for unit cell information")
+            if len(cel_files) != len(pos_files):
+                sys.exit("ERROR: Number of .cel files must match .pos files")
+            print(f"Starting RDF analysis...")
+            print(f"Central atoms: {', '.join(a.central_atom)}")
+            print(f"Processing {len(pos_files)} file sets...")
+            results = {}
+            # Process each file set for RDF calculation
+            for i, (pos_file, ion_file, cel_file) in enumerate(zip(pos_files, ion_files, cel_files)):
+                try:
+                    base_name = os.path.splitext(os.path.basename(pos_file))[0]
+                    output_prefix = f"rdf_plot_{base_name}"
+                    print(f"Processing file set {i+1}/{len(pos_files)}: {base_name}")
+                    # Build ASE trajectory from input files
+                    extracted_frames = rdf.build_ase_trajectory(
+                        ion_file, pos_file, cel_file,
+                        time_after_start=getattr(a, "time_after_start", 60),
+                        num_frames=getattr(a, "num_frames", 100),
+                        time_interval=getattr(a, "time_interval", 0.00193511)
+                    )
+                    # Compute RDF with user-specified parameters
+                    rdf.compute_rdf(
+                        extracted_frames,
+                        output_prefix=output_prefix,
+                        time_after_start=getattr(a, "time_after_start", 60),
+                        central_atoms=getattr(a, "central_atom", ['Li', 'Al', 'P', 'S']),
+                        pair_atoms=getattr(a, "pair_atoms", None),
+                        ngrid=getattr(a, "ngrid", 1001),
+                        rmax=getattr(a, "rmax", 10.0),
+                        sigma=getattr(a, "sigma", 0.2),
+                        xlim=tuple(getattr(a, "xlim", [1.5, 8.0]))
+                    )
+                    results[base_name] = {"rdf_plots": f"{output_prefix}_*.png"}
+                    print(f" → RDF plots created with prefix: {output_prefix}")
+                except Exception as e:
+                    print(f" → Failed to process {base_name}: {e}")
+                    continue
 
     # Handle Velocity Autocorrelation Function analysis
     elif a.mode == "vaf":

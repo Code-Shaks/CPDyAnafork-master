@@ -17,6 +17,7 @@ Usage:
 import numpy as np
 import matplotlib.pyplot as plt
 from ase import Atoms
+from ase.io import read as ase_read
 from pymatgen.io.ase import AseAtomsAdaptor
 from pymatgen.analysis.diffusion.aimd.rdf import RadialDistributionFunctionFast
 from . import input_reader as inp
@@ -24,6 +25,40 @@ import math
 import os
 import argparse
 import sys
+
+def build_lammps_trajectory(
+    lammps_file, lammps_elements, element_mapping, lammps_timestep,
+    num_frames=100, stride=1
+):
+    """
+    Build ASE trajectory frames from a LAMMPS dump file using SAMOS/CPDyAna input_reader.
+    """
+    # Use input_reader.read_lammps_trajectory to get trajectory arrays and atom types
+    pos_full, n_frames, dt_full, t_full, cell_param_full, thermo_data, volumes, inp_array = inp.read_lammps_trajectory(
+        lammps_file,
+        elements=lammps_elements,
+        timestep=lammps_timestep,
+        element_mapping=element_mapping,
+        export_verification=False,
+        show_recommendations=False
+    )
+
+    # Limit frames if requested
+    if num_frames > 0:
+        frame_indices = list(range(0, min(num_frames, n_frames), stride))
+    else:
+        frame_indices = list(range(0, n_frames, stride))
+
+    atoms_list = []
+    for i in frame_indices:
+        symbols = [str(s) for s in inp_array]
+        positions = pos_full[:, i, :]
+        cell = cell_param_full[i].reshape((3, 3))
+        atoms = Atoms(symbols=symbols, positions=positions, cell=cell, pbc=True)
+        atoms_list.append(atoms)
+
+    print(f"Built {len(atoms_list)} ASE Atoms frames from LAMMPS trajectory.")
+    return atoms_list
 
 def build_ase_trajectory(
     in_file, pos_file, cel_file, time_after_start=60, num_frames=100, time_interval=0.00193511
@@ -175,58 +210,62 @@ def compute_rdf(
     return results
 
 def main():
-    """
-    Main function with integrated .traj conversion approach.
-    Handles command-line argument parsing, file validation,
-    and orchestrates the complete RDF calculation workflow from Quantum
-    ESPRESSO output files.
-    """
-    # Set up command-line argument parser
-    parser = argparse.ArgumentParser(description='Compute RDF from QE files via .traj conversion')
-    parser.add_argument('--in-file', required=True, help='Path to .in file')
-    parser.add_argument('--pos-file', required=True, help='Path to .pos file')
-    parser.add_argument('--cel-file', required=True, help='Path to .cel file')
+    parser = argparse.ArgumentParser(description='Compute RDF from QE or LAMMPS files')
+    # QE arguments
+    parser.add_argument('--in-file', help='Path to .in file')
+    parser.add_argument('--pos-file', help='Path to .pos file')
+    parser.add_argument('--cel-file', help='Path to .cel file')
     parser.add_argument('--time-after-start', type=float, default=60.0,
                         help='Time (ps) after which to start extracting frames')
-    parser.add_argument('--num-frames', type=int, default=100,
-                        help='Number of frames to extract for RDF')
+    parser.add_argument('--num-frames', type=int, default=0,
+                        help='Number of frames to extract for RDF (default: 0 for all frames)')
     parser.add_argument('--time-interval', type=float, default=0.00193511,
                         help='Time interval between frames (ps)')
-    parser.add_argument('--output-prefix', default='rdf_plot',
-                        help='Prefix for output plot filename')
-    parser.add_argument('--central-atoms', nargs='+', default=['Li', 'Al', 'P', 'S'],
-                        help='List of central atom types for RDF (default: Li Al P S)')
-    parser.add_argument('--pair-atoms', nargs='+', default=None,
-                        help='List of pair atom types for RDF (default: same as central-atoms)')
-    parser.add_argument('--ngrid', type=int, default=1001,
-                        help='Number of radial grid points for RDF')
-    parser.add_argument('--rmax', type=float, default=10.0,
-                        help='Maximum distance for RDF calculation (Å)')
-    parser.add_argument('--sigma', type=float, default=0.2,
-                        help='Gaussian broadening parameter for RDF')
-    parser.add_argument('--xlim', nargs=2, type=float, default=[1.5, 8.0],
-                        help='x-axis limits for RDF plot (default: 1.5 8.0)')
-
+    # LAMMPS-specific arguments
+    parser.add_argument('--lammps-file', help='LAMMPS trajectory file (.lammpstrj)')
+    parser.add_argument('--lammps-elements', nargs='+', help='LAMMPS atom-type symbols (e.g., Li La Ti O)')
+    parser.add_argument('--element-mapping', nargs='+', help='LAMMPS type-to-element map (e.g., 1:Li 2:La 3:Ti 4:O)')
+    parser.add_argument('--lammps-timestep', type=float, help='LAMMPS timestep (ps)')
+    parser.add_argument('--stride', type=int, default=1, help='Stride for reading frames (LAMMPS only)')
+    # Common RDF arguments
+    parser.add_argument('--output-prefix', default='rdf_plot', help='Prefix for output plot filename')
+    parser.add_argument('--central-atoms', nargs='+', default=['Li'],
+                        help='List of central atom types for RDF')
+    parser.add_argument('--pair-atoms', nargs='+', default=None, help='List of pair atom types for RDF')
+    parser.add_argument('--ngrid', type=int, default=1001, help='Number of radial grid points for RDF')
+    parser.add_argument('--rmax', type=float, default=10.0, help='Maximum distance for RDF calculation (Å)')
+    parser.add_argument('--sigma', type=float, default=0.2, help='Gaussian broadening parameter for RDF')
+    parser.add_argument('--xlim', nargs=2, type=float, default=[1.5, 8.0], help='x-axis limits for RDF plot')
     args = parser.parse_args()
 
-    # Validate that all required input files exist
-    for file_path in [args.in_file, args.pos_file, args.cel_file]:
-        if not os.path.exists(file_path):
-            print(f"Error: File not found: {file_path}")
+    # --- LAMMPS branch ---
+    if args.lammps_file:
+        # Parse element mapping if provided
+        element_mapping = None
+        if args.element_mapping:
+            element_mapping = {}
+            for mapping in args.element_mapping:
+                k, v = mapping.split(':')
+                element_mapping[int(k)] = v
+
+        # Validate required LAMMPS arguments
+        if not args.lammps_elements or not args.lammps_timestep:
+            print("Error: --lammps-elements and --lammps-timestep are required for LAMMPS input.")
             sys.exit(1)
 
-    try:
-        # Step 1 & 2: Build trajectory frames in memory
-        extracted_frames = build_ase_trajectory(
-            args.in_file, args.pos_file, args.cel_file,
-            time_after_start=args.time_after_start,
+        # Build trajectory from LAMMPS dump
+        frames = build_lammps_trajectory(
+            args.lammps_file,
+            lammps_elements=args.lammps_elements,
+            element_mapping=element_mapping,
+            lammps_timestep=args.lammps_timestep,
             num_frames=args.num_frames,
-            time_interval=args.time_interval
+            stride=args.stride
         )
 
-        # Step 3: Compute RDF and generate plots
+        # Compute RDF and plot
         compute_rdf(
-            extracted_frames,
+            frames,
             output_prefix=args.output_prefix,
             time_after_start=args.time_after_start,
             central_atoms=args.central_atoms,
@@ -236,18 +275,44 @@ def main():
             sigma=args.sigma,
             xlim=tuple(args.xlim)
         )
-        print("\n=== RDF Calculation Complete ===")
+        print("\n=== RDF Calculation Complete (LAMMPS) ===")
+        return
 
-    except Exception as e:
-        print(f"Error during calculation: {e}")
-        sys.exit(1)
+    # --- QE branch (unchanged) ---
+    if args.in_file and args.pos_file and args.cel_file:
+        # Validate that all required input files exist
+        for file_path in [args.in_file, args.pos_file, args.cel_file]:
+            if not os.path.exists(file_path):
+                print(f"Error: File not found: {file_path}")
+                sys.exit(1)
+        try:
+            # Step 1 & 2: Build trajectory frames in memory
+            extracted_frames = build_ase_trajectory(
+                args.in_file, args.pos_file, args.cel_file,
+                time_after_start=args.time_after_start,
+                num_frames=args.num_frames,
+                time_interval=args.time_interval
+            )
+            # Step 3: Compute RDF and generate plots
+            compute_rdf(
+                extracted_frames,
+                output_prefix=args.output_prefix,
+                time_after_start=args.time_after_start,
+                central_atoms=args.central_atoms,
+                pair_atoms=args.pair_atoms if args.pair_atoms is not None else args.central_atoms,
+                ngrid=args.ngrid,
+                rmax=args.rmax,
+                sigma=args.sigma,
+                xlim=tuple(args.xlim)
+            )
+            print("\n=== RDF Calculation Complete (QE) ===")
+        except Exception as e:
+            print(f"Error during calculation: {e}")
+            sys.exit(1)
+        return
+
+    print("Error: Please provide either QE or LAMMPS input files.")
+    sys.exit(1)
 
 if __name__ == "__main__":
-    # Display usage information if no arguments provided
-    if len(sys.argv) == 1:
-        print("Example usage:")
-        print("python compute_rdf.py --in-file LiAlPS.in --pos-file LiAlPS.pos --cel-file LiAlPS.cel")
-        print("\nFor help with all options:")
-        print("python compute_rdf.py --help")
-        sys.exit(0)
     main()
