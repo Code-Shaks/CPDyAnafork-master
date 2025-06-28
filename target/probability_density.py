@@ -328,73 +328,86 @@ def calculate_probability_density(
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Probability Density Calculator for Molecular Dynamics Trajectories (QE or LAMMPS)"
+        description="Ionic Density Calculator (QE or LAMMPS)"
     )
-    parser.add_argument('--in-file', help='Input .in file (QE)')
-    parser.add_argument('--pos-file', help='Input .pos file (QE)')
-    parser.add_argument('--cel-file', help='Input .cel file (QE)')
-    parser.add_argument('--lammps-file', help='LAMMPS trajectory file (.lammpstrj)')
-    parser.add_argument('--element', default='Li', help='Element for density calculation')
-    parser.add_argument('--sigma', type=float, default=0.3, help='Gaussian sigma (Å)')
-    parser.add_argument('--n-sigma', type=float, default=3.0, help='Cutoff in units of sigma')
-    parser.add_argument('--density', type=float, default=0.1, help='Grid density (points/Å)')
-    parser.add_argument('--output', default=None, help='Output XSF filename')
-    parser.add_argument('--time-after-start', type=float, default=0.0, help='Start time (ps, QE only)')
-    parser.add_argument('--num-frames', type=int, default=0, help='Number of frames (0 for all)')
-    parser.add_argument('--time-interval', type=float, default=0.00193511, help='Time interval between frames (ps, QE only)')
-    parser.add_argument('--step-skip', type=int, default=1, help='Number of steps to skip between frames')
+    # QE-style inputs
+    parser.add_argument('--in-file',    help='Input .in file for QE trajectory')
+    parser.add_argument('--pos-file',   help='Input .pos file for QE trajectory')
+    parser.add_argument('--cel-file',   help='Input .cel file for QE trajectory')
+    parser.add_argument('--lammps-file', nargs='?', help='LAMMPS dump file (.lammpstrj)')
+    parser.add_argument('--lammps-elements', nargs='+',
+                        help='LAMMPS atom-type symbols (e.g., Li La Ti O)')
+    parser.add_argument('--element-mapping', nargs='+',
+                        help='LAMMPS type-to-element map (e.g., 1:Li 2:La 3:Ti 4:O)')
+    parser.add_argument('--lammps-timestep', type=float,
+                        help='LAMMPS timestep (ps)')
+    parser.add_argument('--element',    default='Li', help='Species for density calc')
+    parser.add_argument('--sigma',      type=float, default=0.3, help='Gaussian σ (Å)')
+    parser.add_argument('--n-sigma',    type=float, default=4.0, help='Cutoff (σ units)')
+    parser.add_argument('--density',    type=float, default=0.2, help='Grid density (pts/Å)')
+    parser.add_argument('--step-skip',  type=int,   default=1,   help='Frame stride')
+    parser.add_argument('--num-frames', type=int,   default=0,   help='Max frames (0=all)')
     parser.add_argument('--mask', default=None, help="Atom mask (e.g. '0,1,2,5-10') for density calculation")
     parser.add_argument('--recenter', action='store_true', help="Recenter trajectory before density calculation")
     parser.add_argument('--bbox', default=None, help="Bounding box for grid as 'xmin,xmax,ymin,ymax,zmin,zmax' (comma-separated)")
-
+    parser.add_argument('--output',     default='density.xsf', help='Output XSF file')
     args = parser.parse_args()
 
-    # Build trajectory from LAMMPS or QE files
+    # Determine which input mode to use
     if args.lammps_file:
-        atoms_list = build_lammps_trajectory(
+        # Build mapping dict
+        mapping = {}
+        if args.element_mapping:
+            for m in args.element_mapping:
+                tid, sym = m.split(':')
+                mapping[int(tid)] = sym
+
+        # Read LAMMPS trajectory
+        pos_full, n_frames, dt_full, t_full, cell_full, thermo, volumes, types = inp.read_lammps_trajectory(
             args.lammps_file,
-            stride=args.step_skip,
-            max_frames=args.num_frames if args.num_frames > 0 else None
+            elements=args.lammps_elements,
+            timestep=args.lammps_timestep,
+            element_mapping=mapping
         )
+        # Assemble ASE Atoms list
+        atoms_list = []
+        for i in range(n_frames):
+            cell = cell_full[i].reshape(3,3)
+            coords = pos_full[:, i, :]
+            atoms_list.append(Atoms(cell=cell, symbols=types, positions=coords, pbc=True))
+
     elif args.in_file and args.pos_file and args.cel_file:
+        # QE trajectory
+        from target.probability_density import build_trajectory
         atoms_list = build_trajectory(
             args.in_file, args.pos_file, args.cel_file,
-            time_after_start=args.time_after_start,
+            time_after_start=0.0,
             num_frames=args.num_frames,
-            time_interval=args.time_interval,
+            time_interval=None,
             stride=args.step_skip
         )
     else:
-        raise ValueError("Provide either --lammps-file or all of --in-file, --pos-file, --cel-file for QE input.")
+        parser.error("Provide either --lammps-file or all of --in-file, --pos-file, --cel-file")
 
-    # Parse mask and bounding box if provided
-    mask = None
+    # Compute and write density
+    traj = Trajectory.from_atoms(atoms_list)
+    params = {
+        'element': args.element,
+        'sigma': args.sigma,
+        'n_sigma': args.n_sigma,
+        'density': args.density,
+        'outputfile': args.output
+    }
     if args.mask:
-        mask = parse_mask(args.mask, len(atoms_list[0]))
-
-    bbox = None
+        params['mask'] = args.mask
+    if args.recenter:
+        params['recenter'] = True
     if args.bbox:
-        try:
-            bbox_vals = [float(x) for x in args.bbox.split(',')]
-            if len(bbox_vals) == 6:
-                bbox = np.array(bbox_vals).reshape((3,2))
-            else:
-                print("Bounding box must have 6 comma-separated values (xmin,xmax,ymin,ymax,zmin,zmax)")
-        except Exception as e:
-            print(f"Error parsing bounding box: {e}")
-
-    # Calculate probability density
-    calculate_probability_density(
-        atoms_list,
-        element=args.element,
-        sigma=args.sigma,
-        n_sigma=args.n_sigma,
-        density=args.density,
-        outputfile=args.output,
-        mask=mask,
-        recenter=args.recenter,
-        bbox=bbox
-    )
+        # parse bbox string into [[xmin,xmax],[ymin,ymax],[zmin,zmax]]
+        vals = list(map(float, args.bbox.split(',')))
+        params['bbox'] = np.array(vals).reshape(3,2)
+    get_gaussian_density(traj, **params)
+    print(f"Density file: {args.output}")
 
 if __name__ == '__main__':
     main()

@@ -826,6 +826,18 @@ def parser():
         help="Directory containing trajectory files (.pos, .in, .cel) - REQUIRED"
     )
     ionic_density.add_argument(
+    "--lammps-elements", nargs="+",
+    help="Element symbols for LAMMPS atom types (e.g., Li La Ti O)"
+    )
+    ionic_density.add_argument(
+        "--element-mapping", nargs="+",
+        help="LAMMPS type to element mapping (e.g., 1:Li 2:La 3:Ti 4:O)"
+    )
+    ionic_density.add_argument(
+        "--lammps-timestep", type=float,
+        help="LAMMPS timestep in picoseconds"
+    )
+    ionic_density.add_argument(
         "--time-after-start", type=float, default=0.0,
         help="Time in picoseconds after simulation start to begin analysis (default: 0.0)"
     )
@@ -1081,45 +1093,58 @@ def main():
 
     # Handle ionic density mapping
     elif a.mode == "ionic-density":
-    # Detect trajectory format
+    # 1. Detect trajectory format
         format_info = inp.detect_trajectory_format(a.data_dir)
         if format_info['format'] == 'lammps':
-            # LAMMPS support
-            lammps_files = format_info.get('lammps_files', [])
-            if not lammps_files:
-                # fallback: try to find .lammpstrj file
-                lammps_files = glob.glob(os.path.join(a.data_dir, "*.lammpstrj"))
-            if not lammps_files:
-                sys.exit("ERROR: No LAMMPS trajectory file found in data directory for ionic density analysis")
-            lammps_file = os.path.abspath(lammps_files[0])
-            base_name = os.path.splitext(os.path.basename(lammps_file))[0]
-            output_file = f"{base_name}_density.xsf"
+            # 1. Detect format
+            fmt = inp.detect_trajectory_format(a.data_dir)
+            if fmt['format'] != 'lammps':
+                sys.exit("ERROR: Only LAMMPS trajectories supported for ionic-density")
+
+            # 2. Locate file
+            lf = fmt.get('lammps_files', [])
+            if not lf:
+                lf = glob.glob(os.path.join(a.data_dir, "*.lammpstrj"))
+            if not lf:
+                sys.exit("ERROR: No LAMMPS dump file found")
+            lfile = os.path.abspath(lf[0])
+            base = os.path.splitext(os.path.basename(lfile))[0]
+            out = f"{base}_density.xsf"
+
+            # 3. Build command
             cmd = [
                 sys.executable, "-m", "target.probability_density",
-                "--lammps-file", lammps_file,
-                "--output", output_file,
+                "--lammps-file", lfile,
+                "--output", out,
                 "--element", a.element,
                 "--sigma", str(a.sigma),
                 "--n-sigma", str(a.n_sigma),
                 "--density", str(a.density),
-                "--step-skip", str(getattr(a, "step_skip", 1)),
-                "--num-frames", str(a.num_frames)
+                "--step-skip", str(a.step_skip),
+                "--num-frames", str(a.num_frames),
             ]
-            if hasattr(a, "mask") and a.mask:
+            # New options
+            if a.lammps_elements:
+                cmd += ["--lammps-elements"] + a.lammps_elements
+            if a.element_mapping:
+                cmd += ["--element-mapping"] + a.element_mapping
+            if a.lammps_timestep is not None:
+                cmd += ["--lammps-timestep", str(a.lammps_timestep)]
+            # Optional
+            if a.mask:
                 cmd += ["--mask", a.mask]
-            if hasattr(a, "recenter") and a.recenter:
+            if a.recenter:
                 cmd += ["--recenter"]
-            if hasattr(a, "bbox") and a.bbox:
+            if a.bbox:
                 cmd += ["--bbox", a.bbox]
-            print(f"Processing LAMMPS file for ionic density: {base_name}")
+
+            print(f"Processing LAMMPS file for ionic density: {base}")
             try:
                 subprocess.run(cmd, check=True, text=True,
                             cwd=os.path.dirname(os.path.abspath(__file__)))
-                print(f" → Density file created: {output_file}")
+                print(f"→ Density file created: {out}")
             except subprocess.CalledProcessError as e:
-                print(f" → Failed to process {base_name}: {e}")
-            except Exception as e:
-                print(f" → Unexpected error for {base_name}: {e}")
+                print(f"→ Processing failed: {e}")
         else:
             # Existing QE logic (unchanged)
             pos_files = sorted(glob.glob(os.path.join(a.data_dir, "*.pos")))
