@@ -936,6 +936,18 @@ def parser():
         help="Directory containing trajectory files (.pos, .in, .cel, optionally .evp) - REQUIRED"
     )
     vaf.add_argument(
+        "--lammps-elements", nargs="+",
+        help="Element symbols for LAMMPS atom types (e.g., Li S Al P O)"
+    )
+    vaf.add_argument(
+        "--element-mapping", nargs="+",
+        help="LAMMPS type to element mapping (e.g., 1:Li 2:S 3:Al)"
+    )
+    vaf.add_argument(
+        "--lammps-timestep", type=float,
+        help="LAMMPS timestep in picoseconds"
+    )
+    vaf.add_argument(
         "--element", nargs="+", required=True,
         help="Element symbol(s) for VAF calculation (e.g., Li Na) - REQUIRED"
     )
@@ -984,6 +996,18 @@ def parser():
     vdos.add_argument(
         "--data-dir", required=True,
         help="Directory containing trajectory files (.pos, .in, .cel, optionally .evp) - REQUIRED"
+    )
+    vdos.add_argument(
+        "--lammps-elements", nargs="+",
+        help="Element symbols for LAMMPS atom types (e.g., Li S Al P O)"
+    )
+    vdos.add_argument(
+        "--element-mapping", nargs="+",
+        help="LAMMPS type to element mapping (e.g., 1:Li 2:S 3:Al)"
+    )
+    vdos.add_argument(
+        "--lammps-timestep", type=float,
+        help="LAMMPS timestep in picoseconds"
     )
     vdos.add_argument(
         "--elements", nargs="+", default=["Li", "Al", "P", "S"],
@@ -1309,34 +1333,81 @@ def main():
 
     # Handle Velocity Autocorrelation Function analysis
     elif a.mode == "vaf":
-        # Discover and validate input files
-        pos_files = sorted(glob.glob(os.path.join(a.data_dir, "*.pos")))
-        ion_files = sorted(glob.glob(os.path.join(a.data_dir, "*.in")))
-        cel_files = sorted(glob.glob(os.path.join(a.data_dir, "*.cel")))
-        evp_files = sorted(glob.glob(os.path.join(a.data_dir, "*.evp")))
-        if not pos_files or not ion_files or not cel_files:
-            sys.exit("ERROR: Missing required files (.pos, .in, .cel) for VAF analysis")
-        if not (len(pos_files) == len(ion_files) == len(cel_files)):
-            sys.exit("ERROR: Mismatch in number of .pos, .in, .cel files")
-        print(f"Starting VAF analysis for elements: {', '.join(a.element)}")
-        print(f"Processing {len(pos_files)} file sets...")
-        results = {}
-        # Process each file set for VAF calculation
-        for i, (pos_file, ion_file, cel_file) in enumerate(zip(pos_files, ion_files, cel_files)):
-            base_name = os.path.splitext(os.path.basename(pos_file))[0]
-            evp_file = evp_files[i] if i < len(evp_files) else None
-            # Build subprocess command for VAF analysis
+        # --- Auto-detect file type in data-dir ---
+        files = os.listdir(a.data_dir)
+        files_lower = [f.lower() for f in files]
+        # QE detection
+        is_qe = any(f.endswith('.pos') for f in files_lower) and any(f.endswith('.cel') for f in files_lower)
+        # LAMMPS detection
+        is_lammps = any(f.endswith('.dump') or f.endswith('.lammpstrj') or f.endswith('.extxyz') for f in files_lower)
+
+        if is_qe:
+            pos_files = sorted(glob.glob(os.path.join(a.data_dir, "*.pos")))
+            ion_files = sorted(glob.glob(os.path.join(a.data_dir, "*.in")))
+            cel_files = sorted(glob.glob(os.path.join(a.data_dir, "*.cel")))
+            evp_files = sorted(glob.glob(os.path.join(a.data_dir, "*.evp")))
+            if not pos_files or not ion_files or not cel_files:
+                sys.exit("ERROR: Missing required files (.pos, .in, .cel) for VAF analysis")
+            if not (len(pos_files) == len(ion_files) == len(cel_files)):
+                sys.exit("ERROR: Mismatch in number of .pos, .in, .cel files")
+            print(f"Starting VAF analysis for elements: {', '.join(a.element)}")
+            print(f"Processing {len(pos_files)} file sets...")
+            results = {}
+            for i, (pos_file, ion_file, cel_file) in enumerate(zip(pos_files, ion_files, cel_files)):
+                base_name = os.path.splitext(os.path.basename(pos_file))[0]
+                evp_file = evp_files[i] if i < len(evp_files) else None
+                cmd = [
+                    sys.executable, os.path.join(os.path.dirname(__file__), "compute_vaf.py"),
+                    "--data-dir", a.data_dir,
+                    "--element"
+                ] + a.element
+                cmd += [
+                    "--start", str(a.start),
+                    "--nframes", str(a.nframes),
+                    "--stride", str(a.stride),
+                    "--blocks", str(a.blocks),
+                    "--out-prefix", f"{a.out_prefix}_{base_name}",
+                    "--t-end-fit-ps", str(a.t_end_fit_ps),
+                    "--time-interval", str(a.time_interval),
+                    "--t-start-fit-ps", str(a.t_start_fit_ps),
+                    "--stepsize-t", str(a.stepsize_t),
+                    "--stepsize-tau", str(a.stepsize_tau)
+                ]
+                print(f"Processing file set {i+1}/{len(pos_files)}: {base_name}")
+                try:
+                    subprocess.run(cmd, check=True)
+                    results[base_name] = {"vaf_output_prefix": f"{a.out_prefix}_{base_name}"}
+                    print(f" → VAF analysis completed with prefix: {a.out_prefix}_{base_name}")
+                except subprocess.CalledProcessError as e:
+                    print(f" → VAF analysis failed for {base_name}: {e}")
+                    continue
+                except Exception as e:
+                    print(f" → Unexpected error in VAF analysis for {base_name}: {e}")
+                    continue
+            print(f"VAF analysis completed for {len(results)} file sets.")
+
+        elif is_lammps:
+            # Find LAMMPS file
+            lammps_file = None
+            for ext in ('*.dump', '*.lammpstrj', '*.extxyz'):
+                found = glob.glob(os.path.join(a.data_dir, ext))
+                if found:
+                    lammps_file = found[0]
+                    break
+            if not lammps_file:
+                sys.exit("ERROR: No LAMMPS trajectory file found in data-dir for VAF analysis")
+            base_name = os.path.splitext(os.path.basename(lammps_file))[0]
             cmd = [
                 sys.executable, os.path.join(os.path.dirname(__file__), "compute_vaf.py"),
-                "--in-file", ion_file,
-                "--pos-file", pos_file,
-                "--cel-file", cel_file,
+                "--data-dir", a.data_dir,
                 "--element"
             ] + a.element
-            # Add EVP file if available for accurate time steps
-            if evp_file:
-                cmd += ["--evp-file", evp_file]
-            # Add analysis parameters
+            if a.lammps_elements:
+                cmd += ["--lammps-elements"] + a.lammps_elements
+            if a.element_mapping:
+                cmd += ["--element-mapping"] + a.element_mapping
+            if a.lammps_timestep:
+                cmd += ["--lammps-timestep", str(a.lammps_timestep)]
             cmd += [
                 "--start", str(a.start),
                 "--nframes", str(a.nframes),
@@ -1349,44 +1420,82 @@ def main():
                 "--stepsize-t", str(a.stepsize_t),
                 "--stepsize-tau", str(a.stepsize_tau)
             ]
-            print(f"Processing file set {i+1}/{len(pos_files)}: {base_name}")
+            print(f"Processing LAMMPS file for VAF: {base_name}")
             try:
                 subprocess.run(cmd, check=True)
-                results[base_name] = {"vaf_output_prefix": f"{a.out_prefix}_{base_name}"}
-                print(f" → VAF analysis completed with prefix: {a.out_prefix}_{base_name}")
+                print(f" → VAF analysis completed for LAMMPS file: {base_name}")
             except subprocess.CalledProcessError as e:
-                print(f" → VAF analysis failed for {base_name}: {e}")
-                continue
-            except Exception as e:
-                print(f" → Unexpected error in VAF analysis for {base_name}: {e}")
-                continue
-        print(f"VAF analysis completed for {len(results)} file sets.")
+                print(f" → VAF analysis failed for LAMMPS: {e}")
+        else:
+            sys.exit("ERROR: Could not detect QE or LAMMPS trajectory files in data-dir.")
 
     # Handle Vibrational Density of States analysis
     elif a.mode == "vdos":
-        # Discover and validate input files
-        pos_files = sorted(glob.glob(os.path.join(a.data_dir, "*.pos")))
-        ion_files = sorted(glob.glob(os.path.join(a.data_dir, "*.in")))
-        cel_files = sorted(glob.glob(os.path.join(a.data_dir, "*.cel")))
-        evp_files = sorted(glob.glob(os.path.join(a.data_dir, "*.evp")))
-        if not pos_files or not ion_files or not cel_files:
-            print("ERROR: Missing required files (.pos, .in, .cel) for VDOS analysis")
-            return
-        if not (len(pos_files) == len(ion_files) == len(cel_files)):
-            print("ERROR: Mismatch in number of .pos, .in, .cel files")
-            return
-        print(f"Starting VDOS analysis for elements: {', '.join(a.elements)}")
-        print(f"Processing {len(pos_files)} file sets...")
-        # Process each file set for VDOS calculation
-        for i, (pos_file, ion_file, cel_file) in enumerate(zip(pos_files, ion_files, cel_files)):
-            base_name = os.path.splitext(os.path.basename(pos_file))[0]
-            evp_file = evp_files[i] if i < len(evp_files) else None
-            # Build subprocess command for VDOS analysis
+        # --- Auto-detect file type in data-dir ---
+        files = os.listdir(a.data_dir)
+        files_lower = [f.lower() for f in files]
+        # QE detection
+        is_qe = any(f.endswith('.pos') for f in files_lower) and any(f.endswith('.cel') for f in files_lower)
+        # LAMMPS detection
+        is_lammps = any(f.endswith('.dump') or f.endswith('.lammpstrj') or f.endswith('.extxyz') for f in files_lower)
+
+        if is_qe:
+            pos_files = sorted(glob.glob(os.path.join(a.data_dir, "*.pos")))
+            ion_files = sorted(glob.glob(os.path.join(a.data_dir, "*.in")))
+            cel_files = sorted(glob.glob(os.path.join(a.data_dir, "*.cel")))
+            evp_files = sorted(glob.glob(os.path.join(a.data_dir, "*.evp")))
+            if not pos_files or not ion_files or not cel_files:
+                print("ERROR: Missing required files (.pos, .in, .cel) for VDOS analysis")
+                return
+            if not (len(pos_files) == len(ion_files) == len(cel_files)):
+                print("ERROR: Mismatch in number of .pos, .in, .cel files")
+                return
+            print(f"Starting VDOS analysis for elements: {', '.join(a.elements)}")
+            print(f"Processing {len(pos_files)} file sets...")
+            # Process each file set for VDOS calculation
+            for i, (pos_file, ion_file, cel_file) in enumerate(zip(pos_files, ion_files, cel_files)):
+                base_name = os.path.splitext(os.path.basename(pos_file))[0]
+                evp_file = evp_files[i] if i < len(evp_files) else None
+                # Build subprocess command for VDOS analysis
+                cmd = [
+                    sys.executable, os.path.join(os.path.dirname(__file__), "vdos.py"),
+                    "--in_file", ion_file,
+                    "--pos_file", pos_file,
+                    "--cel_file", cel_file,
+                    "--out_prefix", f"{a.out_prefix}_{base_name}",
+                    "--start", str(a.start),
+                    "--nframes", str(a.nframes),
+                    "--stride", str(a.stride),
+                    "--time_interval", str(a.time_interval),
+                    "--elements"
+                ] + a.elements
+                # Add EVP file if available
+                if evp_file:
+                    cmd += ["--evp_file", evp_file]
+                print(f"Processing file set {i+1}/{len(pos_files)}: {base_name}")
+                try:
+                    subprocess.run(cmd, check=True)
+                    print(f" → VDOS analysis completed with prefix: {a.out_prefix}_{base_name}")
+                except subprocess.CalledProcessError as e:
+                    print(f" → VDOS analysis failed for {base_name}: {e}")
+                    continue
+            print("VDOS analysis completed.")
+
+        elif is_lammps:
+            # Find LAMMPS file
+            lammps_file = None
+            for ext in ('*.dump', '*.lammpstrj', '*.extxyz'):
+                found = glob.glob(os.path.join(a.data_dir, ext))
+                if found:
+                    lammps_file = found[0]
+                    break
+            if not lammps_file:
+                print("ERROR: No LAMMPS trajectory file found in data-dir for VDOS analysis")
+                return
+            base_name = os.path.splitext(os.path.basename(lammps_file))[0]
             cmd = [
                 sys.executable, os.path.join(os.path.dirname(__file__), "vdos.py"),
-                "--in_file", ion_file,
-                "--pos_file", pos_file,
-                "--cel_file", cel_file,
+                "--data-dir", a.data_dir,
                 "--out_prefix", f"{a.out_prefix}_{base_name}",
                 "--start", str(a.start),
                 "--nframes", str(a.nframes),
@@ -1394,18 +1503,23 @@ def main():
                 "--time_interval", str(a.time_interval),
                 "--elements"
             ] + a.elements
-            # Add EVP file if available
-            if evp_file:
-                cmd += ["--evp_file", evp_file]
-            print(f"Processing file set {i+1}/{len(pos_files)}: {base_name}")
+            # Pass LAMMPS-specific arguments
+            if a.lammps_elements:
+                cmd += ["--lammps-elements"] + a.lammps_elements
+            if a.element_mapping:
+                cmd += ["--element-mapping"] + a.element_mapping
+            if a.lammps_timestep:
+                cmd += ["--lammps-timestep", str(a.lammps_timestep)]
+            print(f"Processing LAMMPS file for VDOS: {base_name}")
             try:
                 subprocess.run(cmd, check=True)
-                print(f" → VDOS analysis completed with prefix: {a.out_prefix}_{base_name}")
+                print(f" → VDOS analysis completed for LAMMPS file: {base_name}")
             except subprocess.CalledProcessError as e:
-                print(f" → VDOS analysis failed for {base_name}: {e}")
-                continue
-        print("VDOS analysis completed.")
-    return
+                print(f" → VDOS analysis failed for LAMMPS: {e}")
+            print("VDOS analysis completed.")
+        else:
+            print("ERROR: Could not detect QE or LAMMPS trajectory files in data-dir.")
+        return
 
 # Entry point for script execution
 if __name__ == "__main__":

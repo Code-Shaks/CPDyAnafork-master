@@ -14,6 +14,7 @@ import sys
 import argparse
 import numpy as np
 import matplotlib.pyplot as plt
+import glob
 from ase import Atoms
 from samos_modules.samos_trajectory import Trajectory
 from samos_modules.samos_analysis import DynamicsAnalyzer
@@ -265,28 +266,94 @@ def main():
     Main function for VDOS computation and plotting.
     Parses command-line arguments, builds trajectory, and generates VDOS plots.
     """
-    parser = argparse.ArgumentParser(description="Compute and plot VDOS using SAMOS")
-    parser.add_argument('--in_file', required=True)
-    parser.add_argument('--pos_file', required=True)
-    parser.add_argument('--cel_file', required=True)
-    parser.add_argument('--evp_file', default=None)
-    parser.add_argument('--out_prefix', default='vdos')
-    parser.add_argument('--start', type=float, default=0.0)
-    parser.add_argument('--nframes', type=int, default=0)
-    parser.add_argument('--stride', type=int, default=1)
-    parser.add_argument('--time_interval', type=float, default=0.00193511)
-    parser.add_argument('--elements', nargs='+', default=None, help="Elements to plot (default: Li Al P S)")
+    parser = argparse.ArgumentParser(description="Compute and plot VDOS from QE or LAMMPS trajectory files.")
+    parser.add_argument('--data-dir', required=True, help="Directory containing trajectory files (QE or LAMMPS)")
+    parser.add_argument('--lammps-elements', nargs='+', help="Element symbols for LAMMPS atom types (e.g., Li S Al P O)")
+    parser.add_argument('--element-mapping', nargs='+', help="LAMMPS type to element mapping (e.g., 1:Li 2:S 3:Al)")
+    parser.add_argument('--lammps-timestep', type=float, help="LAMMPS timestep in picoseconds")
+    parser.add_argument('--elements', nargs='+', required=True, help="Atom symbol(s) for VDOS (e.g. Li Na)")
+    parser.add_argument('--start', type=float, default=0.0, help="Time (ps) to start analysis")
+    parser.add_argument('--nframes', type=int, default=0, help="Number of frames (0=all)")
+    parser.add_argument('--stride', type=int, default=1, help="Stride for frames (1=all, 2=every other, etc.)")
+    parser.add_argument('--out_prefix', default='vdos', help="Prefix for output files")
+    parser.add_argument('--time_interval', type=float, default=0.00193511, help='Default time between frames (ps) if no .evp file')
     args = parser.parse_args()
 
-    frames = build_trajectory(
-        args.in_file, args.pos_file, args.cel_file,
-        evp_file=args.evp_file,
-        start=args.start,
-        nframes=args.nframes,
-        stride=args.stride,
-        time_interval=args.time_interval
-    )
-    compute_plot_vdos(frames, args.out_prefix, elements=args.elements, time_interval=args.time_interval)
+    files = os.listdir(args.data_dir)
+    files_lower = [f.lower() for f in files]
+    is_qe = any(f.endswith('.pos') for f in files_lower) and any(f.endswith('.cel') for f in files_lower)
+    is_lammps = any(f.endswith('.dump') or f.endswith('.lammpstrj') or f.endswith('.extxyz') for f in files_lower)
+
+    if is_qe:
+        pos_file = glob.glob(os.path.join(args.data_dir, '*.pos'))[0]
+        cel_file = glob.glob(os.path.join(args.data_dir, '*.cel'))[0]
+        in_file = glob.glob(os.path.join(args.data_dir, '*.in'))[0]
+        evp_file = glob.glob(os.path.join(args.data_dir, '*.evp'))[0] if glob.glob(os.path.join(args.data_dir, '*.evp')) else None
+
+        # ...existing QE logic...
+        frames, dt = build_trajectory(
+            in_file, pos_file, cel_file,
+            evp_file=evp_file,
+            start=args.start,
+            nframes=args.nframes,
+            stride=args.stride,
+            time_interval=args.time_interval
+        )
+        traj = Trajectory.from_atoms(frames)
+        traj.set_attr('timestep_fs', dt * 1000.0)
+        da = DynamicsAnalyzer()
+        da.set_trajectories(traj)
+        res = da.get_power_spectrum()
+        plot_power_spectrum(res)
+        plt.savefig(f"{args.out_prefix}_vdos.png")
+        plt.show()
+        plt.close()
+
+    elif is_lammps:
+        lammps_file = None
+        for ext in ('*.dump', '*.lammpstrj', '*.extxyz'):
+            found = glob.glob(os.path.join(args.data_dir, ext))
+            if found:
+                lammps_file = found[0]
+                break
+        if not lammps_file:
+            raise RuntimeError("No LAMMPS trajectory file found in data-dir.")
+
+        element_map = {}
+        if args.element_mapping:
+            for mapping in args.element_mapping:
+                type_id, element = mapping.split(':')
+                element_map[int(type_id)] = element
+
+        pos_full, n_frames, dt_full, t_full, cell_param_full, thermo_data, volumes, inp_array = inp.read_lammps_trajectory(
+            lammps_file,
+            elements=args.lammps_elements,
+            timestep=args.lammps_timestep,
+            Conv_factor=1.0,
+            element_mapping=element_map if element_map else None,
+            export_verification=False,
+            show_recommendations=False
+        )
+        pos_arr = np.transpose(pos_full, (1, 0, 2))  # (frames, atoms, 3)
+        dt = dt_full[0] if dt_full is not None and len(dt_full) > 0 else (args.lammps_timestep or 1.0)
+        t_list = t_full
+        vel_arr = finite_diff_velocities(pos_arr, t_list)
+        frames = []
+        for i, (coords, cell) in enumerate(zip(pos_arr, cell_param_full)):
+            a = Atoms(symbols=inp_array, positions=coords, cell=cell.reshape(3,3), pbc=True)
+            a.set_velocities(vel_arr[i])
+            frames.append(a)
+        traj = Trajectory.from_atoms(frames)
+        traj.set_attr('timestep_fs', dt * 1000.0)
+        da = DynamicsAnalyzer()
+        da.set_trajectories(traj)
+        res = da.get_power_spectrum()
+        plot_power_spectrum(res)
+        plt.savefig(f"{args.out_prefix}_vdos.png")
+        plt.show()
+        plt.close()
+    else:
+        raise RuntimeError("Could not detect QE or LAMMPS trajectory files in data-dir.")
 
 if __name__ == '__main__':
     main()

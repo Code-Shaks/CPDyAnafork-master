@@ -17,6 +17,7 @@ import sys
 import numpy as np
 import argparse
 import matplotlib.pyplot as plt
+import glob
 from ase import Atoms
 from samos_modules.samos_trajectory import Trajectory
 from samos_modules.samos_analysis import DynamicsAnalyzer
@@ -264,10 +265,10 @@ def compute_vaf(frames, dt, element, blocks, out_prefix, in_file,
 if __name__ == '__main__':
     # Argument parsing for CLI usage
     p = argparse.ArgumentParser(description="Compute and plot VAF from QE trajectory files.")
-    p.add_argument('--in-file',   required=True, help="Path to .in file (species)")
-    p.add_argument('--pos-file',  required=True, help="Path to .pos file (positions)")
-    p.add_argument('--cel-file',  required=True, help="Path to .cel file (cell parameters)")
-    p.add_argument('--evp-file',  default=None, help="Path to .evp file (timing, optional)")
+    p.add_argument('--data-dir', help="Directory containing trajectory files (QE or LAMMPS)")
+    p.add_argument('--lammps-elements', nargs='+', help="Element symbols for LAMMPS atom types (e.g., Li S Al P O)")
+    p.add_argument('--element-mapping', nargs='+', help="LAMMPS type to element mapping (e.g., 1:Li 2:S 3:Al)")
+    p.add_argument('--lammps-timestep', type=float, help="LAMMPS timestep in picoseconds")
     p.add_argument('--element',   nargs='+', required=True,
                    help="Atom symbol(s) for VAF (e.g. Li Na)")
     p.add_argument('--start',   type=float, default=0.0,
@@ -288,37 +289,113 @@ if __name__ == '__main__':
     p.add_argument('--t-end-fit-ps', type=float, default=50, help="End of the fit in ps (required by SAMOS)")
     args = p.parse_args()
 
-    # Build trajectory with velocities
-    frames, dt = build_trajectory(
-        args.in_file, args.pos_file, args.cel_file,
-        evp_file=args.evp_file,
-        start=args.start,
-        nframes=args.nframes,
-        stride=args.stride,
-        time_interval=args.time_interval
-    )
+    files = os.listdir(args.data_dir)
+    files_lower = [f.lower() for f in files]
+    # QE detection
+    is_qe = any(f.endswith('.pos') for f in files_lower) and any(f.endswith('.cel') for f in files_lower)
+    # LAMMPS detection
+    is_lammps = any(f.endswith('.dump') or f.endswith('.lammpstrj') or f.endswith('.extxyz') for f in files_lower)
 
-    # Compute and plot VAF for each requested element
-    for elem in args.element:
-        traj = Trajectory.from_atoms(frames)
-        traj.set_attr('timestep_fs', dt * 1000.0)
-        da = DynamicsAnalyzer()
-        da.set_trajectories(traj)
-        ts = da.get_vaf(
-            integration='trapezoid',
-            species_of_interest=[elem],
-            nr_of_blocks=args.blocks,
-            stepsize_t=args.stepsize_t,
-            stepsize_tau=args.stepsize_tau,
-            t_start_fit_ps=args.t_start_fit_ps,            
-            t_end_fit_ps=args.t_end_fit_ps
+    if is_qe:
+        # Find files
+        pos_file = glob.glob(os.path.join(args.data_dir, '*.pos'))[0]
+        cel_file = glob.glob(os.path.join(args.data_dir, '*.cel'))[0]
+        in_file = glob.glob(os.path.join(args.data_dir, '*.in'))[0]
+        evp_file = glob.glob(os.path.join(args.data_dir, '*.evp'))[0] if glob.glob(os.path.join(args.data_dir, '*.evp')) else None
+        # Build trajectory with velocities
+        frames, dt = build_trajectory(
+            in_file, pos_file, cel_file,
+            evp_file=evp_file,
+            start=args.start,
+            nframes=args.nframes,
+            stride=args.stride,
+            time_interval=args.time_interval
         )
 
-        # Plot VAF for this element
-        plot_vaf_isotropic(ts)
-        plt.xlim(0, args.t_end_fit_ps * 1000)  # fs, matches process file
-        save_path = f'{args.out_prefix}_{elem}_vaf_upto_{int(args.t_end_fit_ps)}psframes.png'
-        print(f"Saving VAF plot to: {os.path.abspath(save_path)}")
-        plt.savefig(save_path)
-        plt.show()
-        plt.close()
+        # Compute and plot VAF for each requested element
+        for elem in args.element:
+            traj = Trajectory.from_atoms(frames)
+            traj.set_attr('timestep_fs', dt * 1000.0)
+            da = DynamicsAnalyzer()
+            da.set_trajectories(traj)
+            ts = da.get_vaf(
+                integration='trapezoid',
+                species_of_interest=[elem],
+                nr_of_blocks=args.blocks,
+                stepsize_t=args.stepsize_t,
+                stepsize_tau=args.stepsize_tau,
+                t_start_fit_ps=args.t_start_fit_ps,            
+                t_end_fit_ps=args.t_end_fit_ps
+            )
+
+            # Plot VAF for this element
+            plot_vaf_isotropic(ts)
+            plt.xlim(0, args.t_end_fit_ps * 1000)  # fs, matches process file
+            save_path = f'{args.out_prefix}_{elem}_vaf_upto_{int(args.t_end_fit_ps)}psframes.png'
+            print(f"Saving VAF plot to: {os.path.abspath(save_path)}")
+            plt.savefig(save_path)
+            plt.show()
+            plt.close()
+
+    elif is_lammps:
+        # Find LAMMPS file
+        lammps_file = None
+        for ext in ('*.dump', '*.lammpstrj', '*.extxyz'):
+            found = glob.glob(os.path.join(args.data_dir, ext))
+            if found:
+                lammps_file = found[0]
+                break
+        if not lammps_file:
+            raise RuntimeError("No LAMMPS trajectory file found in data-dir.")
+
+        element_map = {}
+        if args.element_mapping:
+            for mapping in args.element_mapping:
+                type_id, element = mapping.split(':')
+                element_map[int(type_id)] = element
+        # Read LAMMPS trajectory
+        pos_full, n_frames, dt_full, t_full, cell_param_full, thermo_data, volumes, inp_array = inp.read_lammps_trajectory(
+            lammps_file,
+            elements=args.lammps_elements,
+            timestep=args.lammps_timestep,
+            Conv_factor=1.0,
+            element_mapping=element_map if element_map else None,
+            export_verification=False,
+            show_recommendations=False
+        )
+        # Build velocities (finite diff)
+        pos_arr = np.transpose(pos_full, (1, 0, 2))  # (frames, atoms, 3)
+        dt = dt_full[0] if dt_full is not None and len(dt_full) > 0 else (args.lammps_timestep or 1.0)
+        t_list = t_full
+        vel_arr = finite_diff_velocities(pos_arr, t_list)
+        # Build ASE Atoms frames
+        frames = []
+        for i, (coords, cell) in enumerate(zip(pos_arr, cell_param_full)):
+            a = Atoms(symbols=inp_array, positions=coords, cell=cell.reshape(3,3), pbc=True)
+            a.set_velocities(vel_arr[i])
+            frames.append(a)
+        # Compute and plot VAF for each requested element
+        for elem in args.element:
+            traj = Trajectory.from_atoms(frames)
+            traj.set_attr('timestep_fs', dt * 1000.0)
+            da = DynamicsAnalyzer()
+            da.set_trajectories(traj)
+            ts = da.get_vaf(
+                integration='trapezoid',
+                species_of_interest=[elem],
+                nr_of_blocks=args.blocks,
+                stepsize_t=args.stepsize_t,
+                stepsize_tau=args.stepsize_tau,
+                t_start_fit_ps=args.t_start_fit_ps,            
+                t_end_fit_ps=args.t_end_fit_ps
+            )
+            plot_vaf_isotropic(ts)
+            plt.xlim(0, args.t_end_fit_ps * 1000)
+            save_path = f'{args.out_prefix}_{elem}_vaf_upto_{int(args.t_end_fit_ps)}psframes.png'
+            print(f"Saving VAF plot to: {os.path.abspath(save_path)}")
+            plt.savefig(save_path)
+            plt.show()
+            plt.close()
+    
+    else:
+        raise RuntimeError("Could not detect QE or LAMMPS trajectory files in data-dir.")
