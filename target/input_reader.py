@@ -198,23 +198,6 @@ def read_lammps_trajectory(lammps_file, elements=None, timestep=None,
     print(f"Trajectory shape: {positions.shape} (frames, atoms, xyz)")
     print(f"Number of frames: {n_frames}")
     print(f"Number of atoms: {n_atoms}")
-
-    unwrapped = np.copy(positions)
-    shifts = np.zeros((n_atoms, 3))
-    for frame in range(1, n_frames):
-        for atom in range(n_atoms):
-            disp = positions[frame, atom] - positions[frame-1, atom]
-            for dim in range(3):
-                box_length = cells[frame, dim, dim]
-                if abs(disp[dim]) > box_length / 2:
-                    shift = -np.sign(disp[dim]) * box_length
-                    shifts[atom, dim] += shift
-            unwrapped[frame, atom] = positions[frame, atom] + shifts[atom]
-    
-    positions = unwrapped
-    print("Positions have been unwrapped for MSD analysis.")
-    
-    # Get atom types from the trajectory (already mapped by SAMOS)
     try:
         atom_types = trajectory.get_types()
         print(f"Retrieved atom types from trajectory: {set(atom_types)}")
