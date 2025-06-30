@@ -267,7 +267,11 @@ def main():
     Parses command-line arguments, builds trajectory, and generates VDOS plots.
     """
     parser = argparse.ArgumentParser(description="Compute and plot VDOS from QE or LAMMPS trajectory files.")
-    parser.add_argument('--data-dir', required=True, help="Directory containing trajectory files (QE or LAMMPS)")
+    parser.add_argument('--data-dir', help="Directory containing trajectory files (QE or LAMMPS)")
+    parser.add_argument('--in_file', help="QE .in file (species)")
+    parser.add_argument('--pos_file', help="QE .pos file (positions)")
+    parser.add_argument('--cel_file', help="QE .cel file (cell parameters)")
+    parser.add_argument('--evp_file', help="QE .evp file (timing)", default=None)
     parser.add_argument('--lammps-elements', nargs='+', help="Element symbols for LAMMPS atom types (e.g., Li S Al P O)")
     parser.add_argument('--element-mapping', nargs='+', help="LAMMPS type to element mapping (e.g., 1:Li 2:S 3:Al)")
     parser.add_argument('--lammps-timestep', type=float, help="LAMMPS timestep in picoseconds")
@@ -278,6 +282,24 @@ def main():
     parser.add_argument('--out_prefix', default='vdos', help="Prefix for output files")
     parser.add_argument('--time_interval', type=float, default=0.00193511, help='Default time between frames (ps) if no .evp file')
     args = parser.parse_args()
+
+    # --- NEW LOGIC: Support direct file input ---
+    if args.in_file and args.pos_file and args.cel_file:
+        # QE-style direct file input
+        frames = build_trajectory(
+            args.in_file, args.pos_file, args.cel_file,
+            evp_file=args.evp_file,
+            start=args.start,
+            nframes=args.nframes,
+            stride=args.stride,
+            time_interval=args.time_interval
+        )
+        compute_plot_vdos(frames, args.out_prefix, elements=args.elements, time_interval=args.time_interval)
+        return
+
+    # --- Original directory-based logic ---
+    if not args.data_dir:
+        raise RuntimeError("Either --data-dir or all of --in_file, --pos_file, --cel_file must be provided.")
 
     files = os.listdir(args.data_dir)
     files_lower = [f.lower() for f in files]
@@ -290,8 +312,7 @@ def main():
         in_file = glob.glob(os.path.join(args.data_dir, '*.in'))[0]
         evp_file = glob.glob(os.path.join(args.data_dir, '*.evp'))[0] if glob.glob(os.path.join(args.data_dir, '*.evp')) else None
 
-        # ...existing QE logic...
-        frames, dt = build_trajectory(
+        frames = build_trajectory(
             in_file, pos_file, cel_file,
             evp_file=evp_file,
             start=args.start,
@@ -299,15 +320,8 @@ def main():
             stride=args.stride,
             time_interval=args.time_interval
         )
-        traj = Trajectory.from_atoms(frames)
-        traj.set_attr('timestep_fs', dt * 1000.0)
-        da = DynamicsAnalyzer()
-        da.set_trajectories(traj)
-        res = da.get_power_spectrum()
-        plot_power_spectrum(res)
-        plt.savefig(f"{args.out_prefix}_vdos.png")
-        plt.show()
-        plt.close()
+        compute_plot_vdos(frames, args.out_prefix, elements=args.elements, time_interval=args.time_interval)
+        return
 
     elif is_lammps:
         lammps_file = None
@@ -343,15 +357,9 @@ def main():
             a = Atoms(symbols=inp_array, positions=coords, cell=cell.reshape(3,3), pbc=True)
             a.set_velocities(vel_arr[i])
             frames.append(a)
-        traj = Trajectory.from_atoms(frames)
-        traj.set_attr('timestep_fs', dt * 1000.0)
-        da = DynamicsAnalyzer()
-        da.set_trajectories(traj)
-        res = da.get_power_spectrum()
-        plot_power_spectrum(res)
-        plt.savefig(f"{args.out_prefix}_vdos.png")
-        plt.show()
-        plt.close()
+        compute_plot_vdos(frames, args.out_prefix, elements=args.elements, time_interval=dt)
+        return
+
     else:
         raise RuntimeError("Could not detect QE or LAMMPS trajectory files in data-dir.")
 
