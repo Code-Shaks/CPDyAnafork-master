@@ -21,6 +21,8 @@ def Van_Hove_self(avg_step, dt, rmax, step_skip, sigma, ngrid, moving_ion_pos):
     nstep = len(dt) - avg_step  # Number of time steps for averaging
     dr = rmax / (ngrid - 1)  # Distance interval
     dist_interval = np.linspace(0.0, rmax, ngrid)  # Create distance intervals
+    aux_factor = 4.0 * np.pi * dist_interval**2 * dr
+    aux_factor[0] = (4.0/3.0) * np.pi * dr**3
     reduced_nt = int(nstep/float(step_skip)) + 1  # Number of reduced time steps
     gsrt = np.zeros((reduced_nt, ngrid), dtype=np.double)  # Initialize Van Hove self part array
     gaussians = norm.pdf(dist_interval[:, None], dist_interval[None, :], sigma) / (float(avg_step) * float(len(moving_ion_pos[:,0,0])))  # Precompute Gaussian functions
@@ -36,8 +38,8 @@ def Van_Hove_self(avg_step, dt, rmax, step_skip, sigma, ngrid, moving_ion_pos):
                 common_matrix = Counter(r_indices)  # Update counter for distance indices
                 common_matrix_old.update(common_matrix)
                 common_matrix = common_matrix_old
-        for a, b in common_matrix.most_common(ngrid):  # Loop over most common distance indices
-            gsrt[it, :] += gaussians[a, :] * b  # Update Van Hove self part
+        for a, b in common_matrix.most_common(ngrid):
+            gsrt[it, :] += (gaussians[a, :] * b) / aux_factor[a]  # Update Van Hove self part
     return dist_interval, reduced_nt, gsrt  # Return results
 
 def Van_Hove_distinct(avg_step, dt, rmax, step_skip, sigma, ngrid, moving_ion_pos, volume, x1, x2, x3, y1, y2, y3, z1, z2, z3):
@@ -96,4 +98,3 @@ def Van_Hove_distinct(avg_step, dt, rmax, step_skip, sigma, ngrid, moving_ion_po
         for a, b in common_matrix.most_common(ngrid):  # Loop over most common distance indices
             gdrt[it, :] += (gaussians[a, :] * b) / (aux_factor[a] * rho)  # Update Van Hove distinct part
     return dist_interval, reduced_nt, gdrt  # Return results
-
