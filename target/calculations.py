@@ -368,6 +368,7 @@ def calculate_msd_lammps(elements, diffusivity_direction_choices, diffusivity_ch
                 key_time = f"{diff_type}_time_array{suffix}"
                 key_diffusivity = f"{diff_type}_diffusivity{suffix}"
                 key_diffusivity_error = f"{diff_type}_diffusivity_error{suffix}"
+                key_slope_sem = f"{diff_type}_slope_sem{suffix}"
 
                 if diff_type == "Tracer":
                     msd_array = msd_tracer(posit, step_counts)
@@ -393,8 +394,36 @@ def calculate_msd_lammps(elements, diffusivity_direction_choices, diffusivity_ch
                     diffusivity = np.nan
                     diffusivity_err = np.nan
 
+                # Block analysis for error estimation (same as QE)
+                M = block
+                B = step_counts // M
+                slope_blocks = []
+                for b in range(B):
+                    t_start = b * M
+                    t_end = (b + 1) * M
+                    if t_end > step_counts:
+                        break
+                    pos_block = posit[:, t_start:t_end, :]
+                    step_block = t_end - t_start
+                    if diff_type == "Tracer":
+                        msd_block = msd_tracer(pos_block, step_block)
+                    elif diff_type == "Charged" or diff_type == "Collective":
+                        tracer_msd_block = msd_tracer(pos_block, step_block)
+                        msd_block = msd_charged(pos_block, tracer_msd_block)
+                    dt_block = np.arange(1, step_block) * dt_value
+                    if len(dt_block) >= 2:
+                        slope_block, _, _, _, _ = linregress(dt_block, msd_block)
+                        slope_blocks.append(slope_block)
+                if len(slope_blocks) > 1:
+                    slope_mean = np.mean(slope_blocks)
+                    slope_std = np.std(slope_blocks)
+                    slope_sem = slope_std / np.sqrt(len(slope_blocks) - 1)
+                else:
+                    slope_sem = np.nan
+
                 result_dict[element].setdefault(key_diffusivity, []).append(diffusivity)
                 result_dict[element].setdefault(key_diffusivity_error, []).append(diffusivity_err)
+                result_dict[element].setdefault(key_slope_sem, []).append(slope_sem)
     return result_dict
 
 def calculate_msd_qe(elements, diffusivity_direction_choices, diffusivity_choices,
