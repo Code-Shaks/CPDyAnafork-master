@@ -1096,7 +1096,10 @@ def main():
                 # Use user-specified plot data
                 pdata = [[float(x[0]), x[1], x[2], x[3]] for x in a.plot_data]
             print(f"Generating MSD plot with {len(pdata)} data series...")
-            p.msd_plot(data_source, pdata, a.first_time, a.last_time, save_path=a.save_path)
+            # p.msd_plot(data_source, pdata, a.first_time, a.last_time, save_path=a.save_path)
+            format_info = inp.detect_trajectory_format(a.data_dir)
+            is_lammps = format_info['format'] == 'lammps'
+            p.msd_plot(data_source, pdata, a.first_time, a.last_time, save_path=a.save_path, is_lammps=is_lammps)
             print(f"MSD plot saved to: {a.save_path}")
         elif a.mode == "ngp":
             if a.plot_data is None:
