@@ -100,250 +100,394 @@ def disp_sum(delt, mobile_ion_pos):
     displacements = mobile_ion_pos[:, t + delt, :] - mobile_ion_pos[:, t, :]
     return np.sum(np.square(np.sum(np.abs(displacements), axis=0)))
 
-# UNIFIED MSD and diffusivity calculation function (TP_slope method)
-def calculate_msd(elements, diffusivity_direction_choices, diffusivity_choices,
-                  pos_full, conduct_rectified_structure_array, conduct_ions_array,
-                  t, Last_term, initial_slope_time, final_slope_time, block,
-                  is_lammps=False, dt_value=1.0, lammps_units="metal", atom_types=None, cell_param_full=None):
-    """
-    UNIFIED MSD calculation using TP_slope method for both LAMMPS and QE files.
-    This ensures consistent results and proper diffusion coefficient values.
-    """
+# # UNIFIED MSD and diffusivity calculation function (TP_slope method)
+# def calculate_msd(elements, diffusivity_direction_choices, diffusivity_choices,
+#                   pos_full, conduct_rectified_structure_array, conduct_ions_array,
+#                   t, Last_term, initial_slope_time, final_slope_time, block,
+#                   is_lammps=False, dt_value=1.0, lammps_units="metal", atom_types=None, cell_param_full=None):
+#     """
+#     UNIFIED MSD calculation using TP_slope method for both LAMMPS and QE files.
+#     This ensures consistent results and proper diffusion coefficient values.
+#     """
+#     result_dict = {}
+    
+#     print(f"=== UNIFIED MSD CALCULATION (TP_slope method) ===")
+#     print(f"Processing {len(elements)} element(s): {elements}")
+#     print(f"Directions: {diffusivity_direction_choices}")
+#     print(f"Types: {diffusivity_choices}")
+#     print(f"Is LAMMPS: {is_lammps}, Units: {lammps_units if is_lammps else 'QE'}")
+#     print(f"Block size: {block}")
+#     print(f"Slope fitting: {initial_slope_time} - {final_slope_time} ps")
+    
+#     # Create time arrays based on file type
+#     if is_lammps:
+#         # For LAMMPS, create time array using dt_value
+#         n_frames = conduct_rectified_structure_array.shape[2] if len(conduct_rectified_structure_array.shape) == 4 else len(t)
+#         dt_array = np.arange(1, n_frames) * dt_value
+#         print(f"LAMMPS time array: {dt_array[0]:.3f} to {dt_array[-1]:.3f} ps (dt={dt_value} ps)")
+#     else:
+#         # For QE, use existing time array
+#         dt_array = t[1:] if len(t) > 1 else np.array([1.0])
+#         print(f"QE time array: {dt_array[0]:.3f} to {dt_array[-1]:.3f} ps")
+    
+#     # Process each element
+#     for ele_idx, element in enumerate(elements):
+#         result_dict[element] = {}
+#         print(f"\nProcessing element: {element}")
+        
+#         # Process each direction
+#         for direction_idx, direction in enumerate(diffusivity_direction_choices):
+#             d = {'XYZ': 3, 'XY': 2, 'YZ': 2, 'ZX': 2, 'X': 1, 'Y': 1, 'Z': 1}[direction]
+#             suffix = '' if direction == 'XYZ' else f'_{direction}'
+            
+#             # Extract structure for this direction and element
+#             if len(conduct_rectified_structure_array.shape) == 4:
+#                 # Structure is organized as [direction, ion, time, xyz]
+#                 posit = conduct_rectified_structure_array[direction_idx, :, :, :]
+#             else:
+#                 # Structure is [ion, time, xyz] - use for all directions
+#                 posit = conduct_rectified_structure_array
+            
+#             step_counts = posit.shape[1]  # Number of time steps
+#             print(f"  Direction: {direction}, Steps: {step_counts}, Dimensionality: {d}D")
+            
+#             # Process each diffusivity type
+#             for diff_type_idx, diff_type in enumerate(diffusivity_choices):
+#                 key_msd = f"{diff_type}_msd_array{suffix}"
+#                 key_time = f"{diff_type}_time_array{suffix}"
+#                 key_diffusivity = f"{diff_type}_diffusivity{suffix}"
+#                 key_diffusivity_error = f"{diff_type}_diffusivity_error{suffix}"
+                
+#                 print(f"    Calculating {diff_type} MSD for {direction}")
+                
+#                 try:
+#                     # Calculate MSD using TP_slope method
+#                     if diff_type == "Tracer":
+#                         msd_array = msd_tracer(posit, step_counts)
+#                     elif diff_type == "Charged" or diff_type == "Collective":
+#                         tracer_msd_array = msd_tracer(posit, step_counts)
+#                         msd_array = msd_charged(posit, tracer_msd_array)
+#                     else:
+#                         print(f"    Warning: Unknown diffusivity type {diff_type}")
+#                         continue
+                    
+#                     # Use appropriate time array
+#                     time_array = dt_array[:len(msd_array)]
+                    
+#                     print(f"    MSD array length: {len(msd_array)}")
+#                     print(f"    Time array length: {len(time_array)}")
+#                     print(f"    MSD range: {msd_array[0]:.3f} - {msd_array[-1]:.3f} Ų")
+                    
+#                     # Store MSD and time arrays
+#                     result_dict[element].setdefault(key_msd, []).append(msd_array)
+#                     result_dict[element].setdefault(key_time, []).append(time_array)
+                    
+#                     # Calculate diffusion coefficient using linear regression (TP_slope method)
+#                     try:
+#                         # Find fitting window indices
+#                         first_idx = np.searchsorted(time_array, initial_slope_time, side='left')
+#                         last_idx = np.searchsorted(time_array, final_slope_time, side='right') - 1
+                        
+#                         if first_idx < last_idx and last_idx < len(msd_array):
+#                             fit_times = time_array[first_idx:last_idx + 1]
+#                             fit_msd = msd_array[first_idx:last_idx + 1]
+                            
+#                             # Remove any NaN or infinite values
+#                             valid_mask = np.isfinite(fit_times) & np.isfinite(fit_msd)
+#                             fit_times = fit_times[valid_mask]
+#                             fit_msd = fit_msd[valid_mask]
+                            
+#                             if len(fit_times) > 3:  # Need at least 4 points for fitting
+#                                 # Linear regression: MSD = 2*d*D*t 
+#                                 slope, intercept, r_value, p_value, std_err = linregress(fit_times, fit_msd)
+#                                 diffusivity = (slope * 1e-4) / (2 * d)  # Convert Å²/ps to cm²/s
+                                
+#                                 print(f"    Slope: {slope:.3e} Ų/ps")
+#                                 print(f"    Diffusion coefficient: {diffusivity:.3e} cm²/s")
+#                                 print(f"    R² = {r_value**2:.4f}")
+#                                 print(f"    Fitting window: {fit_times[0]:.1f} - {fit_times[-1]:.1f} ps ({len(fit_times)} points)")
+#                             else:
+#                                 print(f"    Warning: Too few points for fitting ({len(fit_times)} points)")
+#                                 diffusivity = np.nan
+#                                 std_err = np.nan
+#                         else:
+#                             print(f"    Warning: Invalid fitting window [{initial_slope_time}, {final_slope_time}] ps")
+#                             diffusivity = np.nan
+#                             std_err = np.nan
+                    
+#                     except Exception as e:
+#                         print(f"    Error calculating diffusion coefficient: {e}")
+#                         diffusivity = np.nan
+#                         std_err = np.nan
+                    
+#                     # Block analysis for error estimation (TP_slope method)
+#                     diffusivity_sem = np.nan
+#                     try:
+#                         print(f"    Performing block analysis with block size: {block}")
+#                         M = max(1, min(block, step_counts // 4))  # Ensure reasonable block size
+#                         B = step_counts // M  # Number of complete blocks
+#                         slope_blocks = []
+                        
+#                         for b in range(B):
+#                             t_start = b * M
+#                             t_end = (b + 1) * M
+#                             if t_end > step_counts:
+#                                 break
+                                
+#                             # Extract block data
+#                             pos_block = posit[:, t_start:t_end, :]
+#                             step_block = t_end - t_start
+                            
+#                             if step_block < 10:  # Need minimum points for MSD
+#                                 continue
+                            
+#                             # Calculate MSD for this block
+#                             if diff_type == "Tracer":
+#                                 msd_block = msd_tracer(pos_block, step_block)
+#                             elif diff_type == "Charged" or diff_type == "Collective":
+#                                 tracer_msd_block = msd_tracer(pos_block, step_block)
+#                                 msd_block = msd_charged(pos_block, tracer_msd_block)
+                            
+#                             # Create time array for this block
+#                             if is_lammps:
+#                                 dt_block = np.arange(1, len(msd_block) + 1) * dt_value
+#                             else:
+#                                 time_step = time_array[1] - time_array[0] if len(time_array) > 1 else 1.0
+#                                 dt_block = np.arange(1, len(msd_block) + 1) * time_step
+                            
+#                             # Fit slope for this block (using middle portion for stability)
+#                             if len(dt_block) >= 6:
+#                                 mid_start = len(dt_block) // 4
+#                                 mid_end = 3 * len(dt_block) // 4
+#                                 if mid_end > mid_start + 2:
+#                                     slope_block, _, _, _, _ = linregress(dt_block[mid_start:mid_end], 
+#                                                                        msd_block[mid_start:mid_end])
+#                                     slope_blocks.append(slope_block)
+                        
+#                         # Calculate block statistics
+#                         if len(slope_blocks) > 1:
+#                             slope_mean = np.mean(slope_blocks)
+#                             slope_std = np.std(slope_blocks, ddof=1)
+#                             slope_sem = slope_std / np.sqrt(len(slope_blocks))
+#                             diffusivity_block_mean = (slope_mean * 1e-4) / (2 * d)
+#                             diffusivity_sem = (slope_sem * 1e-4) / (2 * d)
+                            
+#                             print(f"    Block analysis: {len(slope_blocks)} blocks")
+#                             print(f"    Block diffusion: {diffusivity_block_mean:.3e} ± {diffusivity_sem:.3e} cm²/s")
+                            
+#                             # Use block analysis results for error
+#                             if not np.isnan(diffusivity):
+#                                 diffusivity_error = diffusivity_sem
+#                             else:
+#                                 diffusivity = diffusivity_block_mean
+#                                 diffusivity_error = diffusivity_sem
+#                         else:
+#                             print(f"    Block analysis failed: only {len(slope_blocks)} valid blocks")
+#                             diffusivity_error = std_err * 1e-4 / (2 * d) if not np.isnan(std_err) else np.nan
+                            
+#                     except Exception as e:
+#                         print(f"    Block analysis error: {e}")
+#                         diffusivity_error = std_err * 1e-4 / (2 * d) if not np.isnan(std_err) else np.nan
+                    
+#                     # Store diffusion coefficients
+#                     result_dict[element].setdefault(key_diffusivity, []).append(diffusivity)
+#                     result_dict[element].setdefault(key_diffusivity_error, []).append(diffusivity_error)
+                    
+#                     print(f"    Final result: D = {diffusivity:.3e} ± {diffusivity_error:.3e} cm²/s")
+                    
+#                 except Exception as e:
+#                     print(f"    Error in MSD calculation for {diff_type}: {e}")
+#                     # Store empty/NaN data
+#                     result_dict[element].setdefault(key_msd, []).append(np.array([np.nan]))
+#                     result_dict[element].setdefault(key_time, []).append(np.array([1.0]))
+#                     result_dict[element].setdefault(key_diffusivity, []).append(np.nan)
+#                     result_dict[element].setdefault(key_diffusivity_error, []).append(np.nan)
+        
+#         # Create summary data in the expected QE format for plotting compatibility
+#         if 'Tracer_msd_array' in result_dict[element] and len(result_dict[element]['Tracer_msd_array']) > 0:
+#             # Use the first (and typically only) entry for each array
+#             result_dict[element]['msd_mean'] = result_dict[element]['Tracer_msd_array'][0]
+#             result_dict[element]['time_ps'] = result_dict[element]['Tracer_time_array'][0]
+            
+#             # Create diffusion_data structure in QE format
+#             result_dict[element]['diffusion_data'] = {}
+#             for diff_type in diffusivity_choices:
+#                 for direction in diffusivity_direction_choices:
+#                     suffix = '' if direction == 'XYZ' else f'_{direction}'
+#                     diff_key = f"{diff_type}_{direction}"
+                    
+#                     key_diffusivity = f"{diff_type}_diffusivity{suffix}"
+#                     key_diffusivity_error = f"{diff_type}_diffusivity_error{suffix}"
+                    
+#                     if key_diffusivity in result_dict[element] and len(result_dict[element][key_diffusivity]) > 0:
+#                         diffusion_mean = result_dict[element][key_diffusivity][0]
+#                         diffusion_sem = result_dict[element][key_diffusivity_error][0]
+                        
+#                         result_dict[element]['diffusion_data'][diff_key] = {
+#                             'diffusion_mean': diffusion_mean,
+#                             'diffusion_std': diffusion_sem,  # Use SEM as std for consistency
+#                             'diffusion_sem': diffusion_sem
+#                         }
+            
+#             # Also store in the new format for compatibility
+#             if 'Tracer_diffusivity' in result_dict[element] and len(result_dict[element]['Tracer_diffusivity']) > 0:
+#                 result_dict[element]['Tracer_diffusivity'] = result_dict[element]['Tracer_diffusivity']
+#                 result_dict[element]['Tracer_diffusivity_error'] = result_dict[element]['Tracer_diffusivity_error']
+#             else:
+#                 # Fallback to diffusion_data if available
+#                 if 'diffusion_data' in result_dict[element] and 'Tracer_XYZ' in result_dict[element]['diffusion_data']:
+#                     tracer_data = result_dict[element]['diffusion_data']['Tracer_XYZ']
+#                     result_dict[element]['Tracer_diffusivity'] = [tracer_data['diffusion_mean']]
+#                     result_dict[element]['Tracer_diffusivity_error'] = [tracer_data['diffusion_sem']]
+        
+#         print(f"MSD calculation completed for {element}")
+    
+#     print(f"=== UNIFIED MSD CALCULATION COMPLETE ===")
+#     return result_dict
+
+def calculate_msd_lammps(elements, diffusivity_direction_choices, diffusivity_choices,
+                         pos_full, conduct_rectified_structure_array, conduct_ions_array,
+                         t, Last_term, initial_slope_time, final_slope_time, block,
+                         dt_value=1.0, lammps_units="metal", atom_types=None, cell_param_full=None):
     result_dict = {}
-    
-    print(f"=== UNIFIED MSD CALCULATION (TP_slope method) ===")
-    print(f"Processing {len(elements)} element(s): {elements}")
-    print(f"Directions: {diffusivity_direction_choices}")
-    print(f"Types: {diffusivity_choices}")
-    print(f"Is LAMMPS: {is_lammps}, Units: {lammps_units if is_lammps else 'QE'}")
-    print(f"Block size: {block}")
-    print(f"Slope fitting: {initial_slope_time} - {final_slope_time} ps")
-    
-    # Create time arrays based on file type
-    if is_lammps:
-        # For LAMMPS, create time array using dt_value
-        n_frames = conduct_rectified_structure_array.shape[2] if len(conduct_rectified_structure_array.shape) == 4 else len(t)
-        dt_array = np.arange(1, n_frames) * dt_value
-        print(f"LAMMPS time array: {dt_array[0]:.3f} to {dt_array[-1]:.3f} ps (dt={dt_value} ps)")
-    else:
-        # For QE, use existing time array
-        dt_array = t[1:] if len(t) > 1 else np.array([1.0])
-        print(f"QE time array: {dt_array[0]:.3f} to {dt_array[-1]:.3f} ps")
-    
-    # Process each element
+    n_frames = conduct_rectified_structure_array.shape[2] if len(conduct_rectified_structure_array.shape) == 4 else len(t)
+    dt_array = np.arange(1, n_frames) * dt_value
+
     for ele_idx, element in enumerate(elements):
         result_dict[element] = {}
-        print(f"\nProcessing element: {element}")
-        
-        # Process each direction
         for direction_idx, direction in enumerate(diffusivity_direction_choices):
             d = {'XYZ': 3, 'XY': 2, 'YZ': 2, 'ZX': 2, 'X': 1, 'Y': 1, 'Z': 1}[direction]
             suffix = '' if direction == 'XYZ' else f'_{direction}'
-            
-            # Extract structure for this direction and element
             if len(conduct_rectified_structure_array.shape) == 4:
-                # Structure is organized as [direction, ion, time, xyz]
                 posit = conduct_rectified_structure_array[direction_idx, :, :, :]
             else:
-                # Structure is [ion, time, xyz] - use for all directions
                 posit = conduct_rectified_structure_array
-            
-            step_counts = posit.shape[1]  # Number of time steps
-            print(f"  Direction: {direction}, Steps: {step_counts}, Dimensionality: {d}D")
-            
-            # Process each diffusivity type
+            step_counts = posit.shape[1]
             for diff_type_idx, diff_type in enumerate(diffusivity_choices):
                 key_msd = f"{diff_type}_msd_array{suffix}"
                 key_time = f"{diff_type}_time_array{suffix}"
                 key_diffusivity = f"{diff_type}_diffusivity{suffix}"
                 key_diffusivity_error = f"{diff_type}_diffusivity_error{suffix}"
-                
-                print(f"    Calculating {diff_type} MSD for {direction}")
-                
-                try:
-                    # Calculate MSD using TP_slope method
-                    if diff_type == "Tracer":
-                        msd_array = msd_tracer(posit, step_counts)
-                    elif diff_type == "Charged" or diff_type == "Collective":
-                        tracer_msd_array = msd_tracer(posit, step_counts)
-                        msd_array = msd_charged(posit, tracer_msd_array)
-                    else:
-                        print(f"    Warning: Unknown diffusivity type {diff_type}")
-                        continue
-                    
-                    # Use appropriate time array
-                    time_array = dt_array[:len(msd_array)]
-                    
-                    print(f"    MSD array length: {len(msd_array)}")
-                    print(f"    Time array length: {len(time_array)}")
-                    print(f"    MSD range: {msd_array[0]:.3f} - {msd_array[-1]:.3f} Ų")
-                    
-                    # Store MSD and time arrays
-                    result_dict[element].setdefault(key_msd, []).append(msd_array)
-                    result_dict[element].setdefault(key_time, []).append(time_array)
-                    
-                    # Calculate diffusion coefficient using linear regression (TP_slope method)
-                    try:
-                        # Find fitting window indices
-                        first_idx = np.searchsorted(time_array, initial_slope_time, side='left')
-                        last_idx = np.searchsorted(time_array, final_slope_time, side='right') - 1
-                        
-                        if first_idx < last_idx and last_idx < len(msd_array):
-                            fit_times = time_array[first_idx:last_idx + 1]
-                            fit_msd = msd_array[first_idx:last_idx + 1]
-                            
-                            # Remove any NaN or infinite values
-                            valid_mask = np.isfinite(fit_times) & np.isfinite(fit_msd)
-                            fit_times = fit_times[valid_mask]
-                            fit_msd = fit_msd[valid_mask]
-                            
-                            if len(fit_times) > 3:  # Need at least 4 points for fitting
-                                # Linear regression: MSD = 2*d*D*t 
-                                slope, intercept, r_value, p_value, std_err = linregress(fit_times, fit_msd)
-                                diffusivity = (slope * 1e-4) / (2 * d)  # Convert Å²/ps to cm²/s
-                                
-                                print(f"    Slope: {slope:.3e} Ų/ps")
-                                print(f"    Diffusion coefficient: {diffusivity:.3e} cm²/s")
-                                print(f"    R² = {r_value**2:.4f}")
-                                print(f"    Fitting window: {fit_times[0]:.1f} - {fit_times[-1]:.1f} ps ({len(fit_times)} points)")
-                            else:
-                                print(f"    Warning: Too few points for fitting ({len(fit_times)} points)")
-                                diffusivity = np.nan
-                                std_err = np.nan
-                        else:
-                            print(f"    Warning: Invalid fitting window [{initial_slope_time}, {final_slope_time}] ps")
-                            diffusivity = np.nan
-                            std_err = np.nan
-                    
-                    except Exception as e:
-                        print(f"    Error calculating diffusion coefficient: {e}")
-                        diffusivity = np.nan
-                        std_err = np.nan
-                    
-                    # Block analysis for error estimation (TP_slope method)
-                    diffusivity_sem = np.nan
-                    try:
-                        print(f"    Performing block analysis with block size: {block}")
-                        M = max(1, min(block, step_counts // 4))  # Ensure reasonable block size
-                        B = step_counts // M  # Number of complete blocks
-                        slope_blocks = []
-                        
-                        for b in range(B):
-                            t_start = b * M
-                            t_end = (b + 1) * M
-                            if t_end > step_counts:
-                                break
-                                
-                            # Extract block data
-                            pos_block = posit[:, t_start:t_end, :]
-                            step_block = t_end - t_start
-                            
-                            if step_block < 10:  # Need minimum points for MSD
-                                continue
-                            
-                            # Calculate MSD for this block
-                            if diff_type == "Tracer":
-                                msd_block = msd_tracer(pos_block, step_block)
-                            elif diff_type == "Charged" or diff_type == "Collective":
-                                tracer_msd_block = msd_tracer(pos_block, step_block)
-                                msd_block = msd_charged(pos_block, tracer_msd_block)
-                            
-                            # Create time array for this block
-                            if is_lammps:
-                                dt_block = np.arange(1, len(msd_block) + 1) * dt_value
-                            else:
-                                time_step = time_array[1] - time_array[0] if len(time_array) > 1 else 1.0
-                                dt_block = np.arange(1, len(msd_block) + 1) * time_step
-                            
-                            # Fit slope for this block (using middle portion for stability)
-                            if len(dt_block) >= 6:
-                                mid_start = len(dt_block) // 4
-                                mid_end = 3 * len(dt_block) // 4
-                                if mid_end > mid_start + 2:
-                                    slope_block, _, _, _, _ = linregress(dt_block[mid_start:mid_end], 
-                                                                       msd_block[mid_start:mid_end])
-                                    slope_blocks.append(slope_block)
-                        
-                        # Calculate block statistics
-                        if len(slope_blocks) > 1:
-                            slope_mean = np.mean(slope_blocks)
-                            slope_std = np.std(slope_blocks, ddof=1)
-                            slope_sem = slope_std / np.sqrt(len(slope_blocks))
-                            diffusivity_block_mean = (slope_mean * 1e-4) / (2 * d)
-                            diffusivity_sem = (slope_sem * 1e-4) / (2 * d)
-                            
-                            print(f"    Block analysis: {len(slope_blocks)} blocks")
-                            print(f"    Block diffusion: {diffusivity_block_mean:.3e} ± {diffusivity_sem:.3e} cm²/s")
-                            
-                            # Use block analysis results for error
-                            if not np.isnan(diffusivity):
-                                diffusivity_error = diffusivity_sem
-                            else:
-                                diffusivity = diffusivity_block_mean
-                                diffusivity_error = diffusivity_sem
-                        else:
-                            print(f"    Block analysis failed: only {len(slope_blocks)} valid blocks")
-                            diffusivity_error = std_err * 1e-4 / (2 * d) if not np.isnan(std_err) else np.nan
-                            
-                    except Exception as e:
-                        print(f"    Block analysis error: {e}")
-                        diffusivity_error = std_err * 1e-4 / (2 * d) if not np.isnan(std_err) else np.nan
-                    
-                    # Store diffusion coefficients
-                    result_dict[element].setdefault(key_diffusivity, []).append(diffusivity)
-                    result_dict[element].setdefault(key_diffusivity_error, []).append(diffusivity_error)
-                    
-                    print(f"    Final result: D = {diffusivity:.3e} ± {diffusivity_error:.3e} cm²/s")
-                    
-                except Exception as e:
-                    print(f"    Error in MSD calculation for {diff_type}: {e}")
-                    # Store empty/NaN data
-                    result_dict[element].setdefault(key_msd, []).append(np.array([np.nan]))
-                    result_dict[element].setdefault(key_time, []).append(np.array([1.0]))
-                    result_dict[element].setdefault(key_diffusivity, []).append(np.nan)
-                    result_dict[element].setdefault(key_diffusivity_error, []).append(np.nan)
-        
-        # Create summary data in the expected QE format for plotting compatibility
-        if 'Tracer_msd_array' in result_dict[element] and len(result_dict[element]['Tracer_msd_array']) > 0:
-            # Use the first (and typically only) entry for each array
-            result_dict[element]['msd_mean'] = result_dict[element]['Tracer_msd_array'][0]
-            result_dict[element]['time_ps'] = result_dict[element]['Tracer_time_array'][0]
-            
-            # Create diffusion_data structure in QE format
-            result_dict[element]['diffusion_data'] = {}
-            for diff_type in diffusivity_choices:
-                for direction in diffusivity_direction_choices:
-                    suffix = '' if direction == 'XYZ' else f'_{direction}'
-                    diff_key = f"{diff_type}_{direction}"
-                    
-                    key_diffusivity = f"{diff_type}_diffusivity{suffix}"
-                    key_diffusivity_error = f"{diff_type}_diffusivity_error{suffix}"
-                    
-                    if key_diffusivity in result_dict[element] and len(result_dict[element][key_diffusivity]) > 0:
-                        diffusion_mean = result_dict[element][key_diffusivity][0]
-                        diffusion_sem = result_dict[element][key_diffusivity_error][0]
-                        
-                        result_dict[element]['diffusion_data'][diff_key] = {
-                            'diffusion_mean': diffusion_mean,
-                            'diffusion_std': diffusion_sem,  # Use SEM as std for consistency
-                            'diffusion_sem': diffusion_sem
-                        }
-            
-            # Also store in the new format for compatibility
-            if 'Tracer_diffusivity' in result_dict[element] and len(result_dict[element]['Tracer_diffusivity']) > 0:
-                result_dict[element]['Tracer_diffusivity'] = result_dict[element]['Tracer_diffusivity']
-                result_dict[element]['Tracer_diffusivity_error'] = result_dict[element]['Tracer_diffusivity_error']
-            else:
-                # Fallback to diffusion_data if available
-                if 'diffusion_data' in result_dict[element] and 'Tracer_XYZ' in result_dict[element]['diffusion_data']:
-                    tracer_data = result_dict[element]['diffusion_data']['Tracer_XYZ']
-                    result_dict[element]['Tracer_diffusivity'] = [tracer_data['diffusion_mean']]
-                    result_dict[element]['Tracer_diffusivity_error'] = [tracer_data['diffusion_sem']]
-        
-        print(f"MSD calculation completed for {element}")
-    
-    print(f"=== UNIFIED MSD CALCULATION COMPLETE ===")
+
+                if diff_type == "Tracer":
+                    msd_array = msd_tracer(posit, step_counts)
+                elif diff_type == "Charged" or diff_type == "Collective":
+                    tracer_msd_array = msd_tracer(posit, step_counts)
+                    msd_array = msd_charged(posit, tracer_msd_array)
+                else:
+                    continue
+
+                time_array = dt_array[:len(msd_array)]
+                result_dict[element].setdefault(key_msd, []).append(msd_array)
+                result_dict[element].setdefault(key_time, []).append(time_array)
+
+                first_idx = np.searchsorted(time_array, initial_slope_time, side='left')
+                last_idx = np.searchsorted(time_array, final_slope_time, side='right') - 1
+                if first_idx < last_idx and last_idx < len(msd_array):
+                    fit_times = time_array[first_idx:last_idx + 1]
+                    fit_msd = msd_array[first_idx:last_idx + 1]
+                    slope, _, _, _, std_err = linregress(fit_times, fit_msd)
+                    diffusivity = (slope * 1e-4) / (2 * d)
+                    diffusivity_err = (std_err * 1e-4) / (2 * d)
+                else:
+                    diffusivity = np.nan
+                    diffusivity_err = np.nan
+
+                result_dict[element].setdefault(key_diffusivity, []).append(diffusivity)
+                result_dict[element].setdefault(key_diffusivity_error, []).append(diffusivity_err)
     return result_dict
+
+def calculate_msd_qe(elements, diffusivity_direction_choices, diffusivity_choices,
+                     pos_full, conduct_rectified_structure_array, conduct_ions_array,
+                     t, Last_term, initial_slope_time, final_slope_time, block,
+                     atom_types=None, cell_param_full=None):
+    result_dict = {}
+    for ele in range(len(elements)):
+        element = elements[ele]
+        result_dict[element] = {}
+        for direction_idx, direction in enumerate(diffusivity_direction_choices):
+            d = {'XYZ': 3, 'XY': 2, 'YZ': 2, 'ZX': 2, 'X': 1, 'Y': 1, 'Z': 1}[direction]
+            suffix = '' if direction == 'XYZ' else f'_{direction}'
+            posit = conduct_rectified_structure_array[direction_idx, :, :, :]
+            step_counts = posit.shape[1]
+            for diff_type_idx, diff_type in enumerate(diffusivity_choices):
+                key_msd = f"{diff_type}_msd_array{suffix}"
+                key_diff = f"{diff_type}_diffusivity{suffix}"
+                key_sem = f"{diff_type}_slope_sem{suffix}"
+                key_diff_err = f"{diff_type}_diffusivity_error{suffix}"
+
+                if diff_type == "Tracer":
+                    msd_array = msd_tracer(posit, step_counts)
+                elif diff_type == "Charged":
+                    tracer_msd = msd_tracer(posit, step_counts)
+                    msd_array = msd_charged(posit, tracer_msd)
+                else:
+                    raise ValueError(f"Unknown diffusivity type: {diff_type}")
+
+                first_idx = np.searchsorted(t[1:], initial_slope_time, side='left')
+                last_idx = np.searchsorted(t[1:], final_slope_time, side='right') - 1
+                if first_idx <= last_idx:
+                    slope, _, _, _, std_err = linregress(t[1:][first_idx:last_idx + 1], msd_array[first_idx:last_idx + 1])
+                    diffusivity = (slope * 1e-4) / (2 * d)
+                else:
+                    diffusivity = np.nan
+                    std_err = np.nan
+
+                # Block analysis for error estimation
+                M = block
+                B = step_counts // M
+                slope_blocks = []
+                for b in range(B):
+                    t_start = b * M
+                    t_end = (b + 1) * M
+                    if t_end > step_counts:
+                        break
+                    pos_block = posit[:, t_start:t_end, :]
+                    step_block = t_end - t_start
+                    if diff_type == "Tracer":
+                        msd_block = msd_tracer(pos_block, step_block)
+                    elif diff_type == "Charged":
+                        tracer_msd_block = msd_tracer(pos_block, step_block)
+                        msd_block = msd_charged(pos_block, tracer_msd_block)
+                    dt_block = np.arange(1, step_block) * (t[1] - t[0])
+                    if len(dt_block) >= 2:
+                        slope_block, _, _, _, _ = linregress(dt_block, msd_block)
+                        slope_blocks.append(slope_block)
+                if len(slope_blocks) > 1:
+                    slope_mean = np.mean(slope_blocks)
+                    slope_std = np.std(slope_blocks)
+                    slope_sem = slope_std / np.sqrt(len(slope_blocks) - 1)
+                    diffusivity_block_mean = (slope_mean * 1e-4) / (2 * d)
+                    diffusivity_sem = (slope_sem * 1e-4) / (2 * d)
+                else:
+                    diffusivity_block_mean = np.nan
+                    diffusivity_sem = np.nan
+                    slope_sem = np.nan
+
+                result_dict[element].setdefault(key_msd, []).append(msd_array)
+                result_dict[element].setdefault(key_diff, []).append(diffusivity)
+                result_dict[element].setdefault(key_sem, []).append(slope_sem if 'slope_sem' in locals() else np.nan)
+                result_dict[element].setdefault(key_diff_err, []).append(diffusivity_sem)
+    return result_dict
+
+def calculate_msd(elements, diffusivity_direction_choices, diffusivity_choices,
+                  pos_full, conduct_rectified_structure_array, conduct_ions_array,
+                  t, Last_term, initial_slope_time, final_slope_time, block,
+                  is_lammps=False, dt_value=1.0, lammps_units="metal", atom_types=None, cell_param_full=None):
+    if is_lammps:
+        return calculate_msd_lammps(
+            elements, diffusivity_direction_choices, diffusivity_choices,
+            pos_full, conduct_rectified_structure_array, conduct_ions_array,
+            t, Last_term, initial_slope_time, final_slope_time, block,
+            dt_value=dt_value, lammps_units=lammps_units, atom_types=atom_types, cell_param_full=cell_param_full
+        )
+    else:
+        return calculate_msd_qe(
+            elements, diffusivity_direction_choices, diffusivity_choices,
+            pos_full, conduct_rectified_structure_array, conduct_ions_array,
+            t, Last_term, initial_slope_time, final_slope_time, block,
+            atom_types=atom_types, cell_param_full=cell_param_full
+        )
 
 # NGP calculation function
 def calc_ngp_tracer(r, d, d_idx):
