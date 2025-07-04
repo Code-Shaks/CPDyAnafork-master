@@ -30,7 +30,8 @@ import pandas as pd
 import os
 import glob
 
-from samos_modules.samos_io import read_lammps_dump
+# from samos_modules.samos_io import read_lammps_dump
+from custom_modules.samos_io import read_lammps_dump
 
 from ase import Atoms
 from ase.io import read, write

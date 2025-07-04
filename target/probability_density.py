@@ -195,7 +195,8 @@ import numpy as np
 import argparse
 from ase import Atoms
 from ase.io import read as ase_read
-from samos_modules.samos_trajectory import Trajectory
+# from samos_modules.samos_trajectory import Trajectory
+from custom_modules.samos_trajectory import Trajectory
 from samos_modules.samos_analysis import get_gaussian_density
 from target import input_reader as inp
 

@@ -16,9 +16,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 import glob
 from ase import Atoms
-from samos_modules.samos_trajectory import Trajectory
-from samos_modules.samos_analysis import DynamicsAnalyzer
-from samos_modules.samos_plotting import plot_power_spectrum
+# from samos_modules.samos_trajectory import Trajectory
+# from samos_modules.samos_analysis import DynamicsAnalyzer
+# from samos_modules.samos_plotting import plot_power_spectrum
+from custom_modules.samos_trajectory import Trajectory
+from custom_modules.samos_analysis import DynamicsAnalyzer
+from custom_modules.samos_plotting import plot_power_spectrum
 
 # Import your input_reader
 sys.path.append(os.path.abspath(os.path.join(__file__, '..')))
