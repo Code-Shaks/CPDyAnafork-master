@@ -22,6 +22,10 @@ target/__pycache__/data_processing.cpython-313.pyc
 target/__pycache__/input_reader.cpython-313.pyc
 target/__pycache__/Plotting.cpython-313.pyc
 target/__pycache__/serializable.cpython-313.pyc
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
 LiAlPS.cel
 LiAlPS.evp
 LiAlPS.in
