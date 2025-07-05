@@ -128,7 +128,7 @@ def compute_rdf(
     xlim=(1.5, 8.0)
 ):
     """
-    Compute RDF for various atom pairs and generate plots.
+    Compute RDF for various atom pairs and generate plots with RDF integrals.
 
     Args:
         trajectory (list): List of ASE Atoms objects representing the trajectory.
@@ -140,8 +140,6 @@ def compute_rdf(
         rmax (float): Maximum distance for RDF calculation (Å).
         sigma (float): Gaussian broadening parameter.
         xlim (tuple): x-axis limits for plot.
-        ylim_factor (float): Factor to multiply max RDF for y-axis limit.
-        show_plot (bool): Whether to display the plot interactively.
 
     Returns:
         tuple: Contains r (distance array) and RDF arrays for different atom pairs.
@@ -182,29 +180,94 @@ def compute_rdf(
     for central in central_atoms:
         try:
             plt.figure(figsize=(12, 8))
-            plt.xlabel('Distance (Å)', fontsize=12)
-            plt.ylabel('g(r)', fontsize=12)
+            ax1 = plt.gca()
+            ax2 = ax1.twinx()  # Create a second y-axis for RDF integrals
+            
+            ax1.set_xlabel('Distance (Å)', fontsize=12)
+            ax1.set_ylabel('g(r)', fontsize=12, color='black')
+            ax2.set_ylabel('∫ 4πr²g(r)dr', fontsize=12, color='black')
+            
             max_rdf = 0
-            for pair in pair_atoms:
+            max_integral = 0
+            min_significant_x = float('inf')
+            max_significant_x = 0
+            
+            linestyles = ['-', '--', '-.', ':', '-', '--', '-.', ':']  # Cycle through these for different pairs
+            colors = plt.cm.tab10.colors
+            
+            for i, pair in enumerate(pair_atoms):
                 r, rdf_val = rdf_func.get_rdf(central, [pair])
                 if np.any(np.isnan(rdf_val)):
                     continue
-                plt.plot(r, rdf_val, label=f'{central}-{pair}', linewidth=2)
+                
+                # Calculate RDF integral: n(r) = ∫ 4πr²ρg(r)dr
+                # Since we already have normalized RDF, we calculate cumulative integral
+                dr = r[1] - r[0]
+                # Get volume element 4πr²dr and calculate integral
+                rdf_integral = np.cumsum(4 * np.pi * r**2 * rdf_val * dr)
+                
+                # Find significant range of the data (where RDF > 1% of max)
+                threshold = np.max(rdf_val) * 0.01
+                significant_indices = np.where(rdf_val > threshold)[0]
+                if len(significant_indices) > 0:
+                    min_significant_x = min(min_significant_x, r[significant_indices[0]])
+                    max_significant_x = max(max_significant_x, r[significant_indices[-1]])
+                
+                # Plot RDF on left axis
+                color = colors[i % len(colors)]
+                line1, = ax1.plot(r, rdf_val, 
+                                 label=f'{central}-{pair} g(r)', 
+                                 linewidth=2, 
+                                 color=color)
+                
+                # Plot RDF integral on right axis with dashed line
+                line2, = ax2.plot(r, rdf_integral, 
+                                 label=f'{central}-{pair} integral', 
+                                 linewidth=1.5, 
+                                 linestyle='--',
+                                 color=color)
+                
                 max_rdf = max(max_rdf, np.max(rdf_val))
-                results[(central, pair)] = (r, rdf_val)
+                max_integral = max(max_integral, np.max(rdf_integral))
+                results[(central, pair)] = (r, rdf_val, rdf_integral)
+            
             if max_rdf == 0:
                 plt.close()
                 continue
-            plt.ylim(0, max_rdf * 1.5)
-            plt.xlim(*xlim)
-            plt.legend(loc='upper right', fontsize=10, frameon=True, fancybox=True, shadow=True)
-            plt.grid(True, alpha=0.3)
+                
+            # Set y-axis limits
+            ax1.set_ylim(0, max_rdf * 1.2)
+            ax2.set_ylim(0, max_integral * 1.2)
+            
+            # Set dynamic x-axis limits based on significant data range
+            if min_significant_x != float('inf') and max_significant_x > 0:
+                # Add some padding to the limits (20% extra space)
+                padding = (max_significant_x - min_significant_x) * 0.2
+                x_min = max(0, min_significant_x - padding)
+                x_max = min(rmax, max_significant_x + padding)
+                ax1.set_xlim(x_min, x_max)
+            else:
+                # Fallback to user-provided xlim
+                ax1.set_xlim(*xlim)
+            
+            # Create combined legend
+            lines1, labels1 = ax1.get_legend_handles_labels()
+            lines2, labels2 = ax2.get_legend_handles_labels()
+            ax1.legend(lines1 + lines2, labels1 + labels2, 
+                      loc='upper right', fontsize=10, frameon=True, 
+                      fancybox=True, shadow=True)
+            
+            ax1.grid(True, alpha=0.3)
             plt.tight_layout(pad=2.0)
-            output_filename = f'{output_prefix}_LiAlPS_{central}_time{time_after_start}ps_variable_cell.png'
+            output_filename = f'{output_prefix}_{central}_time{time_after_start}ps_with_integral.png'
             plt.savefig(output_filename, format='png', dpi=300, bbox_inches='tight')
-            plt.show()
+            plt.close()
+            
+            print(f"Created RDF plot with integral for {central} at {output_filename}")
         except Exception as e:
             print(f"Error computing RDF for {central}: {e}")
+            import traceback
+            traceback.print_exc()
             continue
 
     return results

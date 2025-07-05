@@ -14,14 +14,14 @@ import sys
 import argparse
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns  # ADDED
+sns.set_theme(style="darkgrid")  # ADDED
 import glob
 from ase import Atoms
-# from samos_modules.samos_trajectory import Trajectory
-# from samos_modules.samos_analysis import DynamicsAnalyzer
-# from samos_modules.samos_plotting import plot_power_spectrum
-from custom_modules.samos_trajectory import Trajectory
-from custom_modules.samos_analysis import DynamicsAnalyzer
-from custom_modules.samos_plotting import plot_power_spectrum
+from samos_modules.samos_trajectory import Trajectory
+from samos_modules.samos_analysis import DynamicsAnalyzer
+from samos_modules.samos_plotting import plot_power_spectrum
+from target.plotting import plot_power_spectrum  
 
 # Import your input_reader
 sys.path.append(os.path.abspath(os.path.join(__file__, '..')))
@@ -204,7 +204,7 @@ def compute_plot_vdos(frames, prefix, elements=None, time_interval=0.00193511):
     
     # First, clear any existing plots
     ax1.clear()
-    plot_power_spectrum(res, ax=ax1)
+    plot_power_spectrum(res, axis=ax1)
     
     # First set all lines to not show in legend
     for line in ax1.get_lines():
@@ -227,7 +227,22 @@ def compute_plot_vdos(frames, prefix, elements=None, time_interval=0.00193511):
     ax1.set_xlabel('Frequency (THz)', fontsize=12)
     ax1.set_ylabel('Signal (A$^2$ fs$^{-1}$)', fontsize=12)
     ax1.tick_params(axis='both', which='major', labelsize=11)
-    ax1.set_xlim(-2, 22)
+    freq_data = res.get_array('frequency_0')
+    total_signal = np.zeros_like(freq_data)
+    for el in elements:
+        key = f'periodogram_{el}_mean'
+        if res.get_array(key) is not None:
+            total_signal += res.get_array(key)
+
+    # Find the last index where signal exceeds threshold
+    threshold = np.max(total_signal) * 0.01  # 1% of maximum
+    significant_idx = np.where(total_signal > threshold)[0]
+    if len(significant_idx) > 0:
+        max_freq_idx = significant_idx[-1] + 5  # Add small buffer
+        max_freq = freq_data[min(max_freq_idx, len(freq_data)-1)]
+        ax1.set_xlim(min(freq_data), min(max_freq + 1, 22))  # Cap at 22 if needed
+    else:
+        ax1.set_xlim(-2, 22)
     ax1.legend(fontsize=10)
     fig1.tight_layout()
     save_path1 = f'{prefix}_1.png'
@@ -256,7 +271,7 @@ def compute_plot_vdos(frames, prefix, elements=None, time_interval=0.00193511):
     ax2.set_yticks([])
     ax2.set_ylabel('Signal (A$^2$ fs$^{-1}$)', fontsize=12)
     ax2.set_xlabel('Frequency (THz)', fontsize=12)
-    ax2.set_xlim(-2, 22)
+    ax2.set_xlim(min(freq_data), min(max_freq + 1, 22))
     ax2.tick_params(axis='both', which='major', labelsize=11)
     save_path2 = f'{prefix}_2.png'
     print(f"Saving custom VDOS plot to: {os.path.abspath(save_path2)}")

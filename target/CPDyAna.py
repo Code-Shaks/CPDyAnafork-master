@@ -59,8 +59,7 @@ from ase.io import write
 from ase import Atoms
 
 # Internal module imports for analysis functionality
-# from samos_modules.samos_trajectory import Trajectory
-from custom_modules.samos_trajectory import Trajectory
+from samos_modules.samos_trajectory import Trajectory
 from target import correrelation_analysis as corr
 from target import input_reader as inp
 from target import calculations as cal
