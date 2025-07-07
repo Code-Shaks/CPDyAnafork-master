@@ -21,7 +21,7 @@ import glob
 from ase import Atoms
 from target.trajectory import Trajectory
 from target.analysis import DynamicsAnalyzer
-from plotting import plot_vaf_isotropic
+from target.plotting import plot_vaf_isotropic
 
 # Add target directory to sys.path for input_reader import
 sys.path.append(os.path.abspath(os.path.join(__file__, '..', '..', 'target')))

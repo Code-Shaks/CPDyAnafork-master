@@ -737,8 +737,8 @@ def parser():
         )
         sp.add_argument(
             "--step-skip",
-            type=int, default=10,
-            help="Number of trajectory steps to skip between analysis frames (default: 10)"
+            type=int, default=5,
+            help="Number of trajectory steps to skip between analysis frames (default: 5)"
         )
         sp.add_argument(
             "--sigma",

@@ -520,36 +520,58 @@ def calculate_msd(elements, diffusivity_direction_choices, diffusivity_choices,
 
 # NGP calculation function
 def calc_ngp_tracer(r, d, d_idx):
-    """Calculate non-Gaussian parameter for a single trajectory."""
+    """
+    Calculate Non-Gaussian Parameter (NGP) for tracer diffusion.
+    
+    Args:
+        r (np.ndarray): Position array (time_steps, 3) for one particle
+        d (int): Dimensionality (1, 2, or 3)
+        d_idx (np.ndarray): Array of time lag indices
+    
+    Returns:
+        np.ndarray: NGP values for specified time lags
+    """
     step = r.shape[0]
+    ngp = np.zeros(len(d_idx))
     
-    # Calculate MSD components
-    msd_ions, _ = calc_msd_tracer(r, d_idx)
-    
-    # Calculate fourth moment
-    fourth_moment = np.zeros(len(d_idx))
-    for i, dt in enumerate(d_idx):
-        displacements = np.zeros((step - dt, 3))
-        for t in range(step - dt):
-            displacements[t] = r[t + dt] - r[t]
+    for i, delta in enumerate(d_idx):
+        disp = r[delta:, :] - r[:-delta, :]
+        r2 = np.sum(disp**2, axis=1)
+        r4 = r2**2
+        mean_r2 = np.mean(r2)
+        mean_r4 = np.mean(r4)
         
-        # Fourth moment of displacement
-        r4 = np.sum(displacements**4, axis=1)
-        fourth_moment[i] = np.mean(r4)
-    
-    # NGP calculation
-    ngp = (d / (d + 2)) * (fourth_moment / (msd_ions**2)) - 1.0
+        if mean_r2 > 0:
+            numerator = d * mean_r4
+            denominator = (d + 2) * (mean_r2**2)
+            ngp[i] = (numerator / denominator) - 1
+        else:
+            ngp[i] = 0.0
     
     return ngp
 
 def calculate_ngp(diffusing_elements, diffusivity_direction_choices, pos_full, 
                   conduct_rectified_structure_array, conduct_ions_array, dt, 
                   initial_time=2.0, final_time=200.0):
-    """Calculate Non-Gaussian Parameter for diffusing elements."""
-    result_dict = {}
+    """
+    Calculate Non-Gaussian Parameter (NGP) for specified elements and directions.
     
-    # Create time mask
-    time_lags = np.arange(1, len(dt))
+    Args:
+        diffusing_elements (list): Elements to analyze (e.g., ['Li'])
+        diffusivity_direction_choices (list): Directions (e.g., ['XYZ'])
+        pos_full (np.ndarray): Full position trajectory
+        conduct_rectified_structure_array (np.ndarray): Unwrapped positions
+        conduct_ions_array (list): Ion indices
+        dt (np.ndarray): Time step array (ps)
+        initial_time (float): Start time for analysis (ps)
+        final_time (float): End time for analysis (ps)
+    
+    Returns:
+        dict: Nested dictionary with NGP and time lag data
+    """
+    result_dict = {}
+    time_step = dt[1] - dt[0]
+    time_lags = np.arange(1, len(dt)) * time_step
     mask = (time_lags >= initial_time) & (time_lags <= final_time)
     d_idx = np.arange(1, len(dt))[mask]
     
