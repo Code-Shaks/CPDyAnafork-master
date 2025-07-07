@@ -18,8 +18,8 @@ import seaborn as sns  # ADDED
 sns.set_theme(style="darkgrid")  # ADDED
 import glob
 from ase import Atoms
-from samos_modules.samos_trajectory import Trajectory
-from samos_modules.samos_analysis import DynamicsAnalyzer
+from target.trajectory import Trajectory
+from target.analysis import DynamicsAnalyzer
 from samos_modules.samos_plotting import plot_power_spectrum
 from target.plotting import plot_power_spectrum  
 

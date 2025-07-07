@@ -19,9 +19,9 @@ import argparse
 import matplotlib.pyplot as plt
 import glob
 from ase import Atoms
-from samos_modules.samos_trajectory import Trajectory
-from samos_modules.samos_analysis import DynamicsAnalyzer
-from samos_modules.samos_plotting import plot_vaf_isotropic
+from target.trajectory import Trajectory
+from target.analysis import DynamicsAnalyzer
+from plotting import plot_vaf_isotropic
 
 # Add target directory to sys.path for input_reader import
 sys.path.append(os.path.abspath(os.path.join(__file__, '..', '..', 'target')))
