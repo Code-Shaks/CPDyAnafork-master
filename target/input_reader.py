@@ -48,7 +48,13 @@ def detect_trajectory_format(data_dir):
         'cel_files': [],
         'evp_files': [],
         'ion_files': [],
-        'lammps_files': []
+        'lammps_files': [],
+        'xsf_files': [],
+        'vasp_files': [],
+        'cp2k_files': [],
+        'gromacs_files': [],
+        'bomd_files': [],
+        'trajectory_files': []
     }
 
     # Check for LAMMPS trajectory files
@@ -67,19 +73,57 @@ def detect_trajectory_format(data_dir):
         'evp': sorted(glob.glob(os.path.join(data_dir, "*.evp"))),
         'ion': sorted(glob.glob(os.path.join(data_dir, "*.in")))
     }
-
     if all(qe_files.values()):
         format_info['format'] = 'quantum_espresso'
         format_info.update({f'{k}_files': v for k, v in qe_files.items()})
         return format_info
+    
+    bomd_patterns = ['*.trj', '*.trajectory']
+    for pattern in bomd_patterns:
+        bomd_files = sorted(glob.glob(os.path.join(data_dir, pattern)))
+        if bomd_files:
+            format_info['format'] = 'bomd'
+            format_info['bomd_files'] = bomd_files
+            return format_info
 
-    # Check for generic formats supported by ASE
+    # XSF detection
+    xsf_files = sorted(glob.glob(os.path.join(data_dir, "*.xsf")))
+    if xsf_files:
+        format_info['format'] = 'xsf'
+        format_info['xsf_files'] = xsf_files
+        return format_info
+
+    # VASP detection (OUTCAR, XDATCAR, etc.)
+    vasp_files = sorted(glob.glob(os.path.join(data_dir, "OUTCAR"))) + \
+                 sorted(glob.glob(os.path.join(data_dir, "XDATCAR")))
+    if vasp_files:
+        format_info['format'] = 'vasp'
+        format_info['vasp_files'] = vasp_files
+        return format_info
+
+    # CP2K detection (.pdb, .xyz with CP2K header)
+    cp2k_files = sorted(glob.glob(os.path.join(data_dir, "*.pdb"))) + \
+                 sorted(glob.glob(os.path.join(data_dir, "*.xyz")))
+    if cp2k_files:
+        format_info['format'] = 'cp2k'
+        format_info['cp2k_files'] = cp2k_files
+        return format_info
+
+    # GROMACS detection (.gro, .xtc)
+    gromacs_files = sorted(glob.glob(os.path.join(data_dir, "*.gro"))) + \
+                    sorted(glob.glob(os.path.join(data_dir, "*.xtc")))
+    if gromacs_files:
+        format_info['format'] = 'gromacs'
+        format_info['gromacs_files'] = gromacs_files
+        return format_info
+
+    # Generic ASE-compatible detection (fallback)
     ase_patterns = ['*.xyz', '*.extxyz', '*.traj']
     for pattern in ase_patterns:
-        ase_files = sorted(glob.glob(os.path.join(data_dir, pattern)))
-        if ase_files:
+        files = sorted(glob.glob(os.path.join(data_dir, pattern)))
+        if files:
             format_info['format'] = 'ase_compatible'
-            format_info['trajectory_files'] = ase_files
+            format_info['trajectory_files'] = files
             return format_info
 
     return format_info
@@ -273,6 +317,92 @@ def read_lammps_trajectory(lammps_file, elements=None, timestep=None,
     volumes = [np.linalg.det(cell) for cell in cells]
     print(f"\n=== ENHANCED PROCESSING COMPLETE ===")
     return (pos_full, n_frames, dt_full, t_full, cell_param_full, thermo_data, volumes, inp_array)
+
+def read_bomd_trajectory(bomd_file, elements=None, timestep=None, export_verification=False):
+    """
+    Read BOMD trajectory file (.trj or .trajectory) and convert to CPDyAna format.
+
+    Parameters:
+        bomd_file (str): Path to BOMD trajectory file.
+        elements (list): List of element symbols (length = n_atoms).
+        timestep (float): Optional, time step in ps.
+        export_verification (bool): Export verification trajectory.
+
+    Returns:
+        pos_full (np.ndarray): (atoms, frames, 3)
+        n_frames (int)
+        dt_full (np.ndarray): (frames-1,)
+        t_full (np.ndarray): (frames,)
+        cell_param_full (np.ndarray): (frames, 9)
+        thermo_data (dict)
+        volumes (list)
+        inp_array (list): element symbols per atom
+    """
+    bohr_to_ang = 0.529177
+    positions = []
+    cells = []
+    times = []
+    energies = []
+    with open(bomd_file, 'r') as f:
+        lines = f.readlines()
+    idx = 0
+    n_lines = len(lines)
+    # Auto-detect n_atoms
+    # Find first header, then next 3 lines (cell), then count until next header
+    while idx < n_lines:
+        if lines[idx].strip().startswith("TIME"):
+            idx0 = idx
+            break
+        idx += 1
+    idx += 1  # Move to cell
+    cell_lines = lines[idx:idx+3]
+    idx += 3
+    # Count atom lines
+    atom_start = idx
+    while idx < n_lines and not lines[idx].strip().startswith("TIME"):
+        idx += 1
+    n_atoms = idx - atom_start
+    # Now parse all frames
+    idx = 0
+    while idx < n_lines:
+        if not lines[idx].strip().startswith("TIME"):
+            idx += 1
+            continue
+        header = lines[idx].strip().split()
+        time_ps = float(header[0].replace("TIME(ps)", "")) if "TIME" in header[0] else float(header[1])
+        step_idx = int(header[1]) if "TIME" in header[0] else int(header[2])
+        energy_ry = float(header[2]) if "TIME" in header[0] else float(header[3])
+        times.append(time_ps)
+        energies.append(energy_ry)
+        idx += 1
+        cell = []
+        for _ in range(3):
+            cell.append([float(x) * bohr_to_ang for x in lines[idx].split()])
+            idx += 1
+        cells.append(np.array(cell))
+        frame_pos = []
+        for _ in range(n_atoms):
+            frame_pos.append([float(x) * bohr_to_ang for x in lines[idx].split()])
+            idx += 1
+        positions.append(frame_pos)
+    positions = np.array(positions)  # (frames, atoms, 3)
+    positions = np.transpose(positions, (1, 0, 2))  # (atoms, frames, 3)
+    cells = np.array(cells)  # (frames, 3, 3)
+    cell_param_full = cells.reshape(cells.shape[0], 9)
+    n_frames = positions.shape[1]
+    dt_full = np.diff(times) if len(times) > 1 else np.ones(n_frames-1)
+    t_full = np.array(times)
+    volumes = [np.linalg.det(c) for c in cells]
+    thermo_data = {'total_energy_ry': np.array(energies)}
+    # Element assignment
+    if elements and len(elements) == n_atoms:
+        inp_array = elements
+    else:
+        inp_array = ['H'] * n_atoms
+    # Optional verification export
+    if export_verification:
+        export_verification_trajectory(positions, cells, inp_array, t_full)
+    return (positions, n_frames, dt_full, t_full, cell_param_full, thermo_data, volumes, inp_array)
 
 def read_ion_file_universal(ion_file_or_elements):
     """
