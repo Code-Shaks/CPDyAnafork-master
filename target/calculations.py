@@ -574,6 +574,7 @@ def calculate_ngp(diffusing_elements, diffusivity_direction_choices, pos_full,
     time_lags = np.arange(1, len(dt)) * time_step
     mask = (time_lags >= initial_time) & (time_lags <= final_time)
     d_idx = np.arange(1, len(dt))[mask]
+    print(f"[DEBUG] d_idx for NGP: {d_idx}")
     
     for ele in range(len(diffusing_elements)):
         element = diffusing_elements[ele]

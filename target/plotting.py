@@ -1205,6 +1205,8 @@ def ngp_plot(data_source, plot_data, first_time, last_time, save_path="NGP.jpg")
             continue
     
     # Enhance appearance
+    print("NGP array:", ngp_values)
+    print("Time lags:", time_lags)
     plt.xscale('log')
     plt.xlabel('Time Lag (ps)', fontweight='bold', fontsize=14)
     plt.ylabel('Non-Gaussian Parameter, α₂(t)', fontweight='bold', fontsize=14)

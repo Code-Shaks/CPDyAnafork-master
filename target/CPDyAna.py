@@ -502,10 +502,21 @@ def Job(temperature, diffusing_elements, diffusivity_direction_choices,
             ngp_data_dict = {}
             evaluated_corr_dict = {}
             
+            # if mode == "ngp":
+            #     ngp_data_dict = cal.calculate_ngp([ele], diffusivity_direction_choices,
+            #                                       pos_full, conduct_rectified_structure_array,
+            #                                       conduct_ions_array, dt, initial_time, final_time)
             if mode == "ngp":
+                # --- FIX: Construct dt as a time array for LAMMPS ---
+                if format_info['format'] == 'lammps':
+                    num_frames = conduct_rectified_structure_array.shape[2]
+                    timestep = dt_value  # dt_value is set above from dt_full[0] or lammps_timestep
+                    dt_ngp = np.arange(num_frames) * timestep
+                else:
+                    dt_ngp = dt  # For QE, dt is already correct
                 ngp_data_dict = cal.calculate_ngp([ele], diffusivity_direction_choices,
                                                   pos_full, conduct_rectified_structure_array,
-                                                  conduct_ions_array, dt, initial_time, final_time)
+                                                  conduct_ions_array, dt_ngp, initial_time, final_time)
             
             # Van Hove correlation functions (unchanged)
             if mode == "vh":
