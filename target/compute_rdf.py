@@ -3,7 +3,7 @@
 """
 compute_rdf.py
 
-Compute Radial Distribution Functions (RDFs) from Quantum ESPRESSO molecular dynamics output files (.in, .pos, .cel).
+Compute Radial Distribution Functions (RDFs) from Quantum ESPRESSO or LAMMPS molecular dynamics output files.
 This script builds atomic trajectories using ASE, converts them to pymatgen structures, and calculates RDFs for various atom pairs using pymatgen's efficient implementation.
 
 Flexible CLI options allow user control over RDF parameters and plotting.
@@ -12,6 +12,9 @@ Usage:
     python compute_rdf.py --in-file LiAlPS.in --pos-file LiAlPS.pos --cel-file LiAlPS.cel
     # For more options:
     python compute_rdf.py --help
+
+Author: CPDyAna Development Team
+Version: 2025-06-25
 """
 
 import numpy as np
@@ -31,7 +34,18 @@ def build_lammps_trajectory(
     num_frames=100, stride=1
 ):
     """
-    Build ASE trajectory frames from a LAMMPS dump file using SAMOS/CPDyAna input_reader.
+    Build ASE trajectory frames from a LAMMPS dump file using CPDyAna input_reader.
+
+    Args:
+        lammps_file (str): Path to LAMMPS trajectory file.
+        lammps_elements (list): List of atom-type symbols.
+        element_mapping (dict): Mapping from atom type index to element symbol.
+        lammps_timestep (float): Timestep in ps.
+        num_frames (int): Number of frames to extract.
+        stride (int): Stride for frame extraction.
+
+    Returns:
+        list: List of ASE Atoms objects representing the trajectory frames.
     """
     # Use input_reader.read_lammps_trajectory to get trajectory arrays and atom types
     pos_full, n_frames, dt_full, t_full, cell_param_full, thermo_data, volumes, inp_array = inp.read_lammps_trajectory(
@@ -73,12 +87,11 @@ def build_ase_trajectory(
         time_after_start (float): Time in ps after which to start extracting frames.
         num_frames (int): Number of frames to extract.
         time_interval (float): Time interval between frames in ps.
-        bohr_to_angstrom (float): Conversion factor from Bohr to Angstrom.
 
     Returns:
         list: List of ASE Atoms objects representing the trajectory frames.
     """
-    ang = 0.529177249
+    ang = 0.529177249  # Bohr to Angstrom conversion
 
     # Read atomic species from input file
     symbols = inp.read_ion_file(in_file)
@@ -116,6 +129,51 @@ def build_ase_trajectory(
 
     return frames
 
+def build_bomd_trajectory(
+    trj_file, cell_file=None, num_frames=100, stride=1
+):
+    """
+    Build ASE trajectory frames from BOMD (.trj) output files.
+
+    Args:
+        trj_file (str): Path to the BOMD .trj trajectory file.
+        cell_file (str, optional): Path to a file containing cell parameters per frame (optional).
+        num_frames (int): Number of frames to extract.
+        stride (int): Stride for frame extraction.
+
+    Returns:
+        list: List of ASE Atoms objects representing the trajectory frames.
+    """
+    from . import input_reader as inp
+
+    # Use CPDyAna's BOMD reader to get positions, cells, and elements
+    pos_full, n_frames, dt_full, t_full, cell_param_full, thermo_data, volumes, inp_array = inp.read_bomd_trajectory(
+        trj_file,
+        elements=None,
+        timestep=None,
+        export_verification=False
+    )
+
+    # Limit frames if requested
+    if num_frames > 0:
+        frame_indices = list(range(0, min(num_frames, n_frames), stride))
+    else:
+        frame_indices = list(range(0, n_frames, stride))
+
+    atoms_list = []
+    for i in frame_indices:
+        symbols = [str(s) for s in inp_array]
+        positions = pos_full[:, i, :]
+        if cell_param_full is not None:
+            cell = cell_param_full[i].reshape((3, 3))
+        else:
+            cell = None
+        atoms = Atoms(symbols=symbols, positions=positions, cell=cell, pbc=True)
+        atoms_list.append(atoms)
+
+    print(f"Built {len(atoms_list)} ASE Atoms frames from BOMD trajectory.")
+    return atoms_list
+
 def compute_rdf(
     trajectory,
     output_prefix='rdf_plot',
@@ -142,7 +200,7 @@ def compute_rdf(
         xlim (tuple): x-axis limits for plot.
 
     Returns:
-        tuple: Contains r (distance array) and RDF arrays for different atom pairs.
+        dict: Contains r (distance array) and RDF arrays for different atom pairs.
     """
     adaptor = AseAtomsAdaptor()
     structures = []
@@ -273,6 +331,11 @@ def compute_rdf(
     return results
 
 def main():
+    """
+    Command-line interface for computing RDF from QE or LAMMPS files.
+
+    Parses arguments, builds trajectories, computes RDFs, and generates plots.
+    """
     parser = argparse.ArgumentParser(description='Compute RDF from QE or LAMMPS files')
     # QE arguments
     parser.add_argument('--in-file', help='Path to .in file')
@@ -290,6 +353,9 @@ def main():
     parser.add_argument('--element-mapping', nargs='+', help='LAMMPS type-to-element map (e.g., 1:Li 2:La 3:Ti 4:O)')
     parser.add_argument('--lammps-timestep', type=float, help='LAMMPS timestep (ps)')
     parser.add_argument('--stride', type=int, default=1, help='Stride for reading frames (LAMMPS only)')
+    # BOMD-specific arguments
+    parser.add_argument('--bomd-trj', help='BOMD trajectory file (.trj)')
+    parser.add_argument('--bomd-cell', help='BOMD cell file (optional, text file with 3x3 cell per frame)')
     # Common RDF arguments
     parser.add_argument('--output-prefix', default='rdf_plot', help='Prefix for output plot filename')
     parser.add_argument('--central-atoms', nargs='+', default=['Li'],
@@ -340,8 +406,39 @@ def main():
         )
         print("\n=== RDF Calculation Complete (LAMMPS) ===")
         return
+    
+    #  --- BOMD branch ---
+    if args.bomd_trj:
+        if not os.path.exists(args.bomd_trj):
+            print(f"Error: BOMD .trj file not found: {args.bomd_trj}")
+            sys.exit(1)
+        if args.bomd_cell and not os.path.exists(args.bomd_cell):
+            print(f"Warning: BOMD cell file not found: {args.bomd_cell}. Proceeding without cell update.")
 
-    # --- QE branch (unchanged) ---
+        # Build trajectory from BOMD .trj (+ optional cell)
+        frames = build_bomd_trajectory(
+            args.bomd_trj,
+            cell_file=args.bomd_cell,
+            num_frames=args.num_frames,
+            stride=args.stride
+        )
+
+        # Compute RDF and plot
+        compute_rdf(
+            frames,
+            output_prefix=args.output_prefix,
+            time_after_start=args.time_after_start,
+            central_atoms=args.central_atoms,
+            pair_atoms=args.pair_atoms if args.pair_atoms is not None else args.central_atoms,
+            ngrid=args.ngrid,
+            rmax=args.rmax,
+            sigma=args.sigma,
+            xlim=tuple(args.xlim)
+        )
+        print("\n=== RDF Calculation Complete (BOMD) ===")
+        return
+
+    # --- QE branch ---
     if args.in_file and args.pos_file and args.cel_file:
         # Validate that all required input files exist
         for file_path in [args.in_file, args.pos_file, args.cel_file]:

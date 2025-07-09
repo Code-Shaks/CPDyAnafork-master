@@ -1,12 +1,23 @@
 #!/usr/bin/env python3
 """
-Compute and plot VDOS from .in/.pos/.cel[/.evp] using SAMOS.
+Compute and plot VDOS from .in/.pos/.cel[/.evp], LAMMPS, or BOMD (.trj)
 
-This script reads Quantum ESPRESSO trajectory files, constructs ASE Atoms objects with velocities,
-computes the vibrational density of states (VDOS) using the SAMOS library, and plots/saves the results.
+This script reads Quantum ESPRESSO, LAMMPS, or BOMD trajectory files, constructs ASE Atoms objects with velocities,
+computes the vibrational density of states (VDOS), and plots/saves the results.
+
+Features:
+- Supports QE (.in/.pos/.cel), LAMMPS (.lammpstrj), and BOMD (.trj) formats
+- Automatic detection of file type in a directory
+- Element-resolved and total VDOS plotting
+- Publication-quality plots using matplotlib/seaborn
 
 Usage example:
     python vdos.py --in_file LiAlPS.in --pos_file LiAlPS.pos --cel_file LiAlPS.cel --elements Li Al P S
+    python vdos.py --bomd-trj traj.trj --bomd-elements Li O Ti --elements Li O Ti
+    python vdos.py --data-dir ./ --elements Li
+
+Author: CPDyAna Development Team
+Version: 2025-07-09
 """
 
 import os
@@ -14,16 +25,16 @@ import sys
 import argparse
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns  # ADDED
-sns.set_theme(style="darkgrid")  # ADDED
+import seaborn as sns
+sns.set_theme(style="darkgrid")
 import glob
 from ase import Atoms
 from target.trajectory import Trajectory
 from target.analysis import DynamicsAnalyzer
 from samos_modules.samos_plotting import plot_power_spectrum
-from target.plotting import plot_power_spectrum  
+from target.plotting import plot_power_spectrum
 
-# Import your input_reader
+# Import input_reader for trajectory parsing
 sys.path.append(os.path.abspath(os.path.join(__file__, '..')))
 from target import input_reader as inp
 
@@ -117,7 +128,7 @@ def finite_diff_velocities(pos_arr, times):
     N, M, _ = pos_arr.shape
     v = np.zeros_like(pos_arr)
     if len(times) >= 2:
-        dt0 = (times[1] - times[0])*1000
+        dt0 = (times[1] - times[0])*1000  # Convert ps to fs
     else:
         dt0 = 1.0
     for i in range(1, N-1):
@@ -131,7 +142,7 @@ def build_trajectory(in_file, pos_file, cel_file,
                      start=0.0, nframes=0, stride=1,
                      time_interval=0.00193511):
     """
-    Build a trajectory as a list of ASE Atoms objects with velocities.
+    Build a trajectory as a list of ASE Atoms objects with velocities from QE files.
 
     Args:
         in_file (str): Path to .in file (species).
@@ -181,6 +192,44 @@ def build_trajectory(in_file, pos_file, cel_file,
     print(f"Built {len(frames)} frames with velocities.")
     return frames
 
+def build_bomd_trajectory(trj_file, elements=None, num_frames=0, stride=1):
+    """
+    Build a trajectory as a list of ASE Atoms objects with velocities from BOMD .trj file.
+
+    Args:
+        trj_file (str): Path to BOMD .trj trajectory file.
+        elements (list): List of element symbols (order must match .trj).
+        num_frames (int): Number of frames to use (0=all).
+        stride (int): Stride for frames.
+
+    Returns:
+        list: List of ASE Atoms objects with velocities.
+    """
+    # Use CPDyAna's input_reader to parse BOMD .trj file
+    pos_full, n_frames, dt_full, t_full, cell_param_full, thermo_data, volumes, inp_array = inp.read_bomd_trajectory(
+        trj_file,
+        elements=elements,
+        timestep=None,
+        export_verification=False
+    )
+    # Determine frame indices
+    if num_frames > 0:
+        frame_indices = list(range(0, min(num_frames, n_frames), stride))
+    else:
+        frame_indices = list(range(0, n_frames, stride))
+    # Prepare positions and cells
+    pos_arr = np.transpose(pos_full, (1, 0, 2))  # (frames, atoms, 3)
+    cell_arr = cell_param_full.reshape(-1, 3, 3)  # (frames, 3, 3)
+    t_list = t_full
+    vel_arr = finite_diff_velocities(pos_arr, t_list)
+    frames = []
+    for i in frame_indices:
+        atoms = Atoms(symbols=inp_array, positions=pos_arr[i], cell=cell_arr[i], pbc=True)
+        atoms.set_velocities(vel_arr[i])
+        frames.append(atoms)
+    print(f"Built {len(frames)} BOMD frames with velocities from {trj_file}")
+    return frames
+
 def compute_plot_vdos(frames, prefix, elements=None, time_interval=0.00193511):
     """
     Compute and plot the vibrational density of states (VDOS) for the trajectory.
@@ -201,29 +250,21 @@ def compute_plot_vdos(frames, prefix, elements=None, time_interval=0.00193511):
     # Plot total VDOS using SAMOS's built-in plot
     res = da.get_power_spectrum()
     fig1, ax1 = plt.subplots(figsize=(6, 4))
-    
-    # First, clear any existing plots
     ax1.clear()
     plot_power_spectrum(res, axis=ax1)
-    
-    # First set all lines to not show in legend
     for line in ax1.get_lines():
         line.set_label('_nolegend_')
-    
     if elements is None:
         elements = ['Li', 'Al', 'P', 'S']
-    
-    # Then selectively apply labels to specific lines
     element_colors = {}
     for el in elements:
         key = f'periodogram_{el}_mean'
         if res.get_array(key) is not None:
-            # Find first line matching this element's data
             for line in ax1.get_lines():
                 if np.array_equal(line.get_ydata(), res.get_array(key)):
                     line.set_label(el)
                     element_colors[el] = line.get_color()
-                    break  # Only set label for first matching line
+                    break
     ax1.set_xlabel('Frequency (THz)', fontsize=12)
     ax1.set_ylabel('Signal (A$^2$ fs$^{-1}$)', fontsize=12)
     ax1.tick_params(axis='both', which='major', labelsize=11)
@@ -233,14 +274,12 @@ def compute_plot_vdos(frames, prefix, elements=None, time_interval=0.00193511):
         key = f'periodogram_{el}_mean'
         if res.get_array(key) is not None:
             total_signal += res.get_array(key)
-
-    # Find the last index where signal exceeds threshold
     threshold = np.max(total_signal) * 0.01  # 1% of maximum
     significant_idx = np.where(total_signal > threshold)[0]
     if len(significant_idx) > 0:
-        max_freq_idx = significant_idx[-1] + 5  # Add small buffer
+        max_freq_idx = significant_idx[-1] + 5
         max_freq = freq_data[min(max_freq_idx, len(freq_data)-1)]
-        ax1.set_xlim(min(freq_data), min(max_freq + 1, 22))  # Cap at 22 if needed
+        ax1.set_xlim(min(freq_data), min(max_freq + 1, 22))
     else:
         ax1.set_xlim(-2, 22)
     ax1.legend(fontsize=10)
@@ -283,9 +322,10 @@ def main():
     """
     Main function for VDOS computation and plotting.
     Parses command-line arguments, builds trajectory, and generates VDOS plots.
+    Supports QE, LAMMPS, and BOMD (.trj) input modes.
     """
-    parser = argparse.ArgumentParser(description="Compute and plot VDOS from QE or LAMMPS trajectory files.")
-    parser.add_argument('--data-dir', help="Directory containing trajectory files (QE or LAMMPS)")
+    parser = argparse.ArgumentParser(description="Compute and plot VDOS from QE, LAMMPS, or BOMD trajectory files.")
+    parser.add_argument('--data-dir', help="Directory containing trajectory files (QE, LAMMPS, or BOMD)")
     parser.add_argument('--in_file', help="QE .in file (species)")
     parser.add_argument('--pos_file', help="QE .pos file (positions)")
     parser.add_argument('--cel_file', help="QE .cel file (cell parameters)")
@@ -293,6 +333,8 @@ def main():
     parser.add_argument('--lammps-elements', nargs='+', help="Element symbols for LAMMPS atom types (e.g., Li S Al P O)")
     parser.add_argument('--element-mapping', nargs='+', help="LAMMPS type to element mapping (e.g., 1:Li 2:S 3:Al)")
     parser.add_argument('--lammps-timestep', type=float, help="LAMMPS timestep in picoseconds")
+    parser.add_argument('--bomd-trj', help="BOMD trajectory file (.trj)")
+    parser.add_argument('--bomd-elements', nargs='+', help="Element symbols for BOMD atom order (e.g., Li O Ti)")
     parser.add_argument('--elements', nargs='+', required=True, help="Atom symbol(s) for VDOS (e.g. Li Na)")
     parser.add_argument('--start', type=float, default=0.0, help="Time (ps) to start analysis")
     parser.add_argument('--nframes', type=int, default=0, help="Number of frames (0=all)")
@@ -301,9 +343,21 @@ def main():
     parser.add_argument('--time_interval', type=float, default=0.00193511, help='Default time between frames (ps) if no .evp file')
     args = parser.parse_args()
 
-    # --- NEW LOGIC: Support direct file input ---
+    # --- BOMD branch ---
+    if args.bomd_trj:
+        # Use BOMD elements if provided, else fallback to None
+        bomd_elements = args.bomd_elements if args.bomd_elements else None
+        frames = build_bomd_trajectory(
+            args.bomd_trj,
+            elements=bomd_elements,
+            num_frames=args.nframes,
+            stride=args.stride
+        )
+        compute_plot_vdos(frames, args.out_prefix, elements=args.elements, time_interval=args.time_interval)
+        return
+
+    # --- QE-style direct file input ---
     if args.in_file and args.pos_file and args.cel_file:
-        # QE-style direct file input
         frames = build_trajectory(
             args.in_file, args.pos_file, args.cel_file,
             evp_file=args.evp_file,
@@ -315,9 +369,9 @@ def main():
         compute_plot_vdos(frames, args.out_prefix, elements=args.elements, time_interval=args.time_interval)
         return
 
-    # --- Original directory-based logic ---
+    # --- Directory-based logic: auto-detect QE or LAMMPS ---
     if not args.data_dir:
-        raise RuntimeError("Either --data-dir or all of --in_file, --pos_file, --cel_file must be provided.")
+        raise RuntimeError("Either --data-dir or all of --in_file, --pos_file, --cel_file or --bomd-trj must be provided.")
 
     files = os.listdir(args.data_dir)
     files_lower = [f.lower() for f in files]
@@ -379,7 +433,7 @@ def main():
         return
 
     else:
-        raise RuntimeError("Could not detect QE or LAMMPS trajectory files in data-dir.")
+        raise RuntimeError("Could not detect QE, LAMMPS, or BOMD trajectory files in data-dir.")
 
 if __name__ == '__main__':
     main()

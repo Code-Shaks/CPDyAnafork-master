@@ -33,6 +33,16 @@ import os
 def msd_plot_lammps(data_path, Plot_data, First_time, Last_time, save_path=None):
     """
     Create enhanced MSD plots from LAMMPS data using Seaborn styling.
+
+    Args:
+        data_path (str): Path to JSON file with MSD data.
+        Plot_data (list): List of plot specifications (TEMP, ELEMENT, DATA_TYPE, DIRECTION).
+        First_time (float): Start time for plotting window (ps).
+        Last_time (float): End time for plotting window (ps).
+        save_path (str, optional): File path to save the plot.
+
+    Returns:
+        None. Displays and optionally saves the plot.
     """
     # Load data
     with open(data_path, 'r') as file:
@@ -138,6 +148,16 @@ def msd_plot_lammps(data_path, Plot_data, First_time, Last_time, save_path=None)
 def msd_plot_qe(data_path, Plot_data, First_time, Last_time, save_path=None):
     """
     Create enhanced MSD plots from QE data using Seaborn styling.
+
+    Args:
+        data_path (str): Path to JSON file with MSD data.
+        Plot_data (list): List of plot specifications (TEMP, ELEMENT, DATA_TYPE, DIRECTION).
+        First_time (float): Start time for plotting window (ps).
+        Last_time (float): End time for plotting window (ps).
+        save_path (str, optional): File path to save the plot.
+
+    Returns:
+        None. Displays and optionally saves the plot.
     """
     # Load data
     with open(data_path, 'r') as file:
@@ -208,7 +228,20 @@ def msd_plot_qe(data_path, Plot_data, First_time, Last_time, save_path=None):
     plt.close()
 
 def msd_plot(data_path, Plot_data, First_time, Last_time, save_path=None, is_lammps=False):
-    """Dispatcher function for MSD plotting based on data source"""
+    """
+    Dispatcher function for MSD plotting based on data source.
+
+    Args:
+        data_path (str): Path to JSON file with MSD data.
+        Plot_data (list): List of plot specifications.
+        First_time (float): Start time for plotting window (ps).
+        Last_time (float): End time for plotting window (ps).
+        save_path (str, optional): File path to save the plot.
+        is_lammps (bool): If True, use LAMMPS plotting; else QE.
+
+    Returns:
+        None.
+    """
     if is_lammps:
         msd_plot_lammps(data_path, Plot_data, First_time, Last_time, save_path)
     else:
@@ -218,6 +251,12 @@ def centers_to_edges_time(centers):
     """
     Convert bin centers to bin edges for time axis plotting,
     ensuring the first edge is always at 0.
+
+    Args:
+        centers (np.ndarray): Array of bin centers.
+
+    Returns:
+        np.ndarray: Array of bin edges.
     """
     edges = np.zeros(len(centers) + 1)
     edges[1:-1] = (centers[:-1] + centers[1:]) / 2
@@ -228,6 +267,12 @@ def centers_to_edges_time(centers):
 def centers_to_edges(centers):
     """
     Convert bin centers to bin edges for general plotting.
+
+    Args:
+        centers (np.ndarray): Array of bin centers.
+
+    Returns:
+        np.ndarray: Array of bin edges.
     """
     edges = np.zeros(len(centers) + 1)
     edges[1:-1] = (centers[:-1] + centers[1:]) / 2
@@ -238,6 +283,15 @@ def centers_to_edges(centers):
 def van_hove_plot(data_path, Plot_data, save_path=None, figsize=(10, 8)):
     """
     Create enhanced Van Hove correlation function plots using Seaborn styling.
+
+    Args:
+        data_path (str): Path to JSON file with Van Hove data.
+        Plot_data (list): List of plot specifications (TEMP, ELEMENT, TYPE).
+        save_path (str, optional): Base file path for saving plots.
+        figsize (tuple): Figure size in inches.
+
+    Returns:
+        None. Displays and optionally saves the plot.
     """
     # Load data
     with open(data_path, 'r') as file:
@@ -314,6 +368,16 @@ def van_hove_plot(data_path, Plot_data, save_path=None, figsize=(10, 8)):
 def ngp_plot(data_source, plot_data, first_time, last_time, save_path="NGP.jpg"):
     """
     Generate enhanced Non-Gaussian Parameter (NGP) plots using Seaborn styling.
+
+    Args:
+        data_source (str or dict): Path to JSON file or loaded data dict.
+        plot_data (list): List of plot specifications (TEMP, ELEMENT, DIRECTION).
+        first_time (float): Start time for plotting window (ps).
+        last_time (float): End time for plotting window (ps).
+        save_path (str): File path to save the plot.
+
+    Returns:
+        None. Displays and optionally saves the plot.
     """
     # Load data if a file path is provided
     if isinstance(data_source, str):
@@ -382,6 +446,17 @@ def ngp_plot(data_source, plot_data, first_time, last_time, save_path="NGP.jpg")
 def plot_vaf_isotropic(data_obj, axis=None, hide_legend=False, target_species=None, display=False, **options):
     """
     Plot isotropic velocity autocorrelation function (VAF) with enhanced Seaborn styling.
+
+    Args:
+        data_obj: DynamicsAnalyzer or similar object with VAF data.
+        axis (matplotlib.axes.Axes, optional): Axis to plot on.
+        hide_legend (bool): If True, do not display legend.
+        target_species (list, optional): List of species to plot.
+        display (bool): If True, show the plot.
+        **options: Additional matplotlib options.
+
+    Returns:
+        None.
     """
     if axis is None:
         fig = plt.figure(**options)
@@ -483,6 +558,17 @@ def plot_vaf_isotropic(data_obj, axis=None, hide_legend=False, target_species=No
 def plot_power_spectrum(data_obj, axis=None, display=False, signal_alpha=0.1, fill_alpha=0.2, **options):
     """
     Plot power spectrum with enhanced Seaborn styling.
+
+    Args:
+        data_obj: DynamicsAnalyzer or similar object with spectrum data.
+        axis (matplotlib.axes.Axes, optional): Axis to plot on.
+        display (bool): If True, show the plot.
+        signal_alpha (float): Opacity for individual signals.
+        fill_alpha (float): Opacity for error fill.
+        **options: Additional matplotlib options.
+
+    Returns:
+        None.
     """
     if axis is None:
         fig = plt.figure(**options)
@@ -549,6 +635,23 @@ def plot_rdf(data_obj, axis=None, secondary_axis=None, hide_legend=False, target
              rdf_params={}, int_params={}, **options):
     """
     Plot radial distribution functions (RDF) with enhanced Seaborn styling.
+
+    Args:
+        data_obj: RDF analysis object with RDF data.
+        axis (matplotlib.axes.Axes, optional): Axis to plot on.
+        secondary_axis (matplotlib.axes.Axes, optional): Axis for integral.
+        hide_legend (bool): If True, do not display legend.
+        target_pairs (list, optional): List of atom pairs to plot.
+        display (bool): If True, show the plot.
+        hide_labels (bool): If True, do not display labels.
+        fill_alpha (float): Opacity for error fill.
+        skip_integral (bool): If True, do not plot integral.
+        rdf_params (dict): Additional plotting options for RDF.
+        int_params (dict): Additional plotting options for integral.
+        **options: Additional matplotlib options.
+
+    Returns:
+        list: List of line handles for the plotted curves.
     """
     if axis is None:
         fig = plt.figure(**options)
@@ -642,6 +745,17 @@ def plot_rdf(data_obj, axis=None, secondary_axis=None, hide_legend=False, target
 def plot_angular_spec(data_obj, axis=None, hide_legend=False, display=False, hide_labels=False, **options):
     """
     Plot angular spectra for atom triplets with enhanced Seaborn styling.
+
+    Args:
+        data_obj: Angular spectrum analysis object.
+        axis (matplotlib.axes.Axes, optional): Axis to plot on.
+        hide_legend (bool): If True, do not display legend.
+        display (bool): If True, show the plot.
+        hide_labels (bool): If True, do not display labels.
+        **options: Additional matplotlib options.
+
+    Returns:
+        None.
     """
     if axis is None:
         options.pop('ax', None)
@@ -697,7 +811,12 @@ def plot_angular_spec(data_obj, axis=None, hide_legend=False, display=False, hid
         plt.show()
 
 def parse_cli_args():
-    """Parse command-line arguments for plotting utilities"""
+    """
+    Parse command-line arguments for plotting utilities.
+
+    Returns:
+        argparse.Namespace: Parsed arguments for plotting.
+    """
     parser = argparse.ArgumentParser(
         description="Create publication-quality plots for molecular dynamics analysis."
     )
@@ -750,14 +869,29 @@ def parse_cli_args():
     return parser.parse_args()
 
 def int_or_float(val):
-    """Convert string to int if possible, else float"""
+    """
+    Convert string to int if possible, else float.
+
+    Args:
+        val (str): Value to convert.
+
+    Returns:
+        int or float: Converted value.
+    """
     try:
         return int(val)
     except ValueError:
         return float(val)
 
 def main():
-    """Main function for command-line plotting interface"""
+    """
+    Main function for command-line plotting interface.
+
+    Parses CLI arguments and dispatches to the appropriate plotting function.
+
+    Returns:
+        None.
+    """
     args = parse_cli_args()
     
     # Apply global Seaborn styling

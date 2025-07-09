@@ -1,4 +1,26 @@
-# #!/usr/bin/env python3
+#!/usr/bin/env python3
+"""
+Probability Density Calculation Module for CPDyAna
+=================================================
+
+This module provides functions to compute the 3D probability density of ions
+from molecular dynamics trajectories. It supports Quantum ESPRESSO (.in/.pos/.cel),
+LAMMPS (.lammpstrj), and BOMD (.trj) trajectory formats as parsed by CPDyAna's input_reader.
+
+Features:
+- Gaussian density estimation for selected elements
+- Atom masking, recentering, and custom bounding box support
+- Compatible with QE, LAMMPS, and BOMD workflows
+
+Usage (CLI):
+    python probability_density.py --in-file LiAlPS.in --pos-file LiAlPS.pos --cel-file LiAlPS.cel --element Li
+    python probability_density.py --lammps-file traj.lammpstrj --element Li
+    python probability_density.py --bomd-trj traj.trj --bomd-elements Li O Ti --element Li
+
+Author: CPDyAna Development Team
+Version: 2025-07-09
+"""
+
 import numpy as np
 import argparse
 from ase import Atoms
@@ -13,7 +35,15 @@ def divide_chunks(l, n):
         yield l[i:i + n]
 
 def convert_symbols_to_atomic_numbers(element_symbols):
-    """Convert element symbols to atomic numbers."""
+    """
+    Convert element symbols to atomic numbers.
+
+    Args:
+        element_symbols (list): List of element symbols (str).
+
+    Returns:
+        list: List of atomic numbers (int).
+    """
     element_to_atomic_number = {
         'H': 1, 'He': 2, 'Li': 3, 'Be': 4, 'B': 5, 'C': 6, 'N': 7, 'O': 8, 'F': 9, 'Ne': 10,
         'Na': 11, 'Mg': 12, 'Al': 13, 'Si': 14, 'P': 15, 'S': 16, 'Cl': 17, 'Ar': 18,
@@ -41,9 +71,21 @@ def build_trajectory(
     in_file, pos_file, cel_file, time_after_start=0.0, num_frames=None, time_interval=0.00193511, stride=1
 ):
     """
-    Build an in-memory trajectory from .in, .pos, .cel files.
+    Build an in-memory trajectory from .in, .pos, .cel files (Quantum ESPRESSO).
     Returns a list of ASE Atoms objects.
     Supports frame stride for subsampling.
+
+    Args:
+        in_file (str): Path to .in file (species).
+        pos_file (str): Path to .pos file (positions).
+        cel_file (str): Path to .cel file (cell).
+        time_after_start (float): Time (ps) after which to start.
+        num_frames (int): Number of frames to extract (None or 0 for all).
+        time_interval (float): Time between frames (ps).
+        stride (int): Stride for frame extraction.
+
+    Returns:
+        list: List of ASE Atoms objects.
     """
     ang = 0.529177249  # Bohr to Angstrom conversion factor
 
@@ -77,6 +119,14 @@ def build_lammps_trajectory(lammps_file, stride=1, max_frames=None):
     """
     Build a trajectory from a LAMMPS .lammpstrj file using ASE.
     Returns a list of ASE Atoms objects.
+
+    Args:
+        lammps_file (str): Path to LAMMPS trajectory file.
+        stride (int): Stride for frame extraction.
+        max_frames (int): Maximum number of frames to extract.
+
+    Returns:
+        list: List of ASE Atoms objects.
     """
     all_frames = ase_read(lammps_file, index=":", format="lammps-dump-text")
     if max_frames is not None:
@@ -85,9 +135,51 @@ def build_lammps_trajectory(lammps_file, stride=1, max_frames=None):
     print(f"LAMMPS trajectory built: {len(atoms_list)} frames (stride={stride})")
     return atoms_list
 
+def build_bomd_trajectory(trj_file, elements=None, num_frames=0, stride=1):
+    """
+    Build a trajectory from a BOMD .trj file using CPDyAna's input_reader.
+
+    Args:
+        trj_file (str): Path to BOMD .trj trajectory file.
+        elements (list): List of element symbols (order must match .trj).
+        num_frames (int): Number of frames to extract (0 for all).
+        stride (int): Stride for frame extraction.
+
+    Returns:
+        list: List of ASE Atoms objects.
+    """
+    # Use input_reader to parse BOMD .trj file
+    pos_full, n_frames, dt_full, t_full, cell_param_full, thermo_data, volumes, inp_array = inp.read_bomd_trajectory(
+        trj_file,
+        elements=elements,
+        timestep=None,
+        export_verification=False
+    )
+    # Determine frame indices
+    if num_frames > 0:
+        frame_indices = list(range(0, min(num_frames, n_frames), stride))
+    else:
+        frame_indices = list(range(0, n_frames, stride))
+    # Prepare positions and cells
+    pos_arr = np.transpose(pos_full, (1, 0, 2))  # (frames, atoms, 3)
+    cell_arr = cell_param_full.reshape(-1, 3, 3)  # (frames, 3, 3)
+    atoms_list = []
+    for i in frame_indices:
+        atoms = Atoms(symbols=inp_array, positions=pos_arr[i], cell=cell_arr[i], pbc=True)
+        atoms_list.append(atoms)
+    print(f"BOMD trajectory built: {len(atoms_list)} frames (stride={stride})")
+    return atoms_list
+
 def parse_mask(mask_str, total_atoms):
     """
     Parse a mask string like '0,1,2,5-10' into a list of atom indices.
+
+    Args:
+        mask_str (str): Mask string.
+        total_atoms (int): Total number of atoms.
+
+    Returns:
+        list: List of atom indices.
     """
     if not mask_str:
         return None
@@ -109,6 +201,20 @@ def calculate_probability_density(
     """
     Calculate the Gaussian probability density for a given element in the trajectory.
     Supports atom masking, recentering, and custom bounding box.
+
+    Args:
+        atoms_list (list): List of ASE Atoms objects.
+        element (str): Element symbol to compute density for.
+        sigma (float): Gaussian width (Å).
+        n_sigma (float): Cutoff in sigma units.
+        density (float): Grid density (points/Å).
+        outputfile (str): Output file name.
+        mask (list): Atom indices to include.
+        recenter (bool): Whether to recenter trajectory.
+        bbox (np.ndarray): Bounding box for grid.
+
+    Returns:
+        None. Writes density to file.
     """
     traj = Trajectory.from_atoms(atoms_list)
     params = {
@@ -135,8 +241,17 @@ def calculate_probability_density(
     print(f"Density written to {params['outputfile']}")
 
 def main():
+    """
+    Command-line interface for probability density calculation.
+
+    Supports QE, LAMMPS, and BOMD input modes. Builds trajectory and computes
+    the probability density for the specified element.
+
+    Returns:
+        None
+    """
     parser = argparse.ArgumentParser(
-        description="Ionic Density Calculator (QE or LAMMPS)"
+        description="Ionic Density Calculator (QE, LAMMPS, or BOMD)"
     )
     # QE-style inputs
     parser.add_argument('--in-file',    help='Input .in file for QE trajectory')
@@ -149,6 +264,8 @@ def main():
                         help='LAMMPS type-to-element map (e.g., 1:Li 2:La 3:Ti 4:O)')
     parser.add_argument('--lammps-timestep', type=float,
                         help='LAMMPS timestep (ps)')
+    parser.add_argument('--bomd-trj', help='BOMD trajectory file (.trj)')
+    parser.add_argument('--bomd-elements', nargs='+', help='Element symbols for BOMD atom order (e.g., Li O Ti)')
     parser.add_argument('--element',    default='Li', help='Species for density calc')
     parser.add_argument('--sigma',      type=float, default=0.3, help='Gaussian σ (Å)')
     parser.add_argument('--n-sigma',    type=float, default=4.0, help='Cutoff (σ units)')
@@ -161,8 +278,19 @@ def main():
     parser.add_argument('--output',     default='density.xsf', help='Output XSF file')
     args = parser.parse_args()
 
-    # Determine which input mode to use
-    if args.lammps_file:
+    # --- BOMD branch ---
+    if args.bomd_trj:
+        # Use BOMD elements if provided, else fallback to None
+        bomd_elements = args.bomd_elements if args.bomd_elements else None
+        atoms_list = build_bomd_trajectory(
+            args.bomd_trj,
+            elements=bomd_elements,
+            num_frames=args.num_frames,
+            stride=args.step_skip
+        )
+
+    # --- LAMMPS branch ---
+    elif args.lammps_file:
         # Build mapping dict
         mapping = {}
         if args.element_mapping:
@@ -170,7 +298,7 @@ def main():
                 tid, sym = m.split(':')
                 mapping[int(tid)] = sym
 
-        # Read LAMMPS trajectory
+        # Read LAMMPS trajectory using input_reader
         pos_full, n_frames, dt_full, t_full, cell_full, thermo, volumes, types = inp.read_lammps_trajectory(
             args.lammps_file,
             elements=args.lammps_elements,
@@ -184,9 +312,8 @@ def main():
             coords = pos_full[:, i, :]
             atoms_list.append(Atoms(cell=cell, symbols=types, positions=coords, pbc=True))
 
+    # --- QE branch ---
     elif args.in_file and args.pos_file and args.cel_file:
-        # QE trajectory
-        from target.probability_density import build_trajectory
         atoms_list = build_trajectory(
             args.in_file, args.pos_file, args.cel_file,
             time_after_start=0.0,
@@ -195,7 +322,7 @@ def main():
             stride=args.step_skip
         )
     else:
-        parser.error("Provide either --lammps-file or all of --in-file, --pos-file, --cel-file")
+        parser.error("Provide --bomd-trj, --lammps-file, or all of --in-file, --pos-file, --cel-file")
 
     # Compute and write density
     traj = Trajectory.from_atoms(atoms_list)

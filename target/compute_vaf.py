@@ -2,14 +2,18 @@
 """
 compute_vaf.py
 
-Read QE .in/.pos/.cel[/.evp], build ASE+Velocities, compute VAF with SAMOS, and plot.
+Read QE .in/.pos/.cel[/.evp], LAMMPS, or BOMD .trj, build ASE+Velocities, compute VAF, and plot.
 
-This script reads Quantum ESPRESSO trajectory files, constructs ASE Atoms objects with velocities,
-computes the velocity autocorrelation function (VAF) for specified elements using the SAMOS library,
-and plots/saves the results.
+This script reads Quantum ESPRESSO, LAMMPS, or BOMD trajectory files, constructs ASE Atoms objects with velocities,
+computes the velocity autocorrelation function (VAF) for specified elements, and plots/saves the results.
 
 Usage example:
-    python vaf.py --in_file LiAlPS.in --pos_file LiAlPS.pos --cel_file LiAlPS.cel --element Li Na
+    python compute_vaf.py --in_file LiAlPS.in --pos_file LiAlPS.pos --cel_file LiAlPS.cel --element Li Na
+    python compute_vaf.py --bomd-trj traj.trj --bomd-elements Li O Ti --element Li
+    python compute_vaf.py --data-dir ./ --element Li
+
+Author: CPDyAna Development Team
+Version: 2025-07-09
 """
 
 import os
@@ -59,53 +63,6 @@ def convert_symbols_to_atomic_numbers(symbols):
     except KeyError as e:
         raise ValueError(f"Unknown element symbol: {e}") from e
 
-def read_cel(cel_file):
-    """
-    Read cell parameters from a .cel file.
-
-    Args:
-        cel_file (str): Path to .cel file.
-
-    Returns:
-        list: List of 4-line blocks (cell info per frame).
-    """
-    lines = open(cel_file).read().splitlines()
-    return [lines[i:i+4] for i in range(0, len(lines), 4)]
-
-def read_pos(pos_file, natoms):
-    """
-    Read atomic positions from a .pos file.
-
-    Args:
-        pos_file (str): Path to .pos file.
-        natoms (int): Number of atoms.
-
-    Returns:
-        list: List of (natoms+1)-line blocks (positions per frame).
-    """
-    lines = open(pos_file).read().splitlines()
-    return [lines[i:i+natoms+1] for i in range(0, len(lines), natoms+1)]
-
-def read_evp(evp_file):
-    """
-    Read time steps from a .evp file.
-
-    Args:
-        evp_file (str): Path to .evp file.
-
-    Returns:
-        list: List of times (float).
-    """
-    times = []
-    try:
-        for L in open(evp_file):
-            parts = L.split()
-            if len(parts) >= 2 and parts[0].isdigit():
-                times.append(float(parts[1]))
-    except FileNotFoundError:
-        pass
-    return times
-
 def finite_diff_velocities(pos_arr, times):
     """
     Compute velocities using finite differences from positions and times.
@@ -132,12 +89,56 @@ def finite_diff_velocities(pos_arr, times):
     v[-1]  = (pos_arr[-1] - pos_arr[-2]) / dt0
     return v
 
+def build_bomd_trajectory(trj_file, elements=None, num_frames=0, stride=1):
+    """
+    Build a trajectory as a list of ASE Atoms objects with velocities from BOMD .trj file.
+
+    Args:
+        trj_file (str): Path to BOMD .trj trajectory file.
+        elements (list): List of element symbols (order must match .trj).
+        num_frames (int): Number of frames to use (0=all).
+        stride (int): Stride for frames.
+
+    Returns:
+        tuple: (frames, dt)
+            frames: list of ASE Atoms objects with velocities.
+            dt: time step in ps (average).
+    """
+    # Use CPDyAna's input_reader to parse BOMD .trj file
+    pos_full, n_frames, dt_full, t_full, cell_param_full, thermo_data, volumes, inp_array = inp.read_bomd_trajectory(
+        trj_file,
+        elements=elements,
+        timestep=None,
+        export_verification=False
+    )
+    # Determine frame indices
+    if num_frames > 0:
+        frame_indices = list(range(0, min(num_frames, n_frames), stride))
+    else:
+        frame_indices = list(range(0, n_frames, stride))
+    # Prepare positions and cells
+    pos_arr = np.transpose(pos_full, (1, 0, 2))  # (frames, atoms, 3)
+    cell_arr = cell_param_full.reshape(-1, 3, 3)  # (frames, 3, 3)
+    t_list = t_full
+    # Compute velocities
+    vel_arr = finite_diff_velocities(pos_arr, t_list)
+    # Build ASE Atoms frames with velocities
+    frames = []
+    for i in frame_indices:
+        atoms = Atoms(symbols=inp_array, positions=pos_arr[i], cell=cell_arr[i], pbc=True)
+        atoms.set_velocities(vel_arr[i])
+        frames.append(atoms)
+    # Estimate dt as mean of dt_full or from t_list
+    dt = np.mean(dt_full) if dt_full is not None and len(dt_full) > 0 else (t_list[1] - t_list[0] if len(t_list) > 1 else 1.0)
+    print(f"Built {len(frames)} BOMD frames with velocities from {trj_file}")
+    return frames, dt
+
 def build_trajectory(in_file, pos_file, cel_file,
                      evp_file=None,
                      start=0.0, nframes=0, stride=1,
                      time_interval=0.00193511):
     """
-    Build a trajectory as a list of ASE Atoms objects with velocities.
+    Build a trajectory as a list of ASE Atoms objects with velocities from QE files.
 
     Args:
         in_file (str): Path to .in file (species).
@@ -160,12 +161,26 @@ def build_trajectory(in_file, pos_file, cel_file,
     # 2) Convert to atomic numbers
     sp = convert_symbols_to_atomic_numbers(syms)
     # 3) Read cell and position blocks
+    def read_cel(cel_file):
+        lines = open(cel_file).read().splitlines()
+        return [lines[i:i+4] for i in range(0, len(lines), 4)]
+    def read_pos(pos_file, natoms):
+        lines = open(pos_file).read().splitlines()
+        return [lines[i:i+natoms+1] for i in range(0, len(lines), natoms+1)]
+    def read_evp(evp_file):
+        times = []
+        try:
+            for L in open(evp_file):
+                parts = L.split()
+                if len(parts) >= 2 and parts[0].isdigit():
+                    times.append(float(parts[1]))
+        except FileNotFoundError:
+            pass
+        return times
     cel_chunks = read_cel(cel_file)
     pos_chunks = read_pos(pos_file, len(syms))
-    # 4) Read times from .evp if available, else use uniform spacing
     times_full = read_evp(evp_file) if evp_file else []
     total = min(len(cel_chunks), len(pos_chunks))
-
     # Determine start/end indices
     if len(times_full) >= 2:
         dt = times_full[1] - times_full[0]
@@ -175,10 +190,8 @@ def build_trajectory(in_file, pos_file, cel_file,
         dt = time_interval
         start_idx = int(start / dt)
         time_list = [i * dt for i in range(start_idx, total, stride)]
-
     start_idx = max(0, min(start_idx, total-1))
     end_idx = total if nframes <= 0 else min(start_idx + nframes, total)
-
     # Collect positions and cells
     pos_list = []
     cell_list = []
@@ -192,7 +205,6 @@ def build_trajectory(in_file, pos_file, cel_file,
     pos_arr = np.array(pos_list)  # (Nf, nat, 3)
     # Compute velocities
     vel_arr = finite_diff_velocities(pos_arr, time_list)
-
     # Build ASE Atoms objects with velocities
     frames = []
     for i, (coords, cell) in enumerate(zip(pos_arr, cell_list)):
@@ -214,7 +226,7 @@ def compute_vaf(frames, dt, element, blocks, out_prefix, in_file,
         blocks (int): Number of statistical blocks.
         out_prefix (str): Output file prefix.
         in_file (str): Path to .in file (for species).
-        t_start_dt (int): Start index for VAF calculation.
+        t_start_fit_ps (int): Start index for VAF calculation.
         stepsize_t (int): Stride for t in VAF.
         stepsize_tau (int): Stride for tau in VAF.
         t_end_fit_ps (float): End of fit in ps.
@@ -264,11 +276,13 @@ def compute_vaf(frames, dt, element, blocks, out_prefix, in_file,
 
 if __name__ == '__main__':
     # Argument parsing for CLI usage
-    p = argparse.ArgumentParser(description="Compute and plot VAF from QE trajectory files.")
-    p.add_argument('--data-dir', help="Directory containing trajectory files (QE or LAMMPS)")
+    p = argparse.ArgumentParser(description="Compute and plot VAF from QE, LAMMPS, or BOMD trajectory files.")
+    p.add_argument('--data-dir', help="Directory containing trajectory files (QE, LAMMPS, or BOMD)")
     p.add_argument('--lammps-elements', nargs='+', help="Element symbols for LAMMPS atom types (e.g., Li S Al P O)")
     p.add_argument('--element-mapping', nargs='+', help="LAMMPS type to element mapping (e.g., 1:Li 2:S 3:Al)")
     p.add_argument('--lammps-timestep', type=float, help="LAMMPS timestep in picoseconds")
+    p.add_argument('--bomd-trj', help="BOMD trajectory file (.trj)")
+    p.add_argument('--bomd-elements', nargs='+', help="Element symbols for BOMD atom order (e.g., Li O Ti)")
     p.add_argument('--element',   nargs='+', required=True,
                    help="Atom symbol(s) for VAF (e.g. Li Na)")
     p.add_argument('--start',   type=float, default=0.0,
@@ -289,8 +303,48 @@ if __name__ == '__main__':
     p.add_argument('--t-end-fit-ps', type=float, default=50, help="End of the fit in ps (required by SAMOS)")
     args = p.parse_args()
 
-    files = os.listdir(args.data_dir)
-    files_lower = [f.lower() for f in files]
+    # --- BOMD branch ---
+    if args.bomd_trj:
+        if not os.path.exists(args.bomd_trj):
+            raise RuntimeError(f"BOMD .trj file not found: {args.bomd_trj}")
+        # Use BOMD elements if provided, else fallback to None
+        bomd_elements = args.bomd_elements if args.bomd_elements else None
+        frames, dt = build_bomd_trajectory(
+            args.bomd_trj,
+            elements=bomd_elements,
+            num_frames=args.nframes,
+            stride=args.stride
+        )
+        # Compute and plot VAF for each requested element
+        for elem in args.element:
+            traj = Trajectory.from_atoms(frames)
+            traj.set_attr('timestep_fs', dt * 1000.0)
+            da = DynamicsAnalyzer()
+            da.set_trajectories(traj)
+            ts = da.get_vaf(
+                integration='trapezoid',
+                species_of_interest=[elem],
+                nr_of_blocks=args.blocks,
+                stepsize_t=args.stepsize_t,
+                stepsize_tau=args.stepsize_tau,
+                t_start_fit_ps=args.t_start_fit_ps,            
+                t_end_fit_ps=args.t_end_fit_ps
+            )
+            plot_vaf_isotropic(ts)
+            plt.xlim(0, args.t_end_fit_ps * 1000)
+            save_path = f'{args.out_prefix}_{elem}_vaf_upto_{int(args.t_end_fit_ps)}psframes.png'
+            print(f"Saving VAF plot to: {os.path.abspath(save_path)}")
+            plt.savefig(save_path)
+            plt.show()
+            plt.close()
+        sys.exit(0)
+
+    # --- QE and LAMMPS branch (auto-detect) ---
+    files = []
+    files_lower = []
+    if args.data_dir:
+        files = os.listdir(args.data_dir)
+        files_lower = [f.lower() for f in files]
     # QE detection
     is_qe = any(f.endswith('.pos') for f in files_lower) and any(f.endswith('.cel') for f in files_lower)
     # LAMMPS detection
@@ -311,7 +365,6 @@ if __name__ == '__main__':
             stride=args.stride,
             time_interval=args.time_interval
         )
-
         # Compute and plot VAF for each requested element
         for elem in args.element:
             traj = Trajectory.from_atoms(frames)
@@ -327,10 +380,8 @@ if __name__ == '__main__':
                 t_start_fit_ps=args.t_start_fit_ps,            
                 t_end_fit_ps=args.t_end_fit_ps
             )
-
-            # Plot VAF for this element
             plot_vaf_isotropic(ts)
-            plt.xlim(0, args.t_end_fit_ps * 1000)  # fs, matches process file
+            plt.xlim(0, args.t_end_fit_ps * 1000)
             save_path = f'{args.out_prefix}_{elem}_vaf_upto_{int(args.t_end_fit_ps)}psframes.png'
             print(f"Saving VAF plot to: {os.path.abspath(save_path)}")
             plt.savefig(save_path)
@@ -396,6 +447,5 @@ if __name__ == '__main__':
             plt.savefig(save_path)
             plt.show()
             plt.close()
-    
     else:
-        raise RuntimeError("Could not detect QE or LAMMPS trajectory files in data-dir.")
+        raise RuntimeError("Could not detect QE, LAMMPS, or BOMD trajectory files in data-dir.")

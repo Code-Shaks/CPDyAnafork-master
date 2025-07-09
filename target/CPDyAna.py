@@ -7,6 +7,7 @@ CPDyAna is a comprehensive command-line interface for analyzing molecular dynami
 simulations. It provides unified access to multiple analysis types including:
 
 - **Mean Square Displacement (MSD)**: Calculate diffusion coefficients and tracer diffusivity
+- **Non-Gaussian Parameters (NGP)**: Analyze non-Gaussian behavior in diffusion
 - **Van Hove Correlation Functions**: Analyze spatial correlations (self and distinct)
 - **Radial Distribution Functions (RDF)**: Compute pair correlation functions
 - **Velocity Autocorrelation Functions (VAF)**: Analyze velocity correlations
@@ -19,27 +20,30 @@ functions for a complete standalone workflow.
 Supported File Formats:
     - Quantum ESPRESSO trajectory files (.pos, .cel, .evp, .in)
     - LAMMPS trajectory files
+    - BOMD (.trj) trajectory files
     - ASE-compatible formats
 
 Usage Examples:
     # Mean Square Displacement analysis
     python CPDyAna.py msd -T 800 --data-dir /path/to/data --diffusing-elements Li Na
     
+    # Non-Gaussian Parameters analysis
+    python CPDyAna.py ngp -T 800 --data-dir /path/to/data --diffusing-elements Li Na --initial-time 0 --final-time 200
+
     # Van Hove correlation function
     python CPDyAna.py vh -T 800 --data-dir /path/to/data --rmax 10 --sigma 0.1
-    
+
     # Radial distribution function
     python CPDyAna.py rdf --data-dir /path/to/data --central-atom Li Al
-    
+
     # Velocity autocorrelation function
     python CPDyAna.py vaf --data-dir /path/to/data --element Li --nframes 1000
-    
+
     # Ionic density mapping
     python CPDyAna.py ionic-density --data-dir /path/to/data --element Li --sigma 0.3
 
 Author: CPDyAna Development Team
 Version: Combined version (01-02-2024)
-License: Open Source
 """
 
 import argparse
@@ -80,6 +84,32 @@ def Job(temperature, diffusing_elements, diffusivity_direction_choices,
         export_verification=False, show_recommendations=True, lammps_units="metal"):
     """
     Main analysis job function for MSD and related analyses, using UNIFIED calculation approach.
+
+    Handles trajectory reading, format detection, and dispatches to the appropriate
+    analysis routines for MSD, NGP, Van Hove, etc. Compatible with QE, LAMMPS, and BOMD (.trj).
+
+    Args:
+        temperature (list): List of temperatures for analysis.
+        diffusing_elements (list): Elements to analyze.
+        diffusivity_direction_choices (list): Directions for MSD/diffusion.
+        diffusivity_choices (list): Types of diffusivity (Tracer, Collective, etc.).
+        correlation (list): Correlation function types.
+        data_dir (str): Directory containing trajectory files.
+        Conv_factor (float): Unit conversion factor.
+        initial_time, final_time, initial_slope_time, final_slope_time (float): Time windows.
+        block (int): Block size for statistical analysis.
+        rmax (float): Max radius for correlation functions.
+        step_skip (int): Step skip for correlation functions.
+        sigma (float): Gaussian broadening for correlation functions.
+        ngrid (int): Number of grid points for correlation functions.
+        mode (str): Analysis mode (msd, ngp, vh, etc.).
+        lammps_elements, lammps_timestep, element_mapping: LAMMPS/BOMD-specific options.
+        export_verification (bool): Export verification trajectory.
+        show_recommendations (bool): Show analysis recommendations.
+        lammps_units (str): LAMMPS unit system.
+
+    Returns:
+        tuple: (temp_input_dict, temp_output_dict) with all processed data.
     """
     # Initialize dictionaries to store input and output data
     temp_input_dict, temp_output_dict = {}, {}
@@ -407,17 +437,11 @@ def parser():
     Subcommands:
         msd: Mean Square Displacement analysis for diffusion coefficients
         vh: Van Hove correlation function analysis  
+        ngp: Non-Gaussian Parameter analysis for dynamic heterogeneity
         ionic-density: 3D ionic density mapping
         rdf: Radial Distribution Function calculation
         vaf: Velocity Autocorrelation Function analysis
-        vdos: Vibrational Density of States calculation
-
-    Common Arguments:
-        - temperature: Temperature(s) for thermodynamic analysis
-        - diffusing-elements: Element types to analyze
-        - data-dir: Directory containing input files
-        - time windows: Analysis and fitting time ranges
-        - statistical parameters: Block sizes, grid points, etc.
+        vdos: Vibrational Density of States calculation.
 
     Example:
         >>> args = parser()
@@ -914,6 +938,17 @@ def parser():
     return p.parse_args()
 
 def main():
+    """
+    Main entry point for CPDyAna CLI.
+
+    Parses arguments, detects trajectory format, and dispatches to the appropriate
+    analysis workflow (MSD, NGP, Van Hove, RDF, VAF, VDOS, ionic density).
+    Handles BOMD (.trj), QE, and LAMMPS files, and manages plotting and output.
+
+    Returns:
+        None
+    """
+    
     a = parser()
     format_info = inp.detect_trajectory_format(a.data_dir)
     if format_info['format'] == 'bomd':
