@@ -166,8 +166,7 @@ def get_position_indices(header_list):
                                  postfix=postfix)
         if found:
             if postfix in ("s", ""):
-                print("Warning: I am not unwrapping positions,"
-                      " this is not yet implemented")
+                print("Wrapped or scaled coordinates found.")
             return postfix, idc
     if 'xsu' in header_list:
         raise NotImplementedError("Do not support scaled"
@@ -452,6 +451,59 @@ def get_thermo_props(fname):
     ts_index = header.index('TimeStep')
     return header, arr, ts_index
 
+def iter_lammps_dump(filename, elements=None, types=None, timestep=None, f_conv=1.0, quiet=False):
+    """
+    Generator version of read_lammps_dump: yields one frame at a time as a dict.
+    """
+    with open(filename) as f:
+        # Read header to get indices and types
+        lines = [next(f) for _ in range(9)]
+        (nat_must, atomid_idx, element_idx, type_idx,
+         postype, posids, has_vel, velids,
+         has_frc, frcids, additional_ids_dump) = read_step_info(
+            lines, lidx=0, start=True, quiet=quiet)
+
+        if types is not None and type_idx is None:
+            raise ValueError("types specified but not found in file")
+
+        # Figure out symbols for this trajectory
+        body = np.array([f.readline().split() for _ in range(nat_must)])
+        atomids = np.array(body[:, atomid_idx], dtype=int)
+        sorting_key = atomids.argsort()
+        if types is not None:
+            types_in_body = np.array(body[:, type_idx][sorting_key], dtype=int)
+            types_in_body -= 1
+            symbols = np.array(types, dtype=str)[types_in_body]
+        elif element_idx is not None:
+            symbols = np.array(body[:, element_idx])[sorting_key]
+        elif elements is not None:
+            assert len(elements) == nat_must
+            symbols = elements[:]
+        else:
+            symbols = ['H'] * nat_must
+
+    # Now yield frames
+    with open(filename) as f:
+        while True:
+            step_info = [f.readline() for _ in range(9)]
+            if ''.join(step_info) == '':
+                break
+            nat, timestep_, cell = read_step_info(step_info, start=False, quiet=quiet)
+            body = np.array([f.readline().split() for _ in range(nat_must)])
+            atomids = np.array(body[:, atomid_idx], dtype=int)
+            sorting_key = atomids.argsort()
+            pos = np.array(body[:, posids], dtype=float)[sorting_key]
+            frame = {
+                "positions": pos_2_absolute(cell, pos, postype),
+                "cell": cell,
+                "timestep": timestep_,
+                "symbols": symbols,
+            }
+            if has_vel:
+                frame["velocities"] = np.array(body[:, velids], dtype=float)[sorting_key]
+            if has_frc:
+                frame["forces"] = f_conv * np.array(body[:, frcids], dtype=float)[sorting_key]
+            yield frame
 
 def read_lammps_dump(filename, elements=None, elements_file=None, types=None, timestep=None,
                      mass_types=None, thermo_file=None, thermo_pe=None, thermo_stress=None,

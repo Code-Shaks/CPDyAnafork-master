@@ -188,6 +188,82 @@ def data_evaluator_lammps(diffusivity_direction_choices, target_elements, pos, t
             np.array(framework_pos_list), np.array(mobile_pos_list), 
             np.array(mobile_drifted_rectified_structure_list), np.array(framework_drifted_rectified_structure_list))
 
+# def data_evaluator_lammps(diffusivity_direction_choices, target_elements, frame_generator, total_ion_array):
+#     """
+#     Process LAMMPS position data for diffusion analysis using a frame generator.
+
+#     Parameters:
+#     - diffusivity_direction_choices: List of directions for analysis (e.g., ["XYZ", "X"])
+#     - target_elements: List of mobile ion elements
+#     - frame_generator: Generator yielding frames with 'positions' (n_atoms, 3)
+#     - total_ion_array: Array of element types
+
+#     Returns:
+#     - tuple: Arrays needed for diffusion analysis
+#     """
+#     positions = []
+#     for frame in frame_generator:
+#         positions.append(frame["positions"])
+#     pos = np.stack(positions, axis=1)  # shape: (n_atoms, n_frames, 3)
+#     steps = pos.shape[1]
+
+#     # Use the same logic as data_evaluator_lammps
+#     position_data_list = [] 
+#     drifted_rectified_structure_list = []
+#     conductor_indices_list = []
+#     framework_indices_list = [] 
+#     framework_pos_list = []
+#     mobile_pos_list = []
+#     pos_list = []
+#     mobile_drifted_rectified_structure_list = []
+#     framework_drifted_rectified_structure_list = []
+
+#     for direction_idx, direction in enumerate(diffusivity_direction_choices):
+#         dim_mask = np.zeros(3, dtype=bool)
+#         if 'X' in direction:
+#             dim_mask[0] = True
+#         if 'Y' in direction:
+#             dim_mask[1] = True
+#         if 'Z' in direction:
+#             dim_mask[2] = True
+
+#         position_data = np.zeros_like(pos)
+#         for dim in range(3):
+#             if dim_mask[dim]:
+#                 position_data[:, :, dim] = pos[:, :, dim]
+
+#         disp = position_data - position_data[:, 0:1, :]
+
+#         conductor_indices = np.array([i for i, element in enumerate(total_ion_array) if element in target_elements])
+#         framework_indices = np.array([i for i in range(len(total_ion_array)) if i not in conductor_indices])
+
+#         framework_disp = disp[framework_indices] if len(framework_indices) > 0 else np.zeros((0, steps, 3))
+#         framework_pos = position_data[framework_indices] if len(framework_indices) > 0 else np.zeros((0, steps, 3))
+#         mobile_pos = position_data[conductor_indices] if len(conductor_indices) > 0 else np.zeros((0, steps, 3))
+
+#         drift = np.mean(framework_disp, axis=0) if len(framework_indices) > 0 else np.zeros((steps, 3))
+#         corrected_displacements = disp - drift
+
+#         drifted_rectified_structure = position_data[:, 0:1, :] + corrected_displacements
+
+#         mobile_drifted_rectified_structure = drifted_rectified_structure[conductor_indices] if len(conductor_indices) > 0 else np.zeros((0, steps, 3))
+#         framework_drifted_rectified_structure = drifted_rectified_structure[framework_indices] if len(framework_indices) > 0 else np.zeros((0, steps, 3))
+
+#         position_data_list.append(position_data)
+#         drifted_rectified_structure_list.append(drifted_rectified_structure)
+#         conductor_indices_list.append(conductor_indices)
+#         framework_indices_list.append(framework_indices)
+#         framework_pos_list.append(framework_pos)
+#         mobile_pos_list.append(mobile_pos)
+#         pos_list.append(pos)
+#         mobile_drifted_rectified_structure_list.append(mobile_drifted_rectified_structure)
+#         framework_drifted_rectified_structure_list.append(framework_drifted_rectified_structure)
+
+#     return (np.array(position_data_list), np.array(drifted_rectified_structure_list), 
+#             np.array(conductor_indices_list), np.array(framework_indices_list), 
+#             np.array(framework_pos_list), np.array(mobile_pos_list), 
+#             np.array(mobile_drifted_rectified_structure_list), np.array(framework_drifted_rectified_structure_list))
+
 def detect_lammps_format(dt_array):
     """
     Detect if the given dt_array is from a LAMMPS trajectory.
@@ -229,3 +305,4 @@ def is_lammps_simulation(data_dict):
             if dt_array and len(dt_array) > 1:
                 return np.allclose(dt_array, dt_array[0], rtol=1e-5)
     return False if dt_found else None  # None if can't determine
+

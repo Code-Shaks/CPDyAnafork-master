@@ -6,116 +6,105 @@ This section provides comprehensive examples for using CPDyAna to analyze molecu
 Command-Line Interface Examples
 -------------------------------
 
-Basic MSD Analysis
-~~~~~~~~~~~~~~~~~~
-
-Calculate Mean Square Displacement for Li ions at 800K:
+Mean Square Displacement (MSD)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: bash
 
-   # Basic MSD analysis
-    CPDyAna msd \
-       --data-dir /path/to/md_data \
-       --temperature 800 \
-       --diffusing-elements Li \
-       --initial-time 5.0 \
-       --final-time 200.0 \
-       --save-path Li_msd_800K.png
+   CPDyAna msd \
+      --data-dir /path/to/md_data \
+      --temperature 800 \
+      --diffusing-elements Li \
+      --diffusivity-direction-choices X Y Z XYZ \
+      --diffusivity-choices Tracer Collective \
+      --initial-time 5.0 \
+      --final-time 200.0 \
+      --initial-slope-time 10.0 \
+      --final-slope-time 150.0 \
+      --block 500 \
+      --step-skip 100 \
+      --save-path Li_msd_800K.png
 
-Multi-Element Analysis
-~~~~~~~~~~~~~~~~~~~~~~
-
-Analyze multiple elements and temperatures:
+Non-Gaussian Parameter (NGP)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: bash
 
-   # Multi-element, multi-temperature MSD
-    CPDyAna msd \
-       --data-dir /path/to/md_data \
-       --temperature 600 800 1000 \
-       --diffusing-elements Li Na \
-       --diffusivity-direction-choices X Y Z XYZ \
-       --diffusivity-choices Tracer Collective
+   CPDyAna ngp \
+      --data-dir /path/to/md_data \
+      --temperature 800 \
+      --diffusing-elements Li \
+      --diffusivity-direction-choices XYZ \
+      --initial-time 2.0 \
+      --final-time 200.0 \
+      --save-path Li_ngp_800K.png
 
 Van Hove Correlation Functions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Calculate both self and distinct Van Hove correlations:
-
 .. code-block:: bash
 
-   # Van Hove correlation analysis
-    CPDyAna vh \
-       --data-dir /path/to/md_data \
-       --temperature 800 \
-       --diffusing-elements Li \
-       --correlation Self Distinct \
-       --rmax 15.0 \
-       --sigma 0.1 \
-       --ngrid 151
+   CPDyAna vh \
+      --data-dir /path/to/md_data \
+      --temperature 800 \
+      --diffusing-elements Li \
+      --correlation Self Distinct \
+      --rmax 15.0 \
+      --sigma 0.1 \
+      --ngrid 151 \
+      --step-skip 100
 
-Radial Distribution Functions
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Compute RDF for multiple atom pairs:
-
-.. code-block:: bash
-
-   # RDF analysis
-    CPDyAna rdf \
-       --data-dir /path/to/md_data \
-       --central-atom Li Al \
-       --pair-atoms Li Al P S O \
-       --rmax 12.0 \
-       --ngrid 1200 \
-       --time-after-start 50.0
-
-Ionic Density Mapping
-~~~~~~~~~~~~~~~~~~~~~~
-
-Generate 3D density maps for visualization:
-
-.. code-block:: bash
-
-   # 3D ionic density calculation
-    CPDyAna ionic-density \
-       --data-dir /path/to/md_data \
-       --element Li \
-       --sigma 0.4 \
-       --density 0.15 \
-       --time-after-start 20.0 \
-       --num-frames 500
-
-Velocity Autocorrelation Functions
+Radial Distribution Functions (RDF)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Calculate VAF for diffusion analysis:
+.. code-block:: bash
+
+   CPDyAna rdf \
+      --data-dir /path/to/md_data \
+      --central-atom Li Al \
+      --pair-atoms Li Al P S O \
+      --rmax 12.0 \
+      --ngrid 1200 \
+      --time-after-start 50.0 \
+      --num-frames 100
+
+Ionic Density Mapping
+~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: bash
 
-   # VAF analysis
-    CPDyAna vaf \
-       --data-dir /path/to/md_data \
-       --element Li Na \
-       --start 10.0 \
-       --nframes 2000 \
-       --blocks 5 \
-       --t-end-fit-ps 20.0
+   CPDyAna ionic-density \
+      --data-dir /path/to/md_data \
+      --element Li \
+      --sigma 0.4 \
+      --density 0.15 \
+      --time-after-start 20.0 \
+      --num-frames 500
 
-Vibrational Density of States
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Compute VDOS for all elements:
+Velocity Autocorrelation Functions (VAF)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: bash
 
-   # VDOS calculation
-    CPDyAna vdos \
-       --data-dir /path/to/md_data \
-       --elements Li Al P S O \
-       --start 50.0 \
-       --nframes 5000 \
-       --stride 2
+   CPDyAna vaf \
+      --data-dir /path/to/md_data \
+      --element Li Na \
+      --start 10.0 \
+      --nframes 2000 \
+      --blocks 5 \
+      --t-end-fit-ps 20.0
+
+Vibrational Density of States (VDOS)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: bash
+
+   CPDyAna vdos \
+      --data-dir /path/to/md_data \
+      --elements Li Al P S O \
+      --start 50.0 \
+      --nframes 5000 \
+      --stride 2
 
 Python API Examples
 -------------------
@@ -222,7 +211,7 @@ Batch Processing Workflows
 ---------------------------
 
 Processing Multiple Simulations
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Script for batch analysis of multiple MD runs:
 
@@ -314,17 +303,17 @@ Advanced Analysis Examples
 --------------------------
 
 Custom Van Hove Analysis
-~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: python
 
    from target.correrelation_analysis import Van_Hove_self, Van_Hove_distinct
    import numpy as np
-   
+
    # Load trajectory data (example structure)
    # pos_array: shape (n_frames, n_atoms, 3)
    # dt: time step array
-   
+
    # Self Van Hove correlation
    dist_interval, reduced_nt, grt_self = Van_Hove_self(
        avg_step=50,
@@ -335,16 +324,16 @@ Custom Van Hove Analysis
        ngrid=151,
        moving_ion_pos=pos_array
    )
-   
+
    # Plot self correlation
    import matplotlib.pyplot as plt
-   
+
    fig, ax = plt.subplots(figsize=(10, 8))
-   
+
    for i, t in enumerate(reduced_nt[::5]):  # Plot every 5th time
        ax.plot(dist_interval, grt_self[i], 
                label=f't = {t:.2f} ps', alpha=0.7)
-   
+
    ax.set_xlabel('Distance (Å)')
    ax.set_ylabel('G_s(r,t)')
    ax.set_title('Self Van Hove Correlation Function')
@@ -356,7 +345,7 @@ File Format Tips
 ----------------
 
 Required File Structure
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
 
 For Quantum ESPRESSO trajectories, ensure your data directory contains:
 
@@ -382,10 +371,10 @@ Performance Optimization
 
 For large trajectories, use these optimization strategies:
 
-.. code-block:: python
+.. code-block:: bash
 
    # Use larger step_skip for faster analysis
-   python CPDyAna.py msd \
+   CPDyAna msd \
        --step-skip 1000 \
        --block 1000 \
        # ... other parameters

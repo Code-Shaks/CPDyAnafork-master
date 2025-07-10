@@ -159,3 +159,85 @@ def data_evaluator(diffusivity_direction_choices, target_elements, pos, total_io
             np.array(conductor_indices_list), np.array(framework_indices_list),
             np.array(framework_pos_list), np.array(mobile_pos_list),
             np.array(mobile_drifted_rectified_structure_list), np.array(framework_drifted_rectified_structure_list))
+
+# def data_evaluator(diffusivity_direction_choices, target_elements, frame_generator, total_ion_array):
+#     """
+#     Evaluate and process simulation data for ion diffusion analysis using a frame generator.
+
+#     Parameters:
+#     - diffusivity_direction_choices (list): List of diffusion directions to analyze.
+#     - target_elements (list): List of elements considered as conductors.
+#     - frame_generator: Generator yielding frames with 'positions' (n_atoms, 3).
+#     - total_ion_array (list): List of element symbols for all atoms.
+
+#     Returns:
+#     - tuple: Processed arrays related to ion diffusion analysis.
+#     """
+#     # Accumulate positions frame by frame
+#     positions = []
+#     for frame in frame_generator:
+#         positions.append(frame["positions"])
+#     pos = np.stack(positions, axis=1)  # shape: (n_atoms, n_frames, 3)
+#     steps = pos.shape[1]
+
+#     # Now use the same logic as the original data_evaluator
+#     position_data_list = []
+#     drifted_rectified_structure_list = []
+#     conductor_indices_list = []
+#     framework_indices_list = []
+#     framework_pos_list = []
+#     mobile_pos_list = []
+#     pos_list = []
+#     mobile_drifted_rectified_structure_list = []
+#     framework_drifted_rectified_structure_list = []
+
+#     for direction in diffusivity_direction_choices:
+#         position_data = np.zeros((len(total_ion_array), steps, 3))
+
+#         # Select position data based on direction
+#         if direction == "XYZ":
+#             position_data = pos
+#         elif direction == "XY":
+#             position_data[:, :, 0:2] = pos[:, :, 0:2]
+#         elif direction == "YZ":
+#             position_data[:, :, 1:3] = pos[:, :, 1:3]
+#         elif direction == "ZX":
+#             position_data[:, :, [0, 2]] = pos[:, :, [0, 2]]
+#         elif direction == "X":
+#             position_data[:, :, 0] = pos[:, :, 0]
+#         elif direction == "Y":
+#             position_data[:, :, 1] = pos[:, :, 1]
+#         elif direction == "Z":
+#             position_data[:, :, 2] = pos[:, :, 2]
+
+#         disp = position_data - position_data[:, 0:1, :]
+
+#         conductor_indices = [i for i, element in enumerate(total_ion_array) if element in target_elements]
+#         framework_indices = [i for i in range(len(total_ion_array)) if i not in conductor_indices]
+
+#         framework_disp = disp[framework_indices] if len(framework_indices) > 0 else np.zeros((0, steps, 3))
+#         framework_pos = position_data[framework_indices] if len(framework_indices) > 0 else np.zeros((0, steps, 3))
+#         mobile_pos = position_data[conductor_indices] if len(conductor_indices) > 0 else np.zeros((0, steps, 3))
+
+#         drift = np.average(framework_disp, axis=0) if len(framework_indices) > 0 else np.zeros((steps, 3))
+#         corrected_displacements = disp - drift
+
+#         drifted_rectified_structure = position_data[:, 0:1, :] + corrected_displacements
+
+#         mobile_drifted_rectified_structure = drifted_rectified_structure[conductor_indices] if len(conductor_indices) > 0 else np.zeros((0, steps, 3))
+#         framework_drifted_rectified_structure = drifted_rectified_structure[framework_indices] if len(framework_indices) > 0 else np.zeros((0, steps, 3))
+
+#         position_data_list.append(position_data)
+#         drifted_rectified_structure_list.append(drifted_rectified_structure)
+#         conductor_indices_list.append(conductor_indices)
+#         framework_indices_list.append(framework_indices)
+#         framework_pos_list.append(framework_pos)
+#         mobile_pos_list.append(mobile_pos)
+#         pos_list.append(pos)
+#         mobile_drifted_rectified_structure_list.append(mobile_drifted_rectified_structure)
+#         framework_drifted_rectified_structure_list.append(framework_drifted_rectified_structure)
+
+#     return (np.array(position_data_list), np.array(drifted_rectified_structure_list),
+#             np.array(conductor_indices_list), np.array(framework_indices_list),
+#             np.array(framework_pos_list), np.array(mobile_pos_list),
+#             np.array(mobile_drifted_rectified_structure_list), np.array(framework_drifted_rectified_structure_list))

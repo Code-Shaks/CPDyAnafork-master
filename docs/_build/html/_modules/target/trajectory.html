@@ -1,0 +1,1098 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>target.trajectory &mdash; CPDyAna 01-02-2024 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=18cd0f04"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            CPDyAna
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../target.html">Target Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#main-analysis-driver">Main Analysis Driver</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#cpdyana-combined-molecular-dynamics-analysis-tool">CPDyAna – Combined Molecular Dynamics Analysis Tool</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.CPDyAna.Job"><code class="docutils literal notranslate"><span class="pre">Job()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.CPDyAna.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.CPDyAna.parser"><code class="docutils literal notranslate"><span class="pre">parser()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#key-functions">Key Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#data-processing">Data Processing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#general-data-processing-module-for-cpdyana">General Data Processing Module for CPDyAna</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.data_processing.data_evaluator"><code class="docutils literal notranslate"><span class="pre">data_evaluator()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.data_processing.find_terms"><code class="docutils literal notranslate"><span class="pre">find_terms()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.data_processing.segmenter_func"><code class="docutils literal notranslate"><span class="pre">segmenter_func()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#lammps-data-processing">LAMMPS Data Processing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#lammps-data-processing-module-for-cpdyana">LAMMPS Data Processing Module for CPDyAna</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.data_processing_lammps.calculate_time_window_lammps"><code class="docutils literal notranslate"><span class="pre">calculate_time_window_lammps()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.data_processing_lammps.data_evaluator_lammps"><code class="docutils literal notranslate"><span class="pre">data_evaluator_lammps()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.data_processing_lammps.detect_lammps_format"><code class="docutils literal notranslate"><span class="pre">detect_lammps_format()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.data_processing_lammps.find_terms_lammps"><code class="docutils literal notranslate"><span class="pre">find_terms_lammps()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.data_processing_lammps.is_lammps_simulation"><code class="docutils literal notranslate"><span class="pre">is_lammps_simulation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.data_processing_lammps.segmenter_func_lammps"><code class="docutils literal notranslate"><span class="pre">segmenter_func_lammps()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#input-output-operations">Input/Output Operations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#input-file-reader-module-for-cpdyana">Input File Reader Module for CPDyAna</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.detect_trajectory_format"><code class="docutils literal notranslate"><span class="pre">detect_trajectory_format()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.export_verification_trajectory"><code class="docutils literal notranslate"><span class="pre">export_verification_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.generate_analysis_recommendations"><code class="docutils literal notranslate"><span class="pre">generate_analysis_recommendations()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.has_type_column"><code class="docutils literal notranslate"><span class="pre">has_type_column()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.read_bomd_trajectory"><code class="docutils literal notranslate"><span class="pre">read_bomd_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.read_cel_file"><code class="docutils literal notranslate"><span class="pre">read_cel_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.read_evp_file"><code class="docutils literal notranslate"><span class="pre">read_evp_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.read_ion_file"><code class="docutils literal notranslate"><span class="pre">read_ion_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.read_ion_file_universal"><code class="docutils literal notranslate"><span class="pre">read_ion_file_universal()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.read_lammps_trajectory"><code class="docutils literal notranslate"><span class="pre">read_lammps_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.read_pos_file"><code class="docutils literal notranslate"><span class="pre">read_pos_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.io.get_indices"><code class="docutils literal notranslate"><span class="pre">get_indices()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.io.get_position_indices"><code class="docutils literal notranslate"><span class="pre">get_position_indices()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.io.get_thermo_props"><code class="docutils literal notranslate"><span class="pre">get_thermo_props()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.io.iter_lammps_dump"><code class="docutils literal notranslate"><span class="pre">iter_lammps_dump()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.io.pos_2_absolute"><code class="docutils literal notranslate"><span class="pre">pos_2_absolute()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.io.read_lammps_dump"><code class="docutils literal notranslate"><span class="pre">read_lammps_dump()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.io.read_positions_with_ase"><code class="docutils literal notranslate"><span class="pre">read_positions_with_ase()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.io.read_step_info"><code class="docutils literal notranslate"><span class="pre">read_step_info()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.io.read_xsf"><code class="docutils literal notranslate"><span class="pre">read_xsf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.io.write_grid"><code class="docutils literal notranslate"><span class="pre">write_grid()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.io.write_xsf"><code class="docutils literal notranslate"><span class="pre">write_xsf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#supported-file-types">Supported File Types</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#core-calculations">Core Calculations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#calculations-module-for-cpdyana">Calculations Module for CPDyAna</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.calc_fft"><code class="docutils literal notranslate"><span class="pre">calc_fft()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.calc_msd_tracer"><code class="docutils literal notranslate"><span class="pre">calc_msd_tracer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.calc_ngp_tracer"><code class="docutils literal notranslate"><span class="pre">calc_ngp_tracer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.calculate_msd"><code class="docutils literal notranslate"><span class="pre">calculate_msd()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.calculate_msd_lammps"><code class="docutils literal notranslate"><span class="pre">calculate_msd_lammps()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.calculate_msd_qe"><code class="docutils literal notranslate"><span class="pre">calculate_msd_qe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.calculate_ngp"><code class="docutils literal notranslate"><span class="pre">calculate_ngp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.disp_sum"><code class="docutils literal notranslate"><span class="pre">disp_sum()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.msd_charged"><code class="docutils literal notranslate"><span class="pre">msd_charged()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.msd_tracer"><code class="docutils literal notranslate"><span class="pre">msd_tracer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#analysis-types">Analysis Types</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#correlation-analysis">Correlation Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#correlation-analysis-module-for-cpdyana">Correlation Analysis Module for CPDyAna</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.correrelation_analysis.Van_Hove_distinct"><code class="docutils literal notranslate"><span class="pre">Van_Hove_distinct()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.correrelation_analysis.Van_Hove_self"><code class="docutils literal notranslate"><span class="pre">Van_Hove_self()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#correlation-types">Correlation Types</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#rdf-computation">RDF Computation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_rdf.build_ase_trajectory"><code class="docutils literal notranslate"><span class="pre">build_ase_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_rdf.build_bomd_trajectory"><code class="docutils literal notranslate"><span class="pre">build_bomd_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_rdf.build_lammps_trajectory"><code class="docutils literal notranslate"><span class="pre">build_lammps_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_rdf.compute_rdf"><code class="docutils literal notranslate"><span class="pre">compute_rdf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_rdf.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#vaf-computation">VAF Computation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_vaf.build_bomd_trajectory"><code class="docutils literal notranslate"><span class="pre">build_bomd_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_vaf.build_trajectory"><code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_vaf.compute_vaf"><code class="docutils literal notranslate"><span class="pre">compute_vaf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_vaf.convert_symbols_to_atomic_numbers"><code class="docutils literal notranslate"><span class="pre">convert_symbols_to_atomic_numbers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_vaf.finite_diff_velocities"><code class="docutils literal notranslate"><span class="pre">finite_diff_velocities()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#vdos-analysis">VDOS Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#plotting-and-visualization">Plotting and Visualization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#plotting-and-visualization-module-for-cpdyana">Plotting and Visualization Module for CPDyAna</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.centers_to_edges"><code class="docutils literal notranslate"><span class="pre">centers_to_edges()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.centers_to_edges_time"><code class="docutils literal notranslate"><span class="pre">centers_to_edges_time()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.int_or_float"><code class="docutils literal notranslate"><span class="pre">int_or_float()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.msd_plot"><code class="docutils literal notranslate"><span class="pre">msd_plot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.msd_plot_lammps"><code class="docutils literal notranslate"><span class="pre">msd_plot_lammps()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.msd_plot_qe"><code class="docutils literal notranslate"><span class="pre">msd_plot_qe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.ngp_plot"><code class="docutils literal notranslate"><span class="pre">ngp_plot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.parse_cli_args"><code class="docutils literal notranslate"><span class="pre">parse_cli_args()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.plot_angular_spec"><code class="docutils literal notranslate"><span class="pre">plot_angular_spec()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.plot_power_spectrum"><code class="docutils literal notranslate"><span class="pre">plot_power_spectrum()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.plot_rdf"><code class="docutils literal notranslate"><span class="pre">plot_rdf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.plot_vaf_isotropic"><code class="docutils literal notranslate"><span class="pre">plot_vaf_isotropic()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.van_hove_plot"><code class="docutils literal notranslate"><span class="pre">van_hove_plot()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#probability-density-analysis">Probability Density Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#probability-density-calculation-module-for-cpdyana">Probability Density Calculation Module for CPDyAna</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.build_bomd_trajectory"><code class="docutils literal notranslate"><span class="pre">build_bomd_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.build_lammps_trajectory"><code class="docutils literal notranslate"><span class="pre">build_lammps_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.build_trajectory"><code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.calculate_probability_density"><code class="docutils literal notranslate"><span class="pre">calculate_probability_density()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.convert_symbols_to_atomic_numbers"><code class="docutils literal notranslate"><span class="pre">convert_symbols_to_atomic_numbers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.divide_chunks"><code class="docutils literal notranslate"><span class="pre">divide_chunks()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.parse_mask"><code class="docutils literal notranslate"><span class="pre">parse_mask()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#trajectory-utilities">Trajectory Utilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.trajectory.IncompatibleTrajectoriesException"><code class="docutils literal notranslate"><span class="pre">IncompatibleTrajectoriesException</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory"><code class="docutils literal notranslate"><span class="pre">Trajectory</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.atoms"><code class="docutils literal notranslate"><span class="pre">Trajectory.atoms</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.types"><code class="docutils literal notranslate"><span class="pre">Trajectory.types</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.nat"><code class="docutils literal notranslate"><span class="pre">Trajectory.nat</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.cell"><code class="docutils literal notranslate"><span class="pre">Trajectory.cell</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.nstep"><code class="docutils literal notranslate"><span class="pre">Trajectory.nstep</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.__init__"><code class="docutils literal notranslate"><span class="pre">Trajectory.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#id0"><code class="docutils literal notranslate"><span class="pre">Trajectory.atoms</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.calculate_velocities_from_positions"><code class="docutils literal notranslate"><span class="pre">Trajectory.calculate_velocities_from_positions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#id1"><code class="docutils literal notranslate"><span class="pre">Trajectory.cell</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.from_atoms"><code class="docutils literal notranslate"><span class="pre">Trajectory.from_atoms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_ase_trajectory"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_ase_trajectory()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_atom_types"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_atom_types()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_atoms"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_atoms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_cells"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_cells()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_forces"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_forces()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_indices_of_species"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_indices_of_species()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_positions"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_positions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_step_atoms"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_step_atoms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_stress"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_stress()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_timestep"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_timestep()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_types"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_types()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_velocities"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_velocities()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_volumes"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_volumes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#id2"><code class="docutils literal notranslate"><span class="pre">Trajectory.nat</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.recenter"><code class="docutils literal notranslate"><span class="pre">Trajectory.recenter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.set_atom_types"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_atom_types()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.set_atoms"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_atoms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.set_cells"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_cells()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.set_forces"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_forces()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.set_positions"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_positions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.set_pot_energies"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_pot_energies()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.set_stress"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_stress()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.set_timestep"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_timestep()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.set_types"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_types()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.set_velocities"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_velocities()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#id3"><code class="docutils literal notranslate"><span class="pre">Trajectory.types</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.trajectory.check_trajectory_compatibility"><code class="docutils literal notranslate"><span class="pre">check_trajectory_compatibility()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#general-utilities">General Utilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#utility-module-for-samos-package">Utility Module for SAMOS Package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray"><code class="docutils literal notranslate"><span class="pre">AttributedArray</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray._arrays"><code class="docutils literal notranslate"><span class="pre">AttributedArray._arrays</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray._attrs"><code class="docutils literal notranslate"><span class="pre">AttributedArray._attrs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray._nstep"><code class="docutils literal notranslate"><span class="pre">AttributedArray._nstep</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray.__init__"><code class="docutils literal notranslate"><span class="pre">AttributedArray.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray.get_array"><code class="docutils literal notranslate"><span class="pre">AttributedArray.get_array()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray.get_arraynames"><code class="docutils literal notranslate"><span class="pre">AttributedArray.get_arraynames()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray.get_attr"><code class="docutils literal notranslate"><span class="pre">AttributedArray.get_attr()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray.get_attrs"><code class="docutils literal notranslate"><span class="pre">AttributedArray.get_attrs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray.load_file"><code class="docutils literal notranslate"><span class="pre">AttributedArray.load_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray.nstep"><code class="docutils literal notranslate"><span class="pre">AttributedArray.nstep</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray.remove_array"><code class="docutils literal notranslate"><span class="pre">AttributedArray.remove_array()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray.rescale_array"><code class="docutils literal notranslate"><span class="pre">AttributedArray.rescale_array()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray.save"><code class="docutils literal notranslate"><span class="pre">AttributedArray.save()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray.set_array"><code class="docutils literal notranslate"><span class="pre">AttributedArray.set_array()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray.set_attr"><code class="docutils literal notranslate"><span class="pre">AttributedArray.set_attr()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.utilities.InputError"><code class="docutils literal notranslate"><span class="pre">InputError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.utilities.apply_minimum_image"><code class="docutils literal notranslate"><span class="pre">apply_minimum_image()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.utilities.get_color"><code class="docutils literal notranslate"><span class="pre">get_color()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.utilities.get_terminal_width"><code class="docutils literal notranslate"><span class="pre">get_terminal_width()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#analysis-helpers">Analysis Helpers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.analysis.BaseAnalyzer"><code class="docutils literal notranslate"><span class="pre">BaseAnalyzer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.analysis.BaseAnalyzer.__init__"><code class="docutils literal notranslate"><span class="pre">BaseAnalyzer.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.analysis.BaseAnalyzer.run"><code class="docutils literal notranslate"><span class="pre">BaseAnalyzer.run()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.analysis.BaseAnalyzer.set_trajectory"><code class="docutils literal notranslate"><span class="pre">BaseAnalyzer.set_trajectory()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.analysis.DynamicsAnalyzer"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.analysis.DynamicsAnalyzer.__init__"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.analysis.DynamicsAnalyzer.get_kinetic_energies"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.get_kinetic_energies()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.analysis.DynamicsAnalyzer.get_power_spectrum"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.get_power_spectrum()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.analysis.DynamicsAnalyzer.get_species_of_interest"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.get_species_of_interest()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.analysis.DynamicsAnalyzer.get_vaf"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.get_vaf()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.analysis.DynamicsAnalyzer.set_species_of_interest"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.set_species_of_interest()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.analysis.DynamicsAnalyzer.set_trajectories"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.set_trajectories()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.analysis.DynamicsAnalyzer.set_verbosity"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.set_verbosity()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.analysis.TimeSeries"><code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.analysis.get_gaussian_density"><code class="docutils literal notranslate"><span class="pre">get_gaussian_density()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.analysis.write_xsf_header"><code class="docutils literal notranslate"><span class="pre">write_xsf_header()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#preprocessing">Preprocessing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#utility-modules">Utility Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#module-target.json_serializable">JSON Serialization</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#json-serialization-utilities-for-cpdyana">JSON Serialization Utilities for CPDyAna</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.json_serializable.convert_to_serializable"><code class="docutils literal notranslate"><span class="pre">convert_to_serializable()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#module-target.const">Constants</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#physical-constants-and-unit-conversions-for-cpdyana">Physical Constants and Unit Conversions for CPDyAna</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../usage_Examples.html">Usage Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../usage_Examples.html#command-line-interface-examples">Command-Line Interface Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#mean-square-displacement-msd">Mean Square Displacement (MSD)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#non-gaussian-parameter-ngp">Non-Gaussian Parameter (NGP)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#van-hove-correlation-functions">Van Hove Correlation Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#radial-distribution-functions-rdf">Radial Distribution Functions (RDF)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#ionic-density-mapping">Ionic Density Mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#velocity-autocorrelation-functions-vaf">Velocity Autocorrelation Functions (VAF)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#vibrational-density-of-states-vdos">Vibrational Density of States (VDOS)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage_Examples.html#python-api-examples">Python API Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#direct-function-usage">Direct Function Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#samos-module-integration">SAMOS Module Integration</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage_Examples.html#batch-processing-workflows">Batch Processing Workflows</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#processing-multiple-simulations">Processing Multiple Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#temperature-series-analysis">Temperature Series Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage_Examples.html#advanced-analysis-examples">Advanced Analysis Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#custom-van-hove-analysis">Custom Van Hove Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage_Examples.html#file-format-tips">File Format Tips</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#required-file-structure">Required File Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#performance-optimization">Performance Optimization</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Module Index:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Usage Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules.html#basic-msd-analysis">Basic MSD Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules.html#non-gaussian-parameter-ngp-analysis">Non-Gaussian Parameter (NGP) Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules.html#van-hove-correlation-function">Van Hove Correlation Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules.html#radial-distribution-function-rdf">Radial Distribution Function (RDF)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules.html#velocity-autocorrelation-function-vaf">Velocity Autocorrelation Function (VAF)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules.html#vibrational-density-of-states-vdos">Vibrational Density of States (VDOS)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules.html#ionic-density-mapping">Ionic Density Mapping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules.html#batch-processing-workflows">Batch Processing Workflows</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../modules.html#processing-multiple-simulations">Processing Multiple Simulations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CPDyAna</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">target.trajectory</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for target.trajectory</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">target.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">AttributedArray</span>
+
+
+<div class="viewcode-block" id="IncompatibleTrajectoriesException">
+<a class="viewcode-back" href="../../target.html#target.trajectory.IncompatibleTrajectoriesException">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">IncompatibleTrajectoriesException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Exception raised when attempting to combine incompatible trajectories.</span>
+<span class="sd">    </span>
+<span class="sd">    This exception indicates that trajectories cannot be combined due to</span>
+<span class="sd">    differences in atom types, array structure, or timestep values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="check_trajectory_compatibility">
+<a class="viewcode-back" href="../../target.html#target.trajectory.check_trajectory_compatibility">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_trajectory_compatibility</span><span class="p">(</span><span class="n">trajectories</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Verify that multiple trajectories can be safely combined.</span>
+<span class="sd">    </span>
+<span class="sd">    This function checks whether trajectories are compatible by confirming</span>
+<span class="sd">    they have the same atomic composition, array structure, and timestep.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        trajectories (list): List of Trajectory objects to check</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: (types, timestep) containing the common atom types and timestep</span>
+<span class="sd">        </span>
+<span class="sd">    Raises:</span>
+<span class="sd">        IncompatibleTrajectoriesException: If trajectories differ in atom types,</span>
+<span class="sd">            array structure, or timestep</span>
+<span class="sd">        TypeError: If any element is not a Trajectory instance</span>
+<span class="sd">        AssertionError: If empty list is provided</span>
+<span class="sd">            </span>
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; try:</span>
+<span class="sd">        ...     types, dt = check_trajectory_compatibility([traj1, traj2])</span>
+<span class="sd">        ...     print(f&quot;Compatible trajectories with {len(types)} atom types&quot;)</span>
+<span class="sd">        ... except IncompatibleTrajectoriesException as e:</span>
+<span class="sd">        ...     print(f&quot;Incompatible trajectories: {e}&quot;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">trajectories</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;No trajectories passed&#39;</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">trajectories</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Trajectory</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> is not an instance of Trajectory&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+    <span class="n">array_names_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">types_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">timestep_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">trajectories</span><span class="p">:</span>
+        <span class="n">array_names_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="nb">frozenset</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">get_arraynames</span><span class="p">()))</span>
+        <span class="n">types_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">types</span><span class="p">))</span>
+        <span class="n">timestep_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">get_timestep</span><span class="p">())</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">array_names_set</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">IncompatibleTrajectoriesException</span><span class="p">(</span>
+            <span class="s1">&#39;Different arrays are set&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">types_set</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">IncompatibleTrajectoriesException</span><span class="p">(</span>
+            <span class="s1">&#39;Different chemical symbols in trajectories&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">timestep_set</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">IncompatibleTrajectoriesException</span><span class="p">(</span>
+            <span class="s1">&#39;Different timesteps in trajectories&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">types_set</span><span class="o">.</span><span class="n">pop</span><span class="p">()),</span> <span class="n">timestep_set</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="Trajectory">
+<a class="viewcode-back" href="../../target.html#target.trajectory.Trajectory">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Trajectory</span><span class="p">(</span><span class="n">AttributedArray</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Molecular dynamics trajectory representation with analytical capabilities.</span>
+<span class="sd">    </span>
+<span class="sd">    The Trajectory class provides a comprehensive container for time-ordered</span>
+<span class="sd">    phase space data from molecular dynamics simulations. It manages positions,</span>
+<span class="sd">    velocities, forces, and structural information with consistent unit handling.</span>
+<span class="sd">    </span>
+<span class="sd">    Internal units:</span>
+<span class="sd">        - Time: Femtoseconds</span>
+<span class="sd">        - Distance: Angstroms</span>
+<span class="sd">        - Energy: eV</span>
+<span class="sd">        - Cell/Mass: As defined in the ASE Atoms object</span>
+<span class="sd">    </span>
+<span class="sd">    The class provides methods for trajectory manipulation, analysis, and</span>
+<span class="sd">    conversion to/from ASE Atoms objects. It handles periodic boundary</span>
+<span class="sd">    conditions and species-specific operations.</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        atoms: ASE Atoms object representing the system structure</span>
+<span class="sd">        types: Chemical symbols of all atoms</span>
+<span class="sd">        nat: Number of atoms in the system</span>
+<span class="sd">        cell: Unit cell vectors</span>
+<span class="sd">        nstep: Number of time steps in the trajectory</span>
+<span class="sd">        </span>
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # Create a trajectory from a list of ASE Atoms objects</span>
+<span class="sd">        &gt;&gt;&gt; traj = Trajectory.from_atoms(atoms_list, timestep_fs=1.0)</span>
+<span class="sd">        &gt;&gt;&gt; # Access positions for all atoms at all timesteps</span>
+<span class="sd">        &gt;&gt;&gt; positions = traj.get_positions()</span>
+<span class="sd">        &gt;&gt;&gt; # Get indices of specific elements</span>
+<span class="sd">        &gt;&gt;&gt; li_indices = traj.get_indices_of_species(&#39;Li&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; # Export a specific timestep as an ASE Atoms object</span>
+<span class="sd">        &gt;&gt;&gt; atoms_t100 = traj.get_step_atoms(100)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_TIMESTEP_KEY</span> <span class="o">=</span> <span class="s1">&#39;timestep_fs&#39;</span>
+    <span class="n">_POSITIONS_KEY</span> <span class="o">=</span> <span class="s1">&#39;positions&#39;</span>
+    <span class="n">_VELOCITIES_KEY</span> <span class="o">=</span> <span class="s1">&#39;velocities&#39;</span>
+    <span class="n">_STRESS_KEY</span> <span class="o">=</span> <span class="s1">&#39;stress&#39;</span>
+    <span class="n">_CELL_KEY</span> <span class="o">=</span> <span class="s1">&#39;cells&#39;</span>
+    <span class="n">_FORCES_KEY</span> <span class="o">=</span> <span class="s1">&#39;forces&#39;</span>
+    <span class="n">_POT_ENER_KEY</span> <span class="o">=</span> <span class="s1">&#39;potential_energy&#39;</span>
+    <span class="n">_ATOMS_FILENAME</span> <span class="o">=</span> <span class="s1">&#39;atoms.traj&#39;</span>
+    <span class="n">_TYPES_KEY</span> <span class="o">=</span> <span class="s1">&#39;types&#39;</span>
+
+<div class="viewcode-block" id="Trajectory.__init__">
+<a class="viewcode-back" href="../../target.html#target.trajectory.Trajectory.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Instantiating a trajectory class.</span>
+<span class="sd">        Optional keyword-arguments are everything with a set-method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_atoms</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Trajectory</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Trajectory.from_atoms">
+<a class="viewcode-back" href="../../target.html#target.trajectory.Trajectory.from_atoms">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_atoms</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">atoms_list</span><span class="p">,</span> <span class="n">timestep_fs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a Trajectory from a list of ASE Atoms objects.</span>
+<span class="sd">        </span>
+<span class="sd">        This is the primary constructor for creating trajectory objects from</span>
+<span class="sd">        existing atomic structure snapshots.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            atoms_list (list): List of ASE Atoms objects representing trajectory frames</span>
+<span class="sd">            timestep_fs (float, optional): Time step between frames in femtoseconds</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Trajectory: New trajectory instance containing data from atoms_list</span>
+<span class="sd">            </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            TypeError: If atoms_list items are not ASE Atoms objects</span>
+<span class="sd">            ValueError: If atoms_list is empty or has inconsistent chemical symbols</span>
+<span class="sd">                </span>
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; # Create trajectory from a series of Atoms objects</span>
+<span class="sd">            &gt;&gt;&gt; from ase.io import read</span>
+<span class="sd">            &gt;&gt;&gt; atoms_list = read(&#39;simulation.xyz&#39;, index=&#39;:&#39;)</span>
+<span class="sd">            &gt;&gt;&gt; traj = Trajectory.from_atoms(atoms_list, timestep_fs=1.0)</span>
+<span class="sd">            &gt;&gt;&gt; print(f&quot;Created trajectory with {traj.nstep} frames and {traj.nat} atoms&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">ase</span><span class="w"> </span><span class="kn">import</span> <span class="n">Atoms</span>
+        <span class="n">chem_sym_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">atoms</span> <span class="ow">in</span> <span class="n">atoms_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">Atoms</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;I have to receive a list/iterable over &quot;</span>
+                                <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Atoms</span><span class="p">))</span>
+            <span class="n">chem_sym_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">atoms</span><span class="o">.</span><span class="n">get_chemical_symbols</span><span class="p">()))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">chem_sym_set</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Empty list provided&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">chem_sym_set</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The chemical_symbols list of provided atoms &quot;</span>
+                             <span class="s2">&quot;are not the same for all, cannot proceed&quot;</span><span class="p">)</span>
+
+        <span class="n">positions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">atoms</span><span class="o">.</span><span class="n">get_positions</span><span class="p">()</span> <span class="k">for</span> <span class="n">atoms</span> <span class="ow">in</span> <span class="n">atoms_list</span><span class="p">])</span>
+        <span class="n">velocities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">atoms</span><span class="o">.</span><span class="n">get_velocities</span><span class="p">()</span> <span class="k">for</span> <span class="n">atoms</span> <span class="ow">in</span> <span class="n">atoms_list</span><span class="p">])</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">forces</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">atoms</span><span class="o">.</span><span class="n">get_forces</span><span class="p">()</span> <span class="k">for</span> <span class="n">atoms</span> <span class="ow">in</span> <span class="n">atoms_list</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">forces</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">cells</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">atoms</span><span class="o">.</span><span class="n">cell</span> <span class="k">for</span> <span class="n">atoms</span> <span class="ow">in</span> <span class="n">atoms_list</span><span class="p">])</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">atoms_list</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">new</span><span class="o">.</span><span class="n">set_positions</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">velocities</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">1e-12</span><span class="p">:</span>
+                <span class="n">new</span><span class="o">.</span><span class="n">set_velocities</span><span class="p">(</span><span class="n">velocities</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">pass</span>  <span class="c1"># velocities are returned as none if not existen</span>
+        <span class="k">if</span> <span class="n">forces</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="n">forces</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">1e-12</span><span class="p">:</span>
+            <span class="n">new</span><span class="o">.</span><span class="n">set_forces</span><span class="p">(</span><span class="n">forces</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">cells</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mf">1e-12</span><span class="p">:</span>
+            <span class="n">new</span><span class="o">.</span><span class="n">set_cells</span><span class="p">(</span><span class="n">cells</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">timestep_fs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">new</span><span class="o">.</span><span class="n">set_timestep</span><span class="p">(</span><span class="n">timestep_fs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new</span></div>
+
+    
+<div class="viewcode-block" id="Trajectory.get_atom_types">
+<a class="viewcode-back" href="../../target.html#target.trajectory.Trajectory.get_atom_types">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_atom_types</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the LAMMPS atom types if available.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;atom_types&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom_types</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom_types</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Atom types not available in trajectory&quot;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="Trajectory.set_atom_types">
+<a class="viewcode-back" href="../../target.html#target.trajectory.Trajectory.set_atom_types">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_atom_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom_types</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the LAMMPS atom types.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atom_types</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">atom_types</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_save_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder_name</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="kn">import</span> <span class="n">join</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_atoms</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">ase.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">write</span>
+            <span class="n">write</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">folder_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ATOMS_FILENAME</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_atoms</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Trajectory.get_timestep">
+<a class="viewcode-back" href="../../target.html#target.trajectory.Trajectory.get_timestep">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_timestep</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_TIMESTEP_KEY</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Trajectory.set_timestep">
+<a class="viewcode-back" href="../../target.html#target.trajectory.Trajectory.set_timestep">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_timestep</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timestep_fs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param timestep: expects value of the timestep in femtoseconds</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_attr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_TIMESTEP_KEY</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">timestep_fs</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="Trajectory.get_atoms">
+<a class="viewcode-back" href="../../target.html#target.trajectory.Trajectory.get_atoms">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_atoms</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_atoms</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+            <span class="c1"># raise ValueError(&#39;Atoms have not been set&#39;)</span>
+
+<div class="viewcode-block" id="Trajectory.set_types">
+<a class="viewcode-back" href="../../target.html#target.trajectory.Trajectory.set_types">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">types</span><span class="p">):</span>
+        <span class="n">types</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">types</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_TYPES_KEY</span><span class="p">,</span> <span class="n">types</span><span class="p">,</span>
+                       <span class="n">check_existing</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                       <span class="n">check_nat</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">check_nstep</span><span class="o">=</span><span class="kc">False</span><span class="p">,)</span></div>
+
+
+<div class="viewcode-block" id="Trajectory.get_types">
+<a class="viewcode-back" href="../../target.html#target.trajectory.Trajectory.get_types">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_types</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_TYPES_KEY</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_arraynames</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_TYPES_KEY</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_atoms</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_atoms</span><span class="o">.</span><span class="n">get_chemical_symbols</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">types</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_types</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Trajectory.set_atoms">
+<a class="viewcode-back" href="../../target.html#target.trajectory.Trajectory.set_atoms">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atoms</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">ase</span><span class="w"> </span><span class="kn">import</span> <span class="n">Atoms</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">Atoms</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;You have to pass an instance of ase.Atoms&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_atoms</span> <span class="o">=</span> <span class="n">atoms</span></div>
+
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">nat</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">types</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_types</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">types</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Types have not been set&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">types</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cell</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">cell</span>
+
+<div class="viewcode-block" id="Trajectory.set_cells">
+<a class="viewcode-back" href="../../target.html#target.trajectory.Trajectory.set_cells">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_cells</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">check_existing</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_CELL_KEY</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span>
+                       <span class="n">check_existing</span><span class="o">=</span><span class="n">check_existing</span><span class="p">,</span>
+                       <span class="n">check_nat</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">check_nstep</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                       <span class="n">wanted_shape_len</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">wanted_shape_1</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                       <span class="n">wanted_shape_2</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Trajectory.get_cells">
+<a class="viewcode-back" href="../../target.html#target.trajectory.Trajectory.get_cells">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_cells</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_CELL_KEY</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_arraynames</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_CELL_KEY</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="Trajectory.get_volumes">
+<a class="viewcode-back" href="../../target.html#target.trajectory.Trajectory.get_volumes">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_volumes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">cells</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_cells</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">cells</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">volume</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">get_volume</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">volume</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">nstep</span><span class="p">)</span>
+        <span class="n">volumes</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span> <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">cells</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">volumes</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Trajectory.get_indices_of_species">
+<a class="viewcode-back" href="../../target.html#target.trajectory.Trajectory.get_indices_of_species">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_indices_of_species</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">species</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Get array indices for atoms of a specific element type.</span>
+<span class="sd">            </span>
+<span class="sd">            This convenience function identifies all atoms of a specified element</span>
+<span class="sd">            and returns their indices, with optional index offset.</span>
+<span class="sd">            </span>
+<span class="sd">            Args:</span>
+<span class="sd">                species (str or int): Element symbol (e.g., &#39;Li&#39;) or specific atom index</span>
+<span class="sd">                start (int): Starting index offset, defaults to 0 (Python indexing)</span>
+<span class="sd">                    Use start=1 for FORTRAN-style indexing</span>
+<span class="sd">            </span>
+<span class="sd">            Returns:</span>
+<span class="sd">                numpy.ndarray: Array of atom indices matching the specified species</span>
+<span class="sd">                </span>
+<span class="sd">            Raises:</span>
+<span class="sd">                TypeError: If species is neither a string nor an integer</span>
+<span class="sd">                </span>
+<span class="sd">            Example:</span>
+<span class="sd">                &gt;&gt;&gt; # Find all lithium atoms</span>
+<span class="sd">                &gt;&gt;&gt; li_indices = traj.get_indices_of_species(&#39;Li&#39;)</span>
+<span class="sd">                &gt;&gt;&gt; print(f&quot;Found {len(li_indices)} Li atoms at indices {li_indices}&quot;)</span>
+<span class="sd">                &gt;&gt;&gt; </span>
+<span class="sd">                &gt;&gt;&gt; # Get FORTRAN-style indices (1-based) for oxygen atoms</span>
+<span class="sd">                &gt;&gt;&gt; o_indices = traj.get_indices_of_species(&#39;O&#39;, start=1)</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="s1">&#39;Start is not an integer&#39;</span>
+        <span class="n">types</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_types</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">species</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">msk</span> <span class="o">=</span> <span class="n">types</span> <span class="o">==</span> <span class="n">species</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">species</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">msk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">types</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+            <span class="n">msk</span><span class="p">[</span><span class="n">species</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;species  has  to be an integer or a string, &#39;</span>
+                            <span class="s1">&#39;I got </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">species</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">msk</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">start</span></div>
+
+    
+
+<div class="viewcode-block" id="Trajectory.set_positions">
+<a class="viewcode-back" href="../../target.html#target.trajectory.Trajectory.set_positions">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">check_existing</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set atomic positions for the entire trajectory.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            array (numpy.ndarray): Positions array with shape (nsteps, natoms, 3)</span>
+<span class="sd">                Values should be in Angstroms</span>
+<span class="sd">            check_existing (bool): If True, raise error if positions already exist</span>
+<span class="sd">                Defaults to False (overwrite existing positions)</span>
+<span class="sd">                </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If array shape doesn&#39;t match trajectory dimensions</span>
+<span class="sd">            ValueError: If check_existing=True and positions already exist</span>
+<span class="sd">            </span>
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; # Set positions from a numpy array</span>
+<span class="sd">            &gt;&gt;&gt; positions = np.zeros((100, 50, 3))  # 100 steps, 50 atoms</span>
+<span class="sd">            &gt;&gt;&gt; traj.set_positions(positions)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_POSITIONS_KEY</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span>
+                       <span class="n">check_existing</span><span class="o">=</span><span class="n">check_existing</span><span class="p">,</span>
+                       <span class="n">check_nat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nat</span><span class="p">,</span> <span class="n">check_nstep</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                       <span class="n">wanted_shape_len</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">wanted_shape_2</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Trajectory.get_positions">
+<a class="viewcode-back" href="../../target.html#target.trajectory.Trajectory.get_positions">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_POSITIONS_KEY</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Trajectory.set_velocities">
+<a class="viewcode-back" href="../../target.html#target.trajectory.Trajectory.set_velocities">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_velocities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">check_existing</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the velocites of the trajectory.</span>
+<span class="sd">        :param array:</span>
+<span class="sd">            A numpy array with the velocites in absolute</span>
+<span class="sd">            values in units of angstrom/femtoseconds</span>
+<span class="sd">        :param bool check_exising:</span>
+<span class="sd">            Check if the velocities have been set, and</span>
+<span class="sd">            raise in such case. Defaults to False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_VELOCITIES_KEY</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span>
+                       <span class="n">check_existing</span><span class="o">=</span><span class="n">check_existing</span><span class="p">,</span> <span class="n">check_nat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nat</span><span class="p">,</span>
+                       <span class="n">check_nstep</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">wanted_shape_len</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">wanted_shape_2</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Trajectory.calculate_velocities_from_positions">
+<a class="viewcode-back" href="../../target.html#target.trajectory.Trajectory.calculate_velocities_from_positions">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_velocities_from_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate atomic velocities from position differences between frames.</span>
+<span class="sd">        </span>
+<span class="sd">        This method uses finite difference approximation to derive velocities</span>
+<span class="sd">        from position data, using the velocity Verlet update formula.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            overwrite (bool): Whether to replace existing velocity data</span>
+<span class="sd">                Defaults to False (raise exception if velocities exist)</span>
+<span class="sd">                </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            numpy.ndarray: Calculated velocities array</span>
+<span class="sd">            </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: If velocities already exist and overwrite=False</span>
+<span class="sd">            </span>
+<span class="sd">        Note:</span>
+<span class="sd">            The first and last frames use forward and backward differences,</span>
+<span class="sd">            while intermediate frames use central differences for better accuracy.</span>
+<span class="sd">            </span>
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; # Calculate velocities from positions</span>
+<span class="sd">            &gt;&gt;&gt; velocities = traj.calculate_velocities_from_positions()</span>
+<span class="sd">            &gt;&gt;&gt; print(f&quot;Average velocity magnitude: {np.mean(np.linalg.norm(velocities, axis=2)):.4f} Å/fs&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_VELOCITIES_KEY</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_arraynames</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">overwrite</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;I am overwriting an existing velocity array&quot;</span>
+                                <span class="s2">&quot;Pass overwrite=True to allow&quot;</span><span class="p">)</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_positions</span><span class="p">()</span>
+        <span class="n">timestep_fs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_timestep</span><span class="p">()</span>
+        <span class="n">vel_first</span> <span class="o">=</span> <span class="p">(</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">timestep_fs</span>
+        <span class="n">vel_last</span> <span class="o">=</span> <span class="p">(</span><span class="n">pos</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">pos</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="n">timestep_fs</span>
+        <span class="n">vel_intermediate</span> <span class="o">=</span> <span class="p">(</span><span class="n">pos</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span> <span class="o">-</span> <span class="n">pos</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">timestep_fs</span><span class="p">)</span>
+        <span class="n">vel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(([</span><span class="n">vel_first</span><span class="p">],</span> <span class="n">vel_intermediate</span><span class="p">,</span> <span class="p">[</span><span class="n">vel_last</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_velocities</span><span class="p">(</span><span class="n">vel</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">vel</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Trajectory.get_velocities">
+<a class="viewcode-back" href="../../target.html#target.trajectory.Trajectory.get_velocities">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_velocities</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_VELOCITIES_KEY</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Trajectory.set_forces">
+<a class="viewcode-back" href="../../target.html#target.trajectory.Trajectory.set_forces">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_forces</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">check_existing</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the forces of the trajectory.</span>
+<span class="sd">        :param array:</span>
+<span class="sd">            A numpy array with the forces in absolute</span>
+<span class="sd">            values in units of eV/angstrom</span>
+<span class="sd">        :param bool check_exising:</span>
+<span class="sd">            Check if the forces have been set, and raise in</span>
+<span class="sd">            such case. Defaults to False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_FORCES_KEY</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">check_existing</span><span class="o">=</span><span class="n">check_existing</span><span class="p">,</span>
+                       <span class="n">check_nat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nat</span><span class="p">,</span> <span class="n">check_nstep</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                       <span class="n">wanted_shape_len</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">wanted_shape_2</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Trajectory.set_stress">
+<a class="viewcode-back" href="../../target.html#target.trajectory.Trajectory.set_stress">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_stress</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="s1">&#39;voigt&#39;</span><span class="p">,</span> <span class="n">check_existing</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        order voigt expects keys (&#39;xx&#39;, &#39;yy&#39;, &#39;zz&#39;, &#39;yz&#39;, &#39;xz&#39;, &#39;xy&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">order</span> <span class="o">==</span> <span class="s1">&#39;voigt&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_STRESS_KEY</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span>
+                           <span class="n">check_existing</span><span class="o">=</span><span class="n">check_existing</span><span class="p">,</span> <span class="n">check_nstep</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                           <span class="n">wanted_shape_1</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">wanted_shape_len</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Not implemented order </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">order</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="Trajectory.get_stress">
+<a class="viewcode-back" href="../../target.html#target.trajectory.Trajectory.get_stress">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_stress</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_STRESS_KEY</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Trajectory.get_forces">
+<a class="viewcode-back" href="../../target.html#target.trajectory.Trajectory.get_forces">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_forces</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_FORCES_KEY</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Trajectory.set_pot_energies">
+<a class="viewcode-back" href="../../target.html#target.trajectory.Trajectory.set_pot_energies">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_pot_energies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">check_existing</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_POT_ENER_KEY</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span>
+                       <span class="n">check_existing</span><span class="o">=</span><span class="n">check_existing</span><span class="p">,</span>
+                       <span class="n">check_nat</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">check_nstep</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                       <span class="n">wanted_shape_len</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Trajectory.get_step_atoms">
+<a class="viewcode-back" href="../../target.html#target.trajectory.Trajectory.get_step_atoms">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_step_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">ignore_calculated</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                       <span class="n">warnings</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extract a single timestep as an ASE Atoms object.</span>
+<span class="sd">        </span>
+<span class="sd">        This method creates an ASE Atoms object for a specific trajectory frame,</span>
+<span class="sd">        optionally including calculated properties like forces and energies.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            index (int): Trajectory frame index to extract</span>
+<span class="sd">            ignore_calculated (bool): If True, don&#39;t include calculated properties</span>
+<span class="sd">                like forces, energies, and stress</span>
+<span class="sd">            warnings (bool): Whether to show warnings for unavailable data</span>
+<span class="sd">                </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            ase.Atoms: Atoms object representing the system at the specified timestep</span>
+<span class="sd">            </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            AssertionError: If index is not an integer</span>
+<span class="sd">            </span>
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; # Extract frame 50 with all calculated properties</span>
+<span class="sd">            &gt;&gt;&gt; atoms_50 = traj.get_step_atoms(50)</span>
+<span class="sd">            &gt;&gt;&gt; </span>
+<span class="sd">            &gt;&gt;&gt; # Extract frame 100 without calculated properties</span>
+<span class="sd">            &gt;&gt;&gt; atoms_100 = traj.get_step_atoms(100, ignore_calculated=True)</span>
+<span class="sd">            &gt;&gt;&gt; </span>
+<span class="sd">            &gt;&gt;&gt; # Access properties of the extracted frame</span>
+<span class="sd">            &gt;&gt;&gt; positions = atoms_50.get_positions()</span>
+<span class="sd">            &gt;&gt;&gt; forces = atoms_50.get_forces()  # If available</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+                          <span class="p">),</span> <span class="s2">&quot;step index has to be an integer&quot;</span>
+
+        <span class="n">need_calculator</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">ignore_calculated</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_FORCES_KEY</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_POT_ENER_KEY</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_arraynames</span><span class="p">():</span>
+                    <span class="n">need_calculator</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">break</span>
+        <span class="n">atoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">need_calculator</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">ase.calculators.singlepoint</span><span class="w"> </span><span class="kn">import</span> <span class="n">SinglePointCalculator</span>
+            <span class="n">calc_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_arrays</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_CELL_KEY</span><span class="p">:</span>
+                <span class="n">atoms</span><span class="o">.</span><span class="n">set_cell</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_FORCES_KEY</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">need_calculator</span><span class="p">:</span>
+                    <span class="n">calc_kwargs</span><span class="p">[</span><span class="s1">&#39;forces&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_POT_ENER_KEY</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">need_calculator</span><span class="p">:</span>
+                    <span class="n">calc_kwargs</span><span class="p">[</span><span class="s1">&#39;energy&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_STRESS_KEY</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">need_calculator</span><span class="p">:</span>
+                    <span class="n">calc_kwargs</span><span class="p">[</span><span class="s1">&#39;stress&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="nb">getattr</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="s1">&#39;set_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">))(</span><span class="n">v</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
+                <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">warnings</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">need_calculator</span><span class="p">:</span>
+            <span class="n">calc</span> <span class="o">=</span> <span class="n">SinglePointCalculator</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="o">**</span><span class="n">calc_kwargs</span><span class="p">)</span>
+            <span class="n">atoms</span><span class="o">.</span><span class="n">set_calculator</span><span class="p">(</span><span class="n">calc</span><span class="p">)</span>  <span class="c1"># this seems to be deprecated,</span>
+            <span class="c1"># replace with atoms.calc = calc at somepoint</span>
+
+        <span class="k">return</span> <span class="n">atoms</span></div>
+
+
+<div class="viewcode-block" id="Trajectory.get_ase_trajectory">
+<a class="viewcode-back" href="../../target.html#target.trajectory.Trajectory.get_ase_trajectory">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_ase_trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stepsize</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert a portion of the trajectory to a list of ASE Atoms objects.</span>
+<span class="sd">        </span>
+<span class="sd">        This method extracts multiple frames as ASE Atoms objects, with options</span>
+<span class="sd">        for selecting a range and stride.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            start (int): First frame index to extract (default: 0)</span>
+<span class="sd">            end (int): Last frame index to extract (exclusive)</span>
+<span class="sd">                If None, uses the full trajectory length</span>
+<span class="sd">            stepsize (int): Frame stride for extraction (default: 1)</span>
+<span class="sd">                </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            list: List of ASE Atoms objects for the requested frames</span>
+<span class="sd">            </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If end exceeds trajectory length or no frames match criteria</span>
+<span class="sd">            AssertionError: If parameters are not valid integers</span>
+<span class="sd">            </span>
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; # Get the first 10 frames</span>
+<span class="sd">            &gt;&gt;&gt; atoms_list = traj.get_ase_trajectory(end=10)</span>
+<span class="sd">            &gt;&gt;&gt; </span>
+<span class="sd">            &gt;&gt;&gt; # Get every 10th frame of the entire trajectory</span>
+<span class="sd">            &gt;&gt;&gt; atoms_list = traj.get_ase_trajectory(stepsize=10)</span>
+<span class="sd">            &gt;&gt;&gt; </span>
+<span class="sd">            &gt;&gt;&gt; # Get frames 100-200 with stride 5</span>
+<span class="sd">            &gt;&gt;&gt; atoms_list = traj.get_ase_trajectory(start=100, end=200, stepsize=5)</span>
+<span class="sd">            &gt;&gt;&gt; print(f&quot;Extracted {len(atoms_list)} frames&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">end</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nstep</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+            <span class="n">start</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">start</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;start has to be a positive integer&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+            <span class="n">end</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">end</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;end has to be a positive integer&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+            <span class="n">stepsize</span><span class="p">,</span> <span class="nb">int</span>
+        <span class="p">)</span> <span class="ow">and</span> <span class="n">stepsize</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;stepsize has to be a positive integer&quot;</span>
+        <span class="k">if</span> <span class="n">end</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">nstep</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;End &gt; nsteps, leave None and it will be set to nstep&quot;</span><span class="p">)</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">stepsize</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No indices for trajectory&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+            <span class="n">start</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">start</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;start has to be a positive integer&quot;</span>
+        <span class="n">atomslist</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">get_step_atoms</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">atomslist</span></div>
+
+
+<div class="viewcode-block" id="Trajectory.recenter">
+<a class="viewcode-back" href="../../target.html#target.trajectory.Trajectory.recenter">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">recenter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sublattice</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Recenter the trajectory to remove system drift or center on specific atoms.</span>
+<span class="sd">        </span>
+<span class="sd">        This method modifies positions and velocities in-place to recenter the system.</span>
+<span class="sd">        Useful for removing center-of-mass drift or for centering on a specific</span>
+<span class="sd">        sublattice (e.g., a rigid framework or specific element).</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            sublattice (list, optional): Element names or indices defining a sublattice</span>
+<span class="sd">                to center on. If None, centers on the entire system.</span>
+<span class="sd">            mode (str, optional): Centering mode:</span>
+<span class="sd">                - None: Center using atomic masses (default)</span>
+<span class="sd">                - &#39;geometric&#39;: Use geometric center (equal weights)</span>
+<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            TypeError: If sublattice is not a list, tuple or set</span>
+<span class="sd">            IndexError: If sublattice contains invalid atom indices</span>
+<span class="sd">            TypeError: If sublattice contains items of invalid type</span>
+<span class="sd">            </span>
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; # Center on the entire system (remove drift)</span>
+<span class="sd">            &gt;&gt;&gt; traj.recenter()</span>
+<span class="sd">            &gt;&gt;&gt; </span>
+<span class="sd">            &gt;&gt;&gt; # Center on the Al-O framework</span>
+<span class="sd">            &gt;&gt;&gt; traj.recenter(sublattice=[&#39;Al&#39;, &#39;O&#39;])</span>
+<span class="sd">            &gt;&gt;&gt; </span>
+<span class="sd">            &gt;&gt;&gt; # Center geometrically on Li atoms</span>
+<span class="sd">            &gt;&gt;&gt; traj.recenter(sublattice=[&#39;Li&#39;], mode=&#39;geometric&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">samos_modules.mdutils</span><span class="w"> </span><span class="kn">import</span> <span class="n">recenter_positions</span><span class="p">,</span> <span class="n">recenter_velocities</span>
+
+        <span class="c1"># masses are either set to 1.0 (all) or to the actual masses</span>
+        <span class="c1"># of the atoms</span>
+        <span class="c1"># Setting to 1 means that the mass is not accounted for and the</span>
+        <span class="c1"># the center is purely geometric.</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;geometric&#39;</span><span class="p">:</span>
+            <span class="n">masses</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">masses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">get_masses</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">sublattice</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sublattice</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">set</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="s1">&#39;You have to pass a tuple/list/set as sublattice&#39;</span><span class="p">)</span>
+            <span class="n">factors</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">masses</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sublattice</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">factors</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span>
+                            <span class="s1">&#39;You passed an integer for the sublattice, &#39;</span>
+                            <span class="s1">&#39;but it is out of range&#39;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_indices_of_species</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+                        <span class="n">factors</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                        <span class="s1">&#39;You passed </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> as a sublattice specifier, &#39;</span>
+                        <span class="s1">&#39;this is not recognized&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">),</span> <span class="n">item</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">factors</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_positions</span><span class="p">(</span><span class="n">recenter_positions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_positions</span><span class="p">(),</span> <span class="n">masses</span><span class="p">,</span> <span class="n">factors</span><span class="p">))</span>
+        <span class="k">if</span> <span class="s1">&#39;velocities&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_arraynames</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_velocities</span><span class="p">(</span><span class="n">recenter_velocities</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">get_velocities</span><span class="p">(),</span> <span class="n">masses</span><span class="p">,</span> <span class="n">factors</span><span class="p">))</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Vinay Maithani.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

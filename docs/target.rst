@@ -1,7 +1,7 @@
 Target Package
 ==============
 
-The target package contains the core CPDyAna analysis functionality for molecular dynamics trajectory analysis. It provides a comprehensive suite of tools for calculating diffusion properties, correlation functions, and structural analysis.
+The `target` package contains the core CPDyAna analysis functionality for molecular dynamics trajectory analysis. It provides a comprehensive suite of tools for calculating diffusion properties, correlation functions, and structural analysis.
 
 Main Analysis Driver
 --------------------
@@ -30,19 +30,27 @@ Utilities for processing and segmenting trajectory data.
    :undoc-members:
    :show-inheritance:
 
-Key Functions
-~~~~~~~~~~~~~
+LAMMPS Data Processing
+----------------------
 
-* :func:`target.data_processing.find_terms`: Find time window indices
-* :func:`target.data_processing.segmenter_func`: Segment trajectory data
-* :func:`target.data_processing.data_evaluator`: Process position data for analysis
+Specialized functions for LAMMPS trajectory data.
+
+.. automodule:: target.data_processing_lammps
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 Input/Output Operations
 -----------------------
 
-Reading and parsing of Quantum ESPRESSO input and trajectory files.
+Reading and parsing of trajectory files and I/O utilities, including BOMD and LAMMPS.
 
 .. automodule:: target.input_reader
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: target.io
    :members:
    :undoc-members:
    :show-inheritance:
@@ -50,15 +58,27 @@ Reading and parsing of Quantum ESPRESSO input and trajectory files.
 Supported File Types
 ~~~~~~~~~~~~~~~~~~~~
 
-* **.pos files**: Position trajectories
+* **.pos files**: Position trajectories (Quantum ESPRESSO, etc.)
 * **.cel files**: Unit cell parameters
 * **.evp files**: Energy, volume, pressure data
 * **.in files**: Ion definitions and atomic information
+* **LAMMPS dump files**: .lammpstrj, .dump
+* **BOMD trajectory files**: .trj (Born-Oppenheimer MD)
+* **XSF files**: For visualization
+* **Extended XYZ files**: .extxyz
+
+BOMD Support
+~~~~~~~~~~~~
+
+CPDyAna supports Born-Oppenheimer Molecular Dynamics (BOMD) analysis via:
+
+* :func:`target.input_reader.read_bomd_trajectory` — Read and parse BOMD .trj files
+* BOMD-specific CLI arguments: `--bomd-elements`, `--bomd-timestep`, etc.
 
 Core Calculations
 -----------------
 
-Main calculation routines for MSD and diffusion analysis.
+Main calculation routines for MSD, NGP, and diffusion analysis.
 
 .. automodule:: target.calculations
    :members:
@@ -68,7 +88,8 @@ Main calculation routines for MSD and diffusion analysis.
 Analysis Types
 ~~~~~~~~~~~~~~
 
-* **Mean Square Displacement**: Tracer and collective diffusivity
+* **Mean Square Displacement**: Tracer and collective diffusivity (LAMMPS and BOMD)
+* **Non-Gaussian Parameter**: Dynamical heterogeneity
 * **Diffusion Coefficients**: Multi-directional analysis (X, Y, Z, XY, XZ, YZ, XYZ)
 * **Statistical Analysis**: Block averaging and error estimation
 
@@ -91,7 +112,7 @@ Correlation Types
 RDF Computation
 ---------------
 
-Radial distribution function calculations with ASE integration.
+Radial distribution function calculations (LAMMPS, BOMD, QE).
 
 .. automodule:: target.compute_rdf
    :members:
@@ -108,8 +129,18 @@ Velocity autocorrelation function analysis.
    :undoc-members:
    :show-inheritance:
 
+VDOS Analysis
+-------------
+
+Vibrational Density of States calculations.
+
+.. automodule:: target.vdos
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Plotting and Visualization
----------------------------
+--------------------------
 
 Plotting utilities for analysis results.
 
@@ -117,13 +148,6 @@ Plotting utilities for analysis results.
    :members:
    :undoc-members:
    :show-inheritance:
-
-Plot Types
-~~~~~~~~~~
-
-* **MSD Plots**: :func:`target.plotting.msd_plot`
-* **Van Hove Plots**: :func:`target.plotting.van_hove_plot` 
-* **Multi-panel Figures**: Comparative analysis visualization
 
 Probability Density Analysis
 ----------------------------
@@ -135,18 +159,42 @@ Probability Density Analysis
    :undoc-members:
    :show-inheritance:
 
-Output Formats
-~~~~~~~~~~~~~~
+Trajectory Utilities
+--------------------
 
-* **XSF Files**: For visualization in VESTA, XCrySDen
-* **Grid Data**: For custom visualization and analysis
+Trajectory object and helpers.
 
-VDOS Analysis
+.. automodule:: target.trajectory
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+General Utilities
+-----------------
+
+General helper functions.
+
+.. automodule:: target.utilities
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Analysis Helpers
+----------------
+
+Additional analysis routines.
+
+.. automodule:: target.analysis
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Preprocessing
 -------------
 
-Vibrational Density of States calculations.
+Preprocessing and filtering routines.
 
-.. automodule:: target.vdos
+.. automodule:: target.prcss
    :members:
    :undoc-members:
    :show-inheritance:

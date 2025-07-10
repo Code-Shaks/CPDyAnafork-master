@@ -66,6 +66,7 @@ from ase import Atoms
 from target.trajectory import Trajectory
 from target.io import read_xsf, read_positions_with_ase
 from target import correrelation_analysis as corr
+from target import io
 from target import input_reader as inp
 from target import calculations as cal
 from target import json_serializable as js
@@ -81,7 +82,15 @@ def Job(temperature, diffusing_elements, diffusivity_direction_choices,
         initial_time, final_time, initial_slope_time, final_slope_time,
         block, rmax, step_skip, sigma, ngrid, mode=None,
         lammps_elements=None, lammps_timestep=None, element_mapping=None,
+        bomd_elements=None, bomd_timestep=None,
         export_verification=False, show_recommendations=True, lammps_units="metal"):
+# def Job(temperature, diffusing_elements, diffusivity_direction_choices,
+#         diffusivity_choices, correlation, data_dir, Conv_factor,
+#         initial_time, final_time, initial_slope_time, final_slope_time,
+#         block, rmax, step_skip, sigma, ngrid, mode=None,
+#         lammps_elements=None, lammps_timestep=None, element_mapping=None,
+#         export_verification=False, show_recommendations=True, lammps_units="metal",
+#         use_lazy_loading=True):
     """
     Main analysis job function for MSD and related analyses, using UNIFIED calculation approach.
 
@@ -214,6 +223,102 @@ def Job(temperature, diffusing_elements, diffusivity_direction_choices,
             (pos, steps, dt, t, cell_param, ke_elec, cell_temp, ion_temp, tot_energy,
              enthalpy, tot_energy_ke_ion, tot_energy_ke_ion_ke_elec, vol, pressure) = dpl.segmenter_func_lammps(
                 First_term, Last_term, pos_full, dt_value, n_timesteps, cell_full=cell_param_full)
+    # temp_input_dict, temp_output_dict = {}, {}
+
+    # format_info = inp.detect_trajectory_format(data_dir)
+    # if format_info['format'] is None:
+    #     raise ValueError("No recognized trajectory files found in data directory")
+
+    # original_conv_factor = Conv_factor
+    # if format_info['format'] == 'lammps' and Conv_factor == 0.529177249:
+    #     if lammps_units in ['metal', 'real']:
+    #         Conv_factor = 1.0
+    #     elif lammps_units == 'si':
+    #         Conv_factor = 1e10
+    #     elif lammps_units == 'lj':
+    #         Conv_factor = 1.0
+    #     if Conv_factor != original_conv_factor:
+    #         print(f"LAMMPS {lammps_units} units detected: Automatically adjusted conversion factor from {original_conv_factor} to {Conv_factor}")
+
+    # for temp_count, temp in enumerate(temperature):
+    #     # --- LAZY LOADING PATH ---
+    #     if use_lazy_loading and format_info['format'] == 'lammps':
+    #         lammps_file = format_info['lammps_files'][temp_count]
+    #         frame_gen = inp.iter_lammps_trajectory(
+    #             lammps_file,
+    #             elements=lammps_elements,
+    #             timestep=lammps_timestep,
+    #             Conv_factor=Conv_factor,
+    #             element_mapping=element_mapping
+    #         )
+    #         first_frame = next(frame_gen)
+    #         n_atoms = len(first_frame["positions"])
+    #         inp_array = first_frame["symbols"]
+    #         # Re-create generator for full pass
+    #         frame_gen = inp.iter_lammps_trajectory(
+    #             lammps_file,
+    #             elements=lammps_elements,
+    #             timestep=lammps_timestep,
+    #             Conv_factor=Conv_factor,
+    #             element_mapping=element_mapping
+    #         )
+    #         (pos_array, rectified_structure_array, conduct_ions_array, frame_ions_array,
+    #          frame_pos_array, conduct_pos_array, conduct_rectified_structure_array,
+    #          frame_rectified_structure_array) = dpl.data_evaluator_lammps(
+    #             diffusivity_direction_choices, diffusing_elements, frame_gen, inp_array
+    #         )
+    #         msd = cal.msd_tracer(
+    #             inp.iter_lammps_trajectory(lammps_file, elements=lammps_elements, timestep=lammps_timestep, Conv_factor=Conv_factor, element_mapping=element_mapping),
+    #             n_atoms
+    #         )
+    #         msd_charged = cal.msd_charged(
+    #             inp.iter_lammps_trajectory(lammps_file, elements=lammps_elements, timestep=lammps_timestep, Conv_factor=Conv_factor, element_mapping=element_mapping),
+    #             n_atoms
+    #         )
+    #         ngp = cal.calc_ngp_tracer(
+    #             inp.iter_lammps_trajectory(lammps_file, elements=lammps_elements, timestep=lammps_timestep, Conv_factor=Conv_factor, element_mapping=element_mapping),
+    #             n_atoms
+    #         )
+    #         # Store results
+    #         temp_input_dict[(temp, diffusing_elements[0])] = {'evaluated_data': {}, 'evaluated_corr': {}}
+    #         temp_output_dict[(temp, diffusing_elements[0])] = {
+    #             'msd_data': msd,
+    #             'msd_charged': msd_charged,
+    #             'ngp_data': ngp
+    #         }
+    #         continue
+
+    #     if use_lazy_loading and format_info['format'] == 'bomd':
+    #         bomd_file = format_info['bomd_files'][temp_count]
+    #         frame_gen = inp.iter_bomd_trajectory(bomd_file, elements=lammps_elements)
+    #         first_frame = next(frame_gen)
+    #         n_atoms = len(first_frame["positions"])
+    #         inp_array = first_frame["symbols"]
+    #         frame_gen = inp.iter_bomd_trajectory(bomd_file, elements=lammps_elements)
+    #         (pos_array, rectified_structure_array, conduct_ions_array, frame_ions_array,
+    #          frame_pos_array, conduct_pos_array, conduct_rectified_structure_array,
+    #          frame_rectified_structure_array) = dp.data_evaluator(
+    #             diffusivity_direction_choices, diffusing_elements, frame_gen, inp_array
+    #         )
+    #         msd = cal.msd_tracer(
+    #             inp.iter_bomd_trajectory(bomd_file, elements=lammps_elements),
+    #             n_atoms
+    #         )
+    #         msd_charged = cal.msd_charged(
+    #             inp.iter_bomd_trajectory(bomd_file, elements=lammps_elements),
+    #             n_atoms
+    #         )
+    #         ngp = cal.calc_ngp_tracer(
+    #             inp.iter_bomd_trajectory(bomd_file, elements=lammps_elements),
+    #             n_atoms
+    #         )
+    #         temp_input_dict[(temp, diffusing_elements[0])] = {'evaluated_data': {}, 'evaluated_corr': {}}
+    #         temp_output_dict[(temp, diffusing_elements[0])] = {
+    #             'msd_data': msd,
+    #             'msd_charged': msd_charged,
+    #             'ngp_data': ngp
+    #         }
+    #         continue
                 
         elif format_info['format'] == 'quantum_espresso':
             # Original QE processing (unchanged)
@@ -242,8 +347,8 @@ def Job(temperature, diffusing_elements, diffusivity_direction_choices,
             (pos_full, n_frames, dt_full, t_full, cell_param_full,
              thermo_data, volumes, inp_array) = inp.read_bomd_trajectory(
                 bomd_file,
-                elements=getattr(lammps_elements, 'bomd_elements', None),
-                timestep=getattr(lammps_timestep, 'bomd_timestep', None),
+                elements=bomd_elements,
+                timestep=bomd_timestep,
                 export_verification=export_verification
             )
             # Use QE-like segmentation for BOMD
@@ -960,9 +1065,11 @@ def main():
             a.Conv_factor, a.initial_time, a.final_time, a.initial_slope_time,
             a.final_slope_time, a.block, a.rmax, a.step_skip, a.sigma, a.ngrid,
             a.mode,
-            lammps_elements=bomd_elements,
-            lammps_timestep=bomd_timestep,
+            lammps_elements=None,
+            lammps_timestep=None,
             element_mapping=None,
+            bomd_elements=bomd_elements,
+            bomd_timestep=bomd_timestep,
             export_verification=getattr(a, 'export_verification', False),
             show_recommendations=getattr(a, 'show_recommendations', False),
             lammps_units=getattr(a, 'lammps_units', 'metal')

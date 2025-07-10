@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>target &mdash; CPDyAna 01-02-2024 documentation</title>
+  <title>Usage Examples &mdash; CPDyAna 01-02-2024 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
@@ -19,7 +19,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="SAMOS Modules" href="samos_modules.html" /> 
+    <link rel="prev" title="Usage Examples" href="usage_Examples.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -53,24 +53,58 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="target.html#data-processing">Data Processing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="target.html#general-data-processing-module-for-cpdyana">General Data Processing Module for CPDyAna</a></li>
 <li class="toctree-l3"><a class="reference internal" href="target.html#target.data_processing.data_evaluator"><code class="docutils literal notranslate"><span class="pre">data_evaluator()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="target.html#target.data_processing.find_terms"><code class="docutils literal notranslate"><span class="pre">find_terms()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="target.html#target.data_processing.segmenter_func"><code class="docutils literal notranslate"><span class="pre">segmenter_func()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#id1">Key Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="target.html#lammps-data-processing">LAMMPS Data Processing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="target.html#lammps-data-processing-module-for-cpdyana">LAMMPS Data Processing Module for CPDyAna</a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.data_processing_lammps.calculate_time_window_lammps"><code class="docutils literal notranslate"><span class="pre">calculate_time_window_lammps()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.data_processing_lammps.data_evaluator_lammps"><code class="docutils literal notranslate"><span class="pre">data_evaluator_lammps()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.data_processing_lammps.detect_lammps_format"><code class="docutils literal notranslate"><span class="pre">detect_lammps_format()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.data_processing_lammps.find_terms_lammps"><code class="docutils literal notranslate"><span class="pre">find_terms_lammps()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.data_processing_lammps.is_lammps_simulation"><code class="docutils literal notranslate"><span class="pre">is_lammps_simulation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.data_processing_lammps.segmenter_func_lammps"><code class="docutils literal notranslate"><span class="pre">segmenter_func_lammps()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="target.html#input-output-operations">Input/Output Operations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="target.html#input-file-reader-module-for-cpdyana">Input File Reader Module for CPDyAna</a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.input_reader.detect_trajectory_format"><code class="docutils literal notranslate"><span class="pre">detect_trajectory_format()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.input_reader.export_verification_trajectory"><code class="docutils literal notranslate"><span class="pre">export_verification_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.input_reader.generate_analysis_recommendations"><code class="docutils literal notranslate"><span class="pre">generate_analysis_recommendations()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.input_reader.has_type_column"><code class="docutils literal notranslate"><span class="pre">has_type_column()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.input_reader.read_bomd_trajectory"><code class="docutils literal notranslate"><span class="pre">read_bomd_trajectory()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="target.html#target.input_reader.read_cel_file"><code class="docutils literal notranslate"><span class="pre">read_cel_file()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="target.html#target.input_reader.read_evp_file"><code class="docutils literal notranslate"><span class="pre">read_evp_file()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="target.html#target.input_reader.read_ion_file"><code class="docutils literal notranslate"><span class="pre">read_ion_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.input_reader.read_ion_file_universal"><code class="docutils literal notranslate"><span class="pre">read_ion_file_universal()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.input_reader.read_lammps_trajectory"><code class="docutils literal notranslate"><span class="pre">read_lammps_trajectory()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="target.html#target.input_reader.read_pos_file"><code class="docutils literal notranslate"><span class="pre">read_pos_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.io.get_indices"><code class="docutils literal notranslate"><span class="pre">get_indices()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.io.get_position_indices"><code class="docutils literal notranslate"><span class="pre">get_position_indices()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.io.get_thermo_props"><code class="docutils literal notranslate"><span class="pre">get_thermo_props()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.io.iter_lammps_dump"><code class="docutils literal notranslate"><span class="pre">iter_lammps_dump()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.io.pos_2_absolute"><code class="docutils literal notranslate"><span class="pre">pos_2_absolute()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.io.read_lammps_dump"><code class="docutils literal notranslate"><span class="pre">read_lammps_dump()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.io.read_positions_with_ase"><code class="docutils literal notranslate"><span class="pre">read_positions_with_ase()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.io.read_step_info"><code class="docutils literal notranslate"><span class="pre">read_step_info()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.io.read_xsf"><code class="docutils literal notranslate"><span class="pre">read_xsf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.io.write_grid"><code class="docutils literal notranslate"><span class="pre">write_grid()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.io.write_xsf"><code class="docutils literal notranslate"><span class="pre">write_xsf()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="target.html#supported-file-types">Supported File Types</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="target.html#core-calculations">Core Calculations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="target.html#calculations-module-for-cpdyana">Calculations Module for CPDyAna</a></li>
 <li class="toctree-l3"><a class="reference internal" href="target.html#target.calculations.calc_fft"><code class="docutils literal notranslate"><span class="pre">calc_fft()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="target.html#target.calculations.calc_msd_tracer"><code class="docutils literal notranslate"><span class="pre">calc_msd_tracer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.calculations.calc_ngp_tracer"><code class="docutils literal notranslate"><span class="pre">calc_ngp_tracer()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="target.html#target.calculations.calculate_msd"><code class="docutils literal notranslate"><span class="pre">calculate_msd()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.calculations.calculate_msd_lammps"><code class="docutils literal notranslate"><span class="pre">calculate_msd_lammps()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.calculations.calculate_msd_qe"><code class="docutils literal notranslate"><span class="pre">calculate_msd_qe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.calculations.calculate_ngp"><code class="docutils literal notranslate"><span class="pre">calculate_ngp()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="target.html#target.calculations.disp_sum"><code class="docutils literal notranslate"><span class="pre">disp_sum()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="target.html#target.calculations.msd_charged"><code class="docutils literal notranslate"><span class="pre">msd_charged()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="target.html#target.calculations.msd_tracer"><code class="docutils literal notranslate"><span class="pre">msd_tracer()</span></code></a></li>
@@ -78,6 +112,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="target.html#correlation-analysis">Correlation Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="target.html#correlation-analysis-module-for-cpdyana">Correlation Analysis Module for CPDyAna</a></li>
 <li class="toctree-l3"><a class="reference internal" href="target.html#target.correrelation_analysis.Van_Hove_distinct"><code class="docutils literal notranslate"><span class="pre">Van_Hove_distinct()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="target.html#target.correrelation_analysis.Van_Hove_self"><code class="docutils literal notranslate"><span class="pre">Van_Hove_self()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="target.html#correlation-types">Correlation Types</a></li>
@@ -85,128 +120,190 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="target.html#rdf-computation">RDF Computation</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="target.html#target.compute_rdf.build_ase_trajectory"><code class="docutils literal notranslate"><span class="pre">build_ase_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.compute_rdf.build_bomd_trajectory"><code class="docutils literal notranslate"><span class="pre">build_bomd_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.compute_rdf.build_lammps_trajectory"><code class="docutils literal notranslate"><span class="pre">build_lammps_trajectory()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="target.html#target.compute_rdf.compute_rdf"><code class="docutils literal notranslate"><span class="pre">compute_rdf()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="target.html#target.compute_rdf.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="target.html#vaf-computation">VAF Computation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.compute_vaf.build_bomd_trajectory"><code class="docutils literal notranslate"><span class="pre">build_bomd_trajectory()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="target.html#target.compute_vaf.build_trajectory"><code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="target.html#target.compute_vaf.compute_vaf"><code class="docutils literal notranslate"><span class="pre">compute_vaf()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="target.html#target.compute_vaf.convert_symbols_to_atomic_numbers"><code class="docutils literal notranslate"><span class="pre">convert_symbols_to_atomic_numbers()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="target.html#target.compute_vaf.finite_diff_velocities"><code class="docutils literal notranslate"><span class="pre">finite_diff_velocities()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.compute_vaf.read_cel"><code class="docutils literal notranslate"><span class="pre">read_cel()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.compute_vaf.read_evp"><code class="docutils literal notranslate"><span class="pre">read_evp()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.compute_vaf.read_pos"><code class="docutils literal notranslate"><span class="pre">read_pos()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="target.html#vdos-analysis">VDOS Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="target.html#plotting-and-visualization">Plotting and Visualization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="target.html#plotting-and-visualization-module-for-cpdyana">Plotting and Visualization Module for CPDyAna</a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.plotting.centers_to_edges"><code class="docutils literal notranslate"><span class="pre">centers_to_edges()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.plotting.centers_to_edges_time"><code class="docutils literal notranslate"><span class="pre">centers_to_edges_time()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="target.html#target.plotting.int_or_float"><code class="docutils literal notranslate"><span class="pre">int_or_float()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="target.html#target.plotting.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="target.html#target.plotting.msd_plot"><code class="docutils literal notranslate"><span class="pre">msd_plot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.plotting.msd_plot_lammps"><code class="docutils literal notranslate"><span class="pre">msd_plot_lammps()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.plotting.msd_plot_qe"><code class="docutils literal notranslate"><span class="pre">msd_plot_qe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.plotting.ngp_plot"><code class="docutils literal notranslate"><span class="pre">ngp_plot()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="target.html#target.plotting.parse_cli_args"><code class="docutils literal notranslate"><span class="pre">parse_cli_args()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.plotting.plot_angular_spec"><code class="docutils literal notranslate"><span class="pre">plot_angular_spec()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.plotting.plot_power_spectrum"><code class="docutils literal notranslate"><span class="pre">plot_power_spectrum()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.plotting.plot_rdf"><code class="docutils literal notranslate"><span class="pre">plot_rdf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.plotting.plot_vaf_isotropic"><code class="docutils literal notranslate"><span class="pre">plot_vaf_isotropic()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="target.html#target.plotting.van_hove_plot"><code class="docutils literal notranslate"><span class="pre">van_hove_plot()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#plot-types">Plot Types</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="target.html#probability-density-analysis">Probability Density Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="target.html#probability-density-calculation-module-for-cpdyana">Probability Density Calculation Module for CPDyAna</a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.probability_density.build_bomd_trajectory"><code class="docutils literal notranslate"><span class="pre">build_bomd_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.probability_density.build_lammps_trajectory"><code class="docutils literal notranslate"><span class="pre">build_lammps_trajectory()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="target.html#target.probability_density.build_trajectory"><code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="target.html#target.probability_density.calculate_probability_density"><code class="docutils literal notranslate"><span class="pre">calculate_probability_density()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="target.html#target.probability_density.convert_symbols_to_atomic_numbers"><code class="docutils literal notranslate"><span class="pre">convert_symbols_to_atomic_numbers()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="target.html#target.probability_density.divide_chunks"><code class="docutils literal notranslate"><span class="pre">divide_chunks()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="target.html#target.probability_density.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="target.html#target.probability_density.parse_mask"><code class="docutils literal notranslate"><span class="pre">parse_mask()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#output-formats">Output Formats</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="target.html#vdos-analysis">VDOS Analysis</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.vdos.build_trajectory"><code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.vdos.compute_plot_vdos"><code class="docutils literal notranslate"><span class="pre">compute_plot_vdos()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.vdos.convert_symbols_to_atomic_numbers"><code class="docutils literal notranslate"><span class="pre">convert_symbols_to_atomic_numbers()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.vdos.finite_diff_velocities"><code class="docutils literal notranslate"><span class="pre">finite_diff_velocities()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.vdos.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.vdos.read_cel"><code class="docutils literal notranslate"><span class="pre">read_cel()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.vdos.read_evp"><code class="docutils literal notranslate"><span class="pre">read_evp()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.vdos.read_pos"><code class="docutils literal notranslate"><span class="pre">read_pos()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="target.html#trajectory-utilities">Trajectory Utilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.trajectory.IncompatibleTrajectoriesException"><code class="docutils literal notranslate"><span class="pre">IncompatibleTrajectoriesException</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.trajectory.Trajectory"><code class="docutils literal notranslate"><span class="pre">Trajectory</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.trajectory.Trajectory.atoms"><code class="docutils literal notranslate"><span class="pre">Trajectory.atoms</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.trajectory.Trajectory.types"><code class="docutils literal notranslate"><span class="pre">Trajectory.types</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.trajectory.Trajectory.nat"><code class="docutils literal notranslate"><span class="pre">Trajectory.nat</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.trajectory.Trajectory.cell"><code class="docutils literal notranslate"><span class="pre">Trajectory.cell</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.trajectory.Trajectory.nstep"><code class="docutils literal notranslate"><span class="pre">Trajectory.nstep</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.trajectory.Trajectory.__init__"><code class="docutils literal notranslate"><span class="pre">Trajectory.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#id0"><code class="docutils literal notranslate"><span class="pre">Trajectory.atoms</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.trajectory.Trajectory.calculate_velocities_from_positions"><code class="docutils literal notranslate"><span class="pre">Trajectory.calculate_velocities_from_positions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#id1"><code class="docutils literal notranslate"><span class="pre">Trajectory.cell</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.trajectory.Trajectory.from_atoms"><code class="docutils literal notranslate"><span class="pre">Trajectory.from_atoms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.trajectory.Trajectory.get_ase_trajectory"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_ase_trajectory()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.trajectory.Trajectory.get_atom_types"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_atom_types()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.trajectory.Trajectory.get_atoms"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_atoms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.trajectory.Trajectory.get_cells"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_cells()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.trajectory.Trajectory.get_forces"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_forces()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.trajectory.Trajectory.get_indices_of_species"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_indices_of_species()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.trajectory.Trajectory.get_positions"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_positions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.trajectory.Trajectory.get_step_atoms"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_step_atoms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.trajectory.Trajectory.get_stress"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_stress()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.trajectory.Trajectory.get_timestep"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_timestep()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.trajectory.Trajectory.get_types"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_types()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.trajectory.Trajectory.get_velocities"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_velocities()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.trajectory.Trajectory.get_volumes"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_volumes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#id2"><code class="docutils literal notranslate"><span class="pre">Trajectory.nat</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.trajectory.Trajectory.recenter"><code class="docutils literal notranslate"><span class="pre">Trajectory.recenter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.trajectory.Trajectory.set_atom_types"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_atom_types()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.trajectory.Trajectory.set_atoms"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_atoms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.trajectory.Trajectory.set_cells"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_cells()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.trajectory.Trajectory.set_forces"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_forces()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.trajectory.Trajectory.set_positions"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_positions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.trajectory.Trajectory.set_pot_energies"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_pot_energies()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.trajectory.Trajectory.set_stress"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_stress()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.trajectory.Trajectory.set_timestep"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_timestep()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.trajectory.Trajectory.set_types"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_types()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.trajectory.Trajectory.set_velocities"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_velocities()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#id3"><code class="docutils literal notranslate"><span class="pre">Trajectory.types</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.trajectory.check_trajectory_compatibility"><code class="docutils literal notranslate"><span class="pre">check_trajectory_compatibility()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="target.html#general-utilities">General Utilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="target.html#utility-module-for-samos-package">Utility Module for SAMOS Package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.utilities.AttributedArray"><code class="docutils literal notranslate"><span class="pre">AttributedArray</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.utilities.AttributedArray._arrays"><code class="docutils literal notranslate"><span class="pre">AttributedArray._arrays</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.utilities.AttributedArray._attrs"><code class="docutils literal notranslate"><span class="pre">AttributedArray._attrs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.utilities.AttributedArray._nstep"><code class="docutils literal notranslate"><span class="pre">AttributedArray._nstep</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.utilities.AttributedArray.__init__"><code class="docutils literal notranslate"><span class="pre">AttributedArray.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.utilities.AttributedArray.get_array"><code class="docutils literal notranslate"><span class="pre">AttributedArray.get_array()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.utilities.AttributedArray.get_arraynames"><code class="docutils literal notranslate"><span class="pre">AttributedArray.get_arraynames()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.utilities.AttributedArray.get_attr"><code class="docutils literal notranslate"><span class="pre">AttributedArray.get_attr()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.utilities.AttributedArray.get_attrs"><code class="docutils literal notranslate"><span class="pre">AttributedArray.get_attrs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.utilities.AttributedArray.load_file"><code class="docutils literal notranslate"><span class="pre">AttributedArray.load_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.utilities.AttributedArray.nstep"><code class="docutils literal notranslate"><span class="pre">AttributedArray.nstep</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.utilities.AttributedArray.remove_array"><code class="docutils literal notranslate"><span class="pre">AttributedArray.remove_array()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.utilities.AttributedArray.rescale_array"><code class="docutils literal notranslate"><span class="pre">AttributedArray.rescale_array()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.utilities.AttributedArray.save"><code class="docutils literal notranslate"><span class="pre">AttributedArray.save()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.utilities.AttributedArray.set_array"><code class="docutils literal notranslate"><span class="pre">AttributedArray.set_array()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.utilities.AttributedArray.set_attr"><code class="docutils literal notranslate"><span class="pre">AttributedArray.set_attr()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.utilities.InputError"><code class="docutils literal notranslate"><span class="pre">InputError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.utilities.apply_minimum_image"><code class="docutils literal notranslate"><span class="pre">apply_minimum_image()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.utilities.get_color"><code class="docutils literal notranslate"><span class="pre">get_color()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.utilities.get_terminal_width"><code class="docutils literal notranslate"><span class="pre">get_terminal_width()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="target.html#analysis-helpers">Analysis Helpers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.analysis.BaseAnalyzer"><code class="docutils literal notranslate"><span class="pre">BaseAnalyzer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.analysis.BaseAnalyzer.__init__"><code class="docutils literal notranslate"><span class="pre">BaseAnalyzer.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.analysis.BaseAnalyzer.run"><code class="docutils literal notranslate"><span class="pre">BaseAnalyzer.run()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.analysis.BaseAnalyzer.set_trajectory"><code class="docutils literal notranslate"><span class="pre">BaseAnalyzer.set_trajectory()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.analysis.DynamicsAnalyzer"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.analysis.DynamicsAnalyzer.__init__"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.analysis.DynamicsAnalyzer.get_kinetic_energies"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.get_kinetic_energies()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.analysis.DynamicsAnalyzer.get_power_spectrum"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.get_power_spectrum()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.analysis.DynamicsAnalyzer.get_species_of_interest"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.get_species_of_interest()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.analysis.DynamicsAnalyzer.get_vaf"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.get_vaf()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.analysis.DynamicsAnalyzer.set_species_of_interest"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.set_species_of_interest()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.analysis.DynamicsAnalyzer.set_trajectories"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.set_trajectories()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="target.html#target.analysis.DynamicsAnalyzer.set_verbosity"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.set_verbosity()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.analysis.TimeSeries"><code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.analysis.get_gaussian_density"><code class="docutils literal notranslate"><span class="pre">get_gaussian_density()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#target.analysis.write_xsf_header"><code class="docutils literal notranslate"><span class="pre">write_xsf_header()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="target.html#preprocessing">Preprocessing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="target.html#utility-modules">Utility Modules</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="target.html#module-target.json_serializable">JSON Serialization</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="target.html#json-serialization-utilities-for-cpdyana">JSON Serialization Utilities for CPDyAna</a></li>
 <li class="toctree-l4"><a class="reference internal" href="target.html#target.json_serializable.convert_to_serializable"><code class="docutils literal notranslate"><span class="pre">convert_to_serializable()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#module-target.const">Constants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="target.html#module-target.const">Constants</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="target.html#physical-constants-and-unit-conversions-for-cpdyana">Physical Constants and Unit Conversions for CPDyAna</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="samos_modules.html">SAMOS Modules</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="samos_modules.html#overview">Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="samos_modules.html#core-analysis-module">Core Analysis Module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="samos_modules.html#samos_modules.samos_analysis.AngularSpectrum"><code class="docutils literal notranslate"><span class="pre">AngularSpectrum</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="samos_modules.html#samos_modules.samos_analysis.AngularSpectrum.run"><code class="docutils literal notranslate"><span class="pre">AngularSpectrum.run()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="samos_modules.html#samos_modules.samos_analysis.BaseAnalyzer"><code class="docutils literal notranslate"><span class="pre">BaseAnalyzer</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="samos_modules.html#samos_modules.samos_analysis.BaseAnalyzer.__init__"><code class="docutils literal notranslate"><span class="pre">BaseAnalyzer.__init__()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="samos_modules.html#samos_modules.samos_analysis.BaseAnalyzer.run"><code class="docutils literal notranslate"><span class="pre">BaseAnalyzer.run()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="samos_modules.html#samos_modules.samos_analysis.BaseAnalyzer.set_trajectory"><code class="docutils literal notranslate"><span class="pre">BaseAnalyzer.set_trajectory()</span></code></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="usage_Examples.html">Usage Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="usage_Examples.html#command-line-interface-examples">Command-Line Interface Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="usage_Examples.html#mean-square-displacement-msd">Mean Square Displacement (MSD)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage_Examples.html#non-gaussian-parameter-ngp">Non-Gaussian Parameter (NGP)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage_Examples.html#van-hove-correlation-functions">Van Hove Correlation Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage_Examples.html#radial-distribution-functions-rdf">Radial Distribution Functions (RDF)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage_Examples.html#ionic-density-mapping">Ionic Density Mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage_Examples.html#velocity-autocorrelation-functions-vaf">Velocity Autocorrelation Functions (VAF)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage_Examples.html#vibrational-density-of-states-vdos">Vibrational Density of States (VDOS)</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer.__init__"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.__init__()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer.get_kinetic_energies"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.get_kinetic_energies()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer.get_msd"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.get_msd()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer.get_power_spectrum"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.get_power_spectrum()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer.get_species_of_interest"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.get_species_of_interest()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer.get_vaf"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.get_vaf()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer.set_species_of_interest"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.set_species_of_interest()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer.set_trajectories"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.set_trajectories()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="samos_modules.html#samos_modules.samos_analysis.DynamicsAnalyzer.set_verbosity"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.set_verbosity()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage_Examples.html#python-api-examples">Python API Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="usage_Examples.html#direct-function-usage">Direct Function Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage_Examples.html#samos-module-integration">SAMOS Module Integration</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="samos_modules.html#samos_modules.samos_analysis.RDF"><code class="docutils literal notranslate"><span class="pre">RDF</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="samos_modules.html#samos_modules.samos_analysis.RDF.run"><code class="docutils literal notranslate"><span class="pre">RDF.run()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="samos_modules.html#samos_modules.samos_analysis.RDF.run_fort"><code class="docutils literal notranslate"><span class="pre">RDF.run_fort()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage_Examples.html#batch-processing-workflows">Batch Processing Workflows</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="usage_Examples.html#processing-multiple-simulations">Processing Multiple Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage_Examples.html#temperature-series-analysis">Temperature Series Analysis</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="samos_modules.html#samos_modules.samos_analysis.TimeSeries"><code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="samos_modules.html#samos_modules.samos_analysis.get_gaussian_density"><code class="docutils literal notranslate"><span class="pre">get_gaussian_density()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="samos_modules.html#samos_modules.samos_analysis.util_msd"><code class="docutils literal notranslate"><span class="pre">util_msd()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="samos_modules.html#samos_modules.samos_analysis.util_rdf_and_plot"><code class="docutils literal notranslate"><span class="pre">util_rdf_and_plot()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="samos_modules.html#samos_modules.samos_analysis.write_xsf_header"><code class="docutils literal notranslate"><span class="pre">write_xsf_header()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="samos_modules.html#key-functions">Key Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage_Examples.html#advanced-analysis-examples">Advanced Analysis Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="usage_Examples.html#custom-van-hove-analysis">Custom Van Hove Analysis</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="samos_modules.html#i-o-operations-module">I/O Operations Module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="samos_modules.html#samos_modules.samos_io.get_indices"><code class="docutils literal notranslate"><span class="pre">get_indices()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="samos_modules.html#samos_modules.samos_io.get_position_indices"><code class="docutils literal notranslate"><span class="pre">get_position_indices()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="samos_modules.html#samos_modules.samos_io.get_thermo_props"><code class="docutils literal notranslate"><span class="pre">get_thermo_props()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="samos_modules.html#samos_modules.samos_io.pos_2_absolute"><code class="docutils literal notranslate"><span class="pre">pos_2_absolute()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="samos_modules.html#samos_modules.samos_io.read_lammps_dump"><code class="docutils literal notranslate"><span class="pre">read_lammps_dump()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="samos_modules.html#samos_modules.samos_io.read_positions_with_ase"><code class="docutils literal notranslate"><span class="pre">read_positions_with_ase()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="samos_modules.html#samos_modules.samos_io.read_step_info"><code class="docutils literal notranslate"><span class="pre">read_step_info()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="samos_modules.html#samos_modules.samos_io.read_xsf"><code class="docutils literal notranslate"><span class="pre">read_xsf()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="samos_modules.html#samos_modules.samos_io.write_grid"><code class="docutils literal notranslate"><span class="pre">write_grid()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="samos_modules.html#samos_modules.samos_io.write_xsf"><code class="docutils literal notranslate"><span class="pre">write_xsf()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="samos_modules.html#supported-formats">Supported Formats</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="samos_modules.html#plotting-module">Plotting Module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="samos_modules.html#samos_modules.samos_plotting.format_mean_err"><code class="docutils literal notranslate"><span class="pre">format_mean_err()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="samos_modules.html#samos_modules.samos_plotting.my_format"><code class="docutils literal notranslate"><span class="pre">my_format()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="samos_modules.html#samos_modules.samos_plotting.plot_angular_spec"><code class="docutils literal notranslate"><span class="pre">plot_angular_spec()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="samos_modules.html#samos_modules.samos_plotting.plot_msd_anisotropic"><code class="docutils literal notranslate"><span class="pre">plot_msd_anisotropic()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="samos_modules.html#samos_modules.samos_plotting.plot_msd_isotropic"><code class="docutils literal notranslate"><span class="pre">plot_msd_isotropic()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="samos_modules.html#samos_modules.samos_plotting.plot_power_spectrum"><code class="docutils literal notranslate"><span class="pre">plot_power_spectrum()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="samos_modules.html#samos_modules.samos_plotting.plot_rdf"><code class="docutils literal notranslate"><span class="pre">plot_rdf()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="samos_modules.html#samos_modules.samos_plotting.plot_vaf_isotropic"><code class="docutils literal notranslate"><span class="pre">plot_vaf_isotropic()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="samos_modules.html#compiled-extensions">Compiled Extensions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="samos_modules.html#usage-examples">Usage Examples</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="samos_modules.html#basic-msd-analysis-with-samos">Basic MSD Analysis with SAMOS</a></li>
-<li class="toctree-l3"><a class="reference internal" href="samos_modules.html#rdf-calculation-and-plotting">RDF Calculation and Plotting</a></li>
-<li class="toctree-l3"><a class="reference internal" href="samos_modules.html#reading-lammps-trajectories">Reading LAMMPS Trajectories</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage_Examples.html#file-format-tips">File Format Tips</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="usage_Examples.html#required-file-structure">Required File Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage_Examples.html#performance-optimization">Performance Optimization</a></li>
 </ul>
 </li>
 </ul>
@@ -214,98 +311,16 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Module Index:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">target</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="target.html">Target Package</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="target.html#main-analysis-driver">Main Analysis Driver</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="target.html#cpdyana-combined-molecular-dynamics-analysis-tool">CPDyAna – Combined Molecular Dynamics Analysis Tool</a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.CPDyAna.Job"><code class="docutils literal notranslate"><span class="pre">Job()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.CPDyAna.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.CPDyAna.parser"><code class="docutils literal notranslate"><span class="pre">parser()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#key-functions">Key Functions</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#data-processing">Data Processing</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.data_processing.data_evaluator"><code class="docutils literal notranslate"><span class="pre">data_evaluator()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.data_processing.find_terms"><code class="docutils literal notranslate"><span class="pre">find_terms()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.data_processing.segmenter_func"><code class="docutils literal notranslate"><span class="pre">segmenter_func()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#id1">Key Functions</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#input-output-operations">Input/Output Operations</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.input_reader.read_cel_file"><code class="docutils literal notranslate"><span class="pre">read_cel_file()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.input_reader.read_evp_file"><code class="docutils literal notranslate"><span class="pre">read_evp_file()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.input_reader.read_ion_file"><code class="docutils literal notranslate"><span class="pre">read_ion_file()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.input_reader.read_pos_file"><code class="docutils literal notranslate"><span class="pre">read_pos_file()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#supported-file-types">Supported File Types</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#core-calculations">Core Calculations</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.calculations.calc_fft"><code class="docutils literal notranslate"><span class="pre">calc_fft()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.calculations.calc_msd_tracer"><code class="docutils literal notranslate"><span class="pre">calc_msd_tracer()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.calculations.calculate_msd"><code class="docutils literal notranslate"><span class="pre">calculate_msd()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.calculations.disp_sum"><code class="docutils literal notranslate"><span class="pre">disp_sum()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.calculations.msd_charged"><code class="docutils literal notranslate"><span class="pre">msd_charged()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.calculations.msd_tracer"><code class="docutils literal notranslate"><span class="pre">msd_tracer()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#analysis-types">Analysis Types</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#correlation-analysis">Correlation Analysis</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.correrelation_analysis.Van_Hove_distinct"><code class="docutils literal notranslate"><span class="pre">Van_Hove_distinct()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.correrelation_analysis.Van_Hove_self"><code class="docutils literal notranslate"><span class="pre">Van_Hove_self()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#correlation-types">Correlation Types</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#rdf-computation">RDF Computation</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.compute_rdf.build_ase_trajectory"><code class="docutils literal notranslate"><span class="pre">build_ase_trajectory()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.compute_rdf.compute_rdf"><code class="docutils literal notranslate"><span class="pre">compute_rdf()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.compute_rdf.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#vaf-computation">VAF Computation</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.compute_vaf.build_trajectory"><code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.compute_vaf.compute_vaf"><code class="docutils literal notranslate"><span class="pre">compute_vaf()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.compute_vaf.convert_symbols_to_atomic_numbers"><code class="docutils literal notranslate"><span class="pre">convert_symbols_to_atomic_numbers()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.compute_vaf.finite_diff_velocities"><code class="docutils literal notranslate"><span class="pre">finite_diff_velocities()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.compute_vaf.read_cel"><code class="docutils literal notranslate"><span class="pre">read_cel()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.compute_vaf.read_evp"><code class="docutils literal notranslate"><span class="pre">read_evp()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.compute_vaf.read_pos"><code class="docutils literal notranslate"><span class="pre">read_pos()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#plotting-and-visualization">Plotting and Visualization</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.plotting.int_or_float"><code class="docutils literal notranslate"><span class="pre">int_or_float()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.plotting.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.plotting.msd_plot"><code class="docutils literal notranslate"><span class="pre">msd_plot()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.plotting.parse_cli_args"><code class="docutils literal notranslate"><span class="pre">parse_cli_args()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.plotting.van_hove_plot"><code class="docutils literal notranslate"><span class="pre">van_hove_plot()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#plot-types">Plot Types</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#probability-density-analysis">Probability Density Analysis</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.probability_density.build_trajectory"><code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.probability_density.calculate_probability_density"><code class="docutils literal notranslate"><span class="pre">calculate_probability_density()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.probability_density.convert_symbols_to_atomic_numbers"><code class="docutils literal notranslate"><span class="pre">convert_symbols_to_atomic_numbers()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.probability_density.divide_chunks"><code class="docutils literal notranslate"><span class="pre">divide_chunks()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.probability_density.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.probability_density.parse_mask"><code class="docutils literal notranslate"><span class="pre">parse_mask()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#output-formats">Output Formats</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#vdos-analysis">VDOS Analysis</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.vdos.build_trajectory"><code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.vdos.compute_plot_vdos"><code class="docutils literal notranslate"><span class="pre">compute_plot_vdos()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.vdos.convert_symbols_to_atomic_numbers"><code class="docutils literal notranslate"><span class="pre">convert_symbols_to_atomic_numbers()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.vdos.finite_diff_velocities"><code class="docutils literal notranslate"><span class="pre">finite_diff_velocities()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.vdos.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.vdos.read_cel"><code class="docutils literal notranslate"><span class="pre">read_cel()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.vdos.read_evp"><code class="docutils literal notranslate"><span class="pre">read_evp()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.vdos.read_pos"><code class="docutils literal notranslate"><span class="pre">read_pos()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#utility-modules">Utility Modules</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="target.html#module-target.json_serializable">JSON Serialization</a></li>
-<li class="toctree-l4"><a class="reference internal" href="target.html#module-target.const">Constants</a></li>
-</ul>
-</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Usage Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#basic-msd-analysis">Basic MSD Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#non-gaussian-parameter-ngp-analysis">Non-Gaussian Parameter (NGP) Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#van-hove-correlation-function">Van Hove Correlation Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#radial-distribution-function-rdf">Radial Distribution Function (RDF)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#velocity-autocorrelation-function-vaf">Velocity Autocorrelation Function (VAF)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vibrational-density-of-states-vdos">Vibrational Density of States (VDOS)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ionic-density-mapping">Ionic Density Mapping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#batch-processing-workflows">Batch Processing Workflows</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#processing-multiple-simulations">Processing Multiple Simulations</a></li>
 </ul>
 </li>
 </ul>
@@ -326,7 +341,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">target</li>
+      <li class="breadcrumb-item active">Usage Examples</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/modules.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -336,115 +351,160 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="target">
-<h1>target<a class="headerlink" href="#target" title="Link to this heading"></a></h1>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="target.html">Target Package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="target.html#main-analysis-driver">Main Analysis Driver</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="target.html#cpdyana-combined-molecular-dynamics-analysis-tool">CPDyAna – Combined Molecular Dynamics Analysis Tool</a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.CPDyAna.Job"><code class="docutils literal notranslate"><span class="pre">Job()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.CPDyAna.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.CPDyAna.parser"><code class="docutils literal notranslate"><span class="pre">parser()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#key-functions">Key Functions</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="target.html#data-processing">Data Processing</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.data_processing.data_evaluator"><code class="docutils literal notranslate"><span class="pre">data_evaluator()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.data_processing.find_terms"><code class="docutils literal notranslate"><span class="pre">find_terms()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.data_processing.segmenter_func"><code class="docutils literal notranslate"><span class="pre">segmenter_func()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#id1">Key Functions</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="target.html#input-output-operations">Input/Output Operations</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.input_reader.read_cel_file"><code class="docutils literal notranslate"><span class="pre">read_cel_file()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.input_reader.read_evp_file"><code class="docutils literal notranslate"><span class="pre">read_evp_file()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.input_reader.read_ion_file"><code class="docutils literal notranslate"><span class="pre">read_ion_file()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.input_reader.read_pos_file"><code class="docutils literal notranslate"><span class="pre">read_pos_file()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#supported-file-types">Supported File Types</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="target.html#core-calculations">Core Calculations</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.calculations.calc_fft"><code class="docutils literal notranslate"><span class="pre">calc_fft()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.calculations.calc_msd_tracer"><code class="docutils literal notranslate"><span class="pre">calc_msd_tracer()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.calculations.calculate_msd"><code class="docutils literal notranslate"><span class="pre">calculate_msd()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.calculations.disp_sum"><code class="docutils literal notranslate"><span class="pre">disp_sum()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.calculations.msd_charged"><code class="docutils literal notranslate"><span class="pre">msd_charged()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.calculations.msd_tracer"><code class="docutils literal notranslate"><span class="pre">msd_tracer()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#analysis-types">Analysis Types</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="target.html#correlation-analysis">Correlation Analysis</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.correrelation_analysis.Van_Hove_distinct"><code class="docutils literal notranslate"><span class="pre">Van_Hove_distinct()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.correrelation_analysis.Van_Hove_self"><code class="docutils literal notranslate"><span class="pre">Van_Hove_self()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#correlation-types">Correlation Types</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="target.html#rdf-computation">RDF Computation</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.compute_rdf.build_ase_trajectory"><code class="docutils literal notranslate"><span class="pre">build_ase_trajectory()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.compute_rdf.compute_rdf"><code class="docutils literal notranslate"><span class="pre">compute_rdf()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.compute_rdf.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="target.html#vaf-computation">VAF Computation</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.compute_vaf.build_trajectory"><code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.compute_vaf.compute_vaf"><code class="docutils literal notranslate"><span class="pre">compute_vaf()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.compute_vaf.convert_symbols_to_atomic_numbers"><code class="docutils literal notranslate"><span class="pre">convert_symbols_to_atomic_numbers()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.compute_vaf.finite_diff_velocities"><code class="docutils literal notranslate"><span class="pre">finite_diff_velocities()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.compute_vaf.read_cel"><code class="docutils literal notranslate"><span class="pre">read_cel()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.compute_vaf.read_evp"><code class="docutils literal notranslate"><span class="pre">read_evp()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.compute_vaf.read_pos"><code class="docutils literal notranslate"><span class="pre">read_pos()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="target.html#plotting-and-visualization">Plotting and Visualization</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.plotting.int_or_float"><code class="docutils literal notranslate"><span class="pre">int_or_float()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.plotting.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.plotting.msd_plot"><code class="docutils literal notranslate"><span class="pre">msd_plot()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.plotting.parse_cli_args"><code class="docutils literal notranslate"><span class="pre">parse_cli_args()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.plotting.van_hove_plot"><code class="docutils literal notranslate"><span class="pre">van_hove_plot()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#plot-types">Plot Types</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="target.html#probability-density-analysis">Probability Density Analysis</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.probability_density.build_trajectory"><code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.probability_density.calculate_probability_density"><code class="docutils literal notranslate"><span class="pre">calculate_probability_density()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.probability_density.convert_symbols_to_atomic_numbers"><code class="docutils literal notranslate"><span class="pre">convert_symbols_to_atomic_numbers()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.probability_density.divide_chunks"><code class="docutils literal notranslate"><span class="pre">divide_chunks()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.probability_density.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.probability_density.parse_mask"><code class="docutils literal notranslate"><span class="pre">parse_mask()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#output-formats">Output Formats</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="target.html#vdos-analysis">VDOS Analysis</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.vdos.build_trajectory"><code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.vdos.compute_plot_vdos"><code class="docutils literal notranslate"><span class="pre">compute_plot_vdos()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.vdos.convert_symbols_to_atomic_numbers"><code class="docutils literal notranslate"><span class="pre">convert_symbols_to_atomic_numbers()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.vdos.finite_diff_velocities"><code class="docutils literal notranslate"><span class="pre">finite_diff_velocities()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.vdos.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.vdos.read_cel"><code class="docutils literal notranslate"><span class="pre">read_cel()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.vdos.read_evp"><code class="docutils literal notranslate"><span class="pre">read_evp()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#target.vdos.read_pos"><code class="docutils literal notranslate"><span class="pre">read_pos()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="target.html#utility-modules">Utility Modules</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="target.html#module-target.json_serializable">JSON Serialization</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="target.html#target.json_serializable.convert_to_serializable"><code class="docutils literal notranslate"><span class="pre">convert_to_serializable()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="target.html#module-target.const">Constants</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
+  <section id="usage-examples">
+<h1>Usage Examples<a class="headerlink" href="#usage-examples" title="Link to this heading"></a></h1>
+<section id="basic-msd-analysis">
+<h2>Basic MSD Analysis<a class="headerlink" href="#basic-msd-analysis" title="Link to this heading"></a></h2>
+<p>To perform mean square displacement (MSD) analysis on a LAMMPS trajectory:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">target.input_reader</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_lammps_trajectory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">target.calculations</span><span class="w"> </span><span class="kn">import</span> <span class="n">msd_tracer</span>
+
+<span class="c1"># Read the full trajectory into memory</span>
+<span class="n">trajectory</span><span class="p">,</span> <span class="n">n_frames</span><span class="p">,</span> <span class="n">dt_full</span><span class="p">,</span> <span class="n">t_full</span><span class="p">,</span> <span class="n">cell_param_full</span><span class="p">,</span> <span class="n">thermo_data</span><span class="p">,</span> <span class="n">volumes</span><span class="p">,</span> <span class="n">inp_array</span> <span class="o">=</span> <span class="n">read_lammps_trajectory</span><span class="p">(</span>
+    <span class="n">lammps_file</span><span class="o">=</span><span class="s1">&#39;dump.lammpstrj&#39;</span><span class="p">,</span>
+    <span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Li&#39;</span><span class="p">,</span> <span class="s1">&#39;O&#39;</span><span class="p">],</span>
+    <span class="n">timestep</span><span class="o">=</span><span class="mf">0.001</span>
+<span class="p">)</span>
+
+<span class="c1"># Calculate MSD for all ions</span>
+<span class="n">msd</span> <span class="o">=</span> <span class="n">msd_tracer</span><span class="p">(</span><span class="n">trajectory</span><span class="p">,</span> <span class="n">n_frames</span><span class="p">)</span>
+</pre></div>
 </div>
+</section>
+<section id="non-gaussian-parameter-ngp-analysis">
+<h2>Non-Gaussian Parameter (NGP) Analysis<a class="headerlink" href="#non-gaussian-parameter-ngp-analysis" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">target.input_reader</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_lammps_trajectory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">target.calculations</span><span class="w"> </span><span class="kn">import</span> <span class="n">calculate_ngp</span>
+
+<span class="n">trajectory</span><span class="p">,</span> <span class="n">n_frames</span><span class="p">,</span> <span class="n">dt_full</span><span class="p">,</span> <span class="n">t_full</span><span class="p">,</span> <span class="n">cell_param_full</span><span class="p">,</span> <span class="n">thermo_data</span><span class="p">,</span> <span class="n">volumes</span><span class="p">,</span> <span class="n">inp_array</span> <span class="o">=</span> <span class="n">read_lammps_trajectory</span><span class="p">(</span>
+    <span class="n">lammps_file</span><span class="o">=</span><span class="s1">&#39;dump.lammpstrj&#39;</span><span class="p">,</span>
+    <span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Li&#39;</span><span class="p">,</span> <span class="s1">&#39;O&#39;</span><span class="p">],</span>
+    <span class="n">timestep</span><span class="o">=</span><span class="mf">0.001</span>
+<span class="p">)</span>
+
+<span class="c1"># Calculate NGP for tracer diffusion</span>
+<span class="n">ngp</span> <span class="o">=</span> <span class="n">calculate_ngp</span><span class="p">([</span><span class="s1">&#39;Li&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;XYZ&#39;</span><span class="p">],</span> <span class="n">trajectory</span><span class="p">,</span> <span class="n">trajectory</span><span class="p">,</span> <span class="n">inp_array</span><span class="p">,</span> <span class="n">dt_full</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="van-hove-correlation-function">
+<h2>Van Hove Correlation Function<a class="headerlink" href="#van-hove-correlation-function" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">target.correrelation_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">Van_Hove_self</span><span class="p">,</span> <span class="n">Van_Hove_distinct</span>
+
+<span class="c1"># pos_array: shape (n_frames, n_atoms, 3)</span>
+<span class="c1"># dt: time step array</span>
+
+<span class="n">dist_interval</span><span class="p">,</span> <span class="n">reduced_nt</span><span class="p">,</span> <span class="n">grt_self</span> <span class="o">=</span> <span class="n">Van_Hove_self</span><span class="p">(</span>
+    <span class="n">avg_step</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="n">dt</span><span class="o">=</span><span class="n">dt</span><span class="p">,</span>
+    <span class="n">rmax</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span>
+    <span class="n">step_skip</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">sigma</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span>
+    <span class="n">ngrid</span><span class="o">=</span><span class="mi">151</span><span class="p">,</span>
+    <span class="n">moving_ion_pos</span><span class="o">=</span><span class="n">pos_array</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="radial-distribution-function-rdf">
+<h2>Radial Distribution Function (RDF)<a class="headerlink" href="#radial-distribution-function-rdf" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">target.compute_rdf</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_rdf</span>
+
+<span class="c1"># Compute RDF for Li-O pairs</span>
+<span class="n">rdf_result</span> <span class="o">=</span> <span class="n">compute_rdf</span><span class="p">(</span>
+    <span class="n">trajectory</span><span class="o">=</span><span class="n">trajectory</span><span class="p">,</span>
+    <span class="n">central_atoms</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Li&#39;</span><span class="p">],</span>
+    <span class="n">pair_atoms</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;O&#39;</span><span class="p">],</span>
+    <span class="n">rmax</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
+    <span class="n">ngrid</span><span class="o">=</span><span class="mi">200</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="velocity-autocorrelation-function-vaf">
+<h2>Velocity Autocorrelation Function (VAF)<a class="headerlink" href="#velocity-autocorrelation-function-vaf" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">target.compute_vaf</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_vaf</span>
+
+<span class="n">vaf_result</span> <span class="o">=</span> <span class="n">compute_vaf</span><span class="p">(</span>
+    <span class="n">trajectory</span><span class="o">=</span><span class="n">trajectory</span><span class="p">,</span>
+    <span class="n">element</span><span class="o">=</span><span class="s1">&#39;Li&#39;</span><span class="p">,</span>
+    <span class="n">nframes</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">blocks</span><span class="o">=</span><span class="mi">5</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="vibrational-density-of-states-vdos">
+<h2>Vibrational Density of States (VDOS)<a class="headerlink" href="#vibrational-density-of-states-vdos" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">target.vdos</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_vdos</span>
+
+<span class="n">vdos_result</span> <span class="o">=</span> <span class="n">compute_vdos</span><span class="p">(</span>
+    <span class="n">trajectory</span><span class="o">=</span><span class="n">trajectory</span><span class="p">,</span>
+    <span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Li&#39;</span><span class="p">,</span> <span class="s1">&#39;O&#39;</span><span class="p">],</span>
+    <span class="n">start</span><span class="o">=</span><span class="mf">50.0</span><span class="p">,</span>
+    <span class="n">nframes</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span>
+    <span class="n">stride</span><span class="o">=</span><span class="mi">2</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="ionic-density-mapping">
+<h2>Ionic Density Mapping<a class="headerlink" href="#ionic-density-mapping" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">target.probability_density</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_density</span>
+
+<span class="n">density_result</span> <span class="o">=</span> <span class="n">compute_density</span><span class="p">(</span>
+    <span class="n">trajectory</span><span class="o">=</span><span class="n">trajectory</span><span class="p">,</span>
+    <span class="n">element</span><span class="o">=</span><span class="s1">&#39;Li&#39;</span><span class="p">,</span>
+    <span class="n">sigma</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span>
+    <span class="n">density</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span>
+    <span class="n">time_after_start</span><span class="o">=</span><span class="mf">20.0</span><span class="p">,</span>
+    <span class="n">num_frames</span><span class="o">=</span><span class="mi">500</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="batch-processing-workflows">
+<h2>Batch Processing Workflows<a class="headerlink" href="#batch-processing-workflows" title="Link to this heading"></a></h2>
+<section id="processing-multiple-simulations">
+<h3>Processing Multiple Simulations<a class="headerlink" href="#processing-multiple-simulations" title="Link to this heading"></a></h3>
+<p>Script for batch analysis of multiple MD runs:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">glob</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+
+<span class="c1"># Directory containing multiple simulation folders</span>
+<span class="n">base_dir</span> <span class="o">=</span> <span class="s1">&#39;/path/to/simulations&#39;</span>
+
+<span class="c1"># Find all simulation directories</span>
+<span class="n">sim_dirs</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base_dir</span><span class="p">,</span> <span class="s1">&#39;sim_*&#39;</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">sim_dir</span> <span class="ow">in</span> <span class="n">sim_dirs</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processing </span><span class="si">{</span><span class="n">sim_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Check for required files</span>
+    <span class="n">required_files</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;*.pos&#39;</span><span class="p">,</span> <span class="s1">&#39;*.cel&#39;</span><span class="p">,</span> <span class="s1">&#39;*.evp&#39;</span><span class="p">,</span> <span class="s1">&#39;*.in&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sim_dir</span><span class="p">,</span> <span class="n">pattern</span><span class="p">))</span> <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">required_files</span><span class="p">):</span>
+
+        <span class="c1"># Run MSD analysis</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;python&#39;</span><span class="p">,</span> <span class="s1">&#39;CPDyAna.py&#39;</span><span class="p">,</span> <span class="s1">&#39;msd&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;--data-dir&#39;</span><span class="p">,</span> <span class="n">sim_dir</span><span class="p">,</span>
+            <span class="s1">&#39;--temperature&#39;</span><span class="p">,</span> <span class="s1">&#39;800&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;--diffusing-elements&#39;</span><span class="p">,</span> <span class="s1">&#39;Li&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;--save-path&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">sim_dir</span><span class="si">}</span><span class="s1">/msd_result.png&#39;</span>
+        <span class="p">]</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="samos_modules.html" class="btn btn-neutral float-left" title="SAMOS Modules" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="usage_Examples.html" class="btn btn-neutral float-left" title="Usage Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

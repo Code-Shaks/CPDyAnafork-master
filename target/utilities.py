@@ -524,3 +524,17 @@ def get_terminal_width():
         #    cr = (25, 80)
     # ~ return int(cr[1]), int(cr[0])
     return int(cr[1]), int(cr[0])
+
+def apply_minimum_image(displacement, cell):
+    """
+    Apply the minimum image convention (MIC) to a displacement vector.
+    Parameters:
+    - displacement: np.ndarray of shape (..., 3), displacement vectors
+    - cell: np.ndarray of shape (3, 3), simulation cell vectors
+    Returns:
+    - np.ndarray of same shape as displacement with MIC applied
+    """
+    inv_cell = np.linalg.inv(cell.T)
+    fractional = np.dot(displacement, inv_cell)
+    fractional -= np.round(fractional)
+    return np.dot(fractional, cell.T)

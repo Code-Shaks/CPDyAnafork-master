@@ -78,7 +78,6 @@ samos-master/samos/lib/gaussian_density.py
 samos-master/samos/lib/mdutils.py
 samos-master/samos/lib/rdf.py
 target/ionic_density.py
-target/Plotting.py
 target/serializable.py
 target/__pycache__/compute_rdf.cpython-313.pyc
 target/__pycache__/ionic_density.cpython-313.pyc
@@ -1699,3 +1698,565 @@ MSD.jpg
 samos_modules/__pycache__/__init__.cpython-313.pyc
 samos_modules/__pycache__/samos_trajectory.cpython-313.pyc
 target/__pycache__/compute_vaf.cpython-313.pyc
+MSD.jpg
+NGP.jpg
+vaf_all800K_relax_La_vaf_upto_100psframes.png
+vaf_all800K_relax_Li_vaf_upto_100psframes.png
+vaf_all800K_relax_O_vaf_upto_100psframes.png
+vaf_all800K_relax_Ti_vaf_upto_100psframes.png
+vdos_all800K_relax_1.png
+vdos_all800K_relax_2.png
+custom_modules/__init__.py
+custom_modules/samos_analysis.py
+custom_modules/samos_io.py
+custom_modules/samos_plotting.py
+custom_modules/samos_trajectory.py
+custom_modules/samos_utils.py
+outputs/msd_slope 0-10_0-10ps_Li_800_Charged.png
+outputs/msd_slope 5-70_0-100ps_Al_800_Tracer.png
+outputs/msd_slope 5-100_0-150ps_Li_800_Tracer.png
+outputs/MSD_slope 5-200_0-300ps_Tracer_block 500_600K.jpeg
+outputs/van_hove_distinct_Li_0-5ps_600K.png
+outputs/van_hove_distinct_Li_0-140ps_600K.png
+outputs/van_hove_self_Li_0-5ps_600K.png
+outputs/van_hove_self_Li_0-140ps_600K.png
+outputs/vh_0-10ps_Li_800_Distinct.png
+outputs/vh_10-15ps_Li_800_Distinct.png
+outputs/vh_slope 5-100_0-160ps_Al_800_self.png
+outputs/vh_slope 5-100_0-160ps_Li_800_self.png
+outputs/vh_slope 5-100_0-160ps_P_800_self.png
+outputs/vh_slope 5-100_0-160ps_S_800_self.png
+outputs/lammps outputs/all800K_relax_density.xsf
+outputs/lammps outputs/lammps_dump_density_1.xsf
+outputs/lammps outputs/lammps_NGP.jpg
+outputs/lammps outputs/msd_lammps_plot_charged_slope_5to100_upto148ps.png
+outputs/lammps outputs/msd_lammps_plot_tracer_slope_5to100_upto148ps.png
+outputs/lammps outputs/MSD_lammps_tracer_Li_0-2000ps_slope 300-1500ps_all800Krelax.png
+outputs/lammps outputs/NGP_lammps_Li_2-200ps_all800Krelax.png
+outputs/lammps outputs/rdf_plot_lammps_La_time60.0ps_with_integral.png
+outputs/lammps outputs/rdf_plot_lammps_Li_time60.0ps_with_integral.png
+outputs/lammps outputs/rdf_plot_lammps_LiLaTiO_La_time60.0ps_variable_cell.png
+outputs/lammps outputs/rdf_plot_lammps_LiLaTiO_Li_time60.0ps_variable_cell.png
+outputs/lammps outputs/rdf_plot_lammps_LiLaTiO_O_time60.0ps_variable_cell.png
+outputs/lammps outputs/rdf_plot_lammps_LiLaTiO_Ti_time60.0ps_variable_cell.png
+outputs/lammps outputs/rdf_plot_lammps_O_time60.0ps_with_integral.png
+outputs/lammps outputs/rdf_plot_lammps_Ti_time60.0ps_with_integral.png
+outputs/lammps outputs/VAF_lammps_La_0-100ps_all800Krelax.png
+outputs/lammps outputs/VAF_lammps_Li_0-100ps_all800Krelax.png
+outputs/lammps outputs/VAF_lammps_O_0-100ps_all800Krelax.png
+outputs/lammps outputs/VAF_lammps_Ti_0-100ps_all800Krelax.png
+outputs/lammps outputs/van_hove_plot_LiLaTiO_lammps_distinct.png
+outputs/lammps outputs/van_hove_plot_LiLaTiO_lammps_self.png
+outputs/lammps outputs/VDOS_fig2_lammps_LLTO_all800K_relax_sb.png
+outputs/lammps outputs/VDOS_fig2_lammps_LLTO_all800K_relax.png
+outputs/lammps outputs/VDOS_lammps_LLTO_all800K_relax_sb.png
+outputs/lammps outputs/VDOS_lammps_LLTO_all800K_relax.png
+outputs/qe outputs/LiAlPS_density.xsf
+outputs/qe outputs/LiAlPS_vaf_upto_100psframes_reference.png
+outputs/qe outputs/LiAlPS_vdos_mine_reference.png
+outputs/qe outputs/LiAlPS_vdos_reference.png
+outputs/qe outputs/msd_plot_charged_block_grok1_slope 5-20_0-20ps_charged_block 500_600K.jpg
+outputs/qe outputs/msd_plot_tracer_block_grok1_slope 5-100ps_2-200ps_tracer_block 250_600K.jpg
+outputs/qe outputs/msd_plot_tracer_block_grok1_slope 5-100ps_2-200ps_tracer_block 500_600K.jpg
+outputs/qe outputs/msd_slope 0-10_0-10ps_Li_800_Charged.png
+outputs/qe outputs/MSD_slope 5-20_0-25ps_charged_block 500_600K.jpg
+outputs/qe outputs/msd_slope 5-70_0-100ps_Al_800_Tracer.png
+outputs/qe outputs/msd_slope 5-100_0-150ps_Li_800_Tracer.png
+outputs/qe outputs/MSD_slope 5-100_2-200ps_tracer_block 250_600K.jpg
+outputs/qe outputs/MSD_slope 5-100_2-200ps_tracer_block 500_600K.jpg
+outputs/qe outputs/MSD_slope 5-200_0-300ps_Tracer_block 500_600K.jpeg
+outputs/qe outputs/NGP_1.jpg
+outputs/qe outputs/NGP_upto 200ps_Li_XYZ_600K.jpg
+outputs/qe outputs/rdf_plot_LiAlPS_LiAlPS_Al_time60ps_variable_cell.png
+outputs/qe outputs/rdf_plot_LiAlPS_LiAlPS_Li_time60ps_variable_cell.png
+outputs/qe outputs/rdf_plot_LiAlPS_LiAlPS_P_time60ps_variable_cell.png
+outputs/qe outputs/rdf_plot_LiAlPS_LiAlPS_S_time60ps_variable_cell.png
+outputs/qe outputs/vaf_Al_vaf.dat
+outputs/qe outputs/vaf_Al_vaf.png
+outputs/qe outputs/vaf_Al_vint.dat
+outputs/qe outputs/vaf_dump_Li_vaf_upto_10psframes.png
+outputs/qe outputs/vaf_dump_Li_vaf_upto_100psframes.png
+outputs/qe outputs/vaf_Li_vaf.dat
+outputs/qe outputs/vaf_Li_vaf.png
+outputs/qe outputs/vaf_Li_vint.dat
+outputs/qe outputs/vaf_LiAlPS_Al_vaf_upto_100psframes.png
+outputs/qe outputs/vaf_LiAlPS_Al_vaf.dat
+outputs/qe outputs/vaf_LiAlPS_Al_vint.dat
+outputs/qe outputs/vaf_LiAlPS_Li_vaf_upto_100psframes.png
+outputs/qe outputs/vaf_LiAlPS_Li_vaf.dat
+outputs/qe outputs/vaf_LiAlPS_Li_vaf.png
+outputs/qe outputs/vaf_LiAlPS_Li_vint.dat
+outputs/qe outputs/vaf_LiAlPS_multi_vaf.png
+outputs/qe outputs/vaf_LiAlPS_P_vaf_upto_100psframes.png
+outputs/qe outputs/vaf_LiAlPS_P_vaf.dat
+outputs/qe outputs/vaf_LiAlPS_P_vint.dat
+outputs/qe outputs/vaf_LiAlPS_S_vaf_upto_100psframes.png
+outputs/qe outputs/vaf_LiAlPS_S_vaf.dat
+outputs/qe outputs/vaf_LiAlPS_S_vint.dat
+outputs/qe outputs/vaf_P_vaf.dat
+outputs/qe outputs/vaf_P_vaf.png
+outputs/qe outputs/vaf_P_vint.dat
+outputs/qe outputs/vaf_S_vaf.dat
+outputs/qe outputs/vaf_S_vaf.png
+outputs/qe outputs/vaf_S_vint.dat
+outputs/qe outputs/van_hove_distinct_Li_0-5ps_600K.png
+outputs/qe outputs/van_hove_distinct_Li_0-140ps_600K.png
+outputs/qe outputs/van_hove_self_Li_0-5ps_600K.png
+outputs/qe outputs/van_hove_self_Li_0-140ps_600K.png
+outputs/qe outputs/vdos_1.png
+outputs/qe outputs/vdos_2.png
+outputs/qe outputs/vdos_dump_1.png
+outputs/qe outputs/vdos_dump_2.png
+outputs/qe outputs/vdos_vdos_mine.png
+outputs/qe outputs/vdos_vdos.png
+outputs/qe outputs/vh_0-10ps_Li_800_Distinct.png
+outputs/qe outputs/vh_10-15ps_Li_800_Distinct.png
+outputs/qe outputs/vh_slope 5-100_0-160ps_Al_800_self.png
+outputs/qe outputs/vh_slope 5-100_0-160ps_Li_800_self.png
+outputs/qe outputs/vh_slope 5-100_0-160ps_P_800_self.png
+outputs/qe outputs/vh_slope 5-100_0-160ps_S_800_self.png
+sitator-master/site-analysis-LASO-Copy1.ipynb
+target/__pycache__/compute_vaf.cpython-313.pyc
+MSD.jpg
+vaf_all800K_relax_Li_vaf_upto_1000psframes.png
+van_hove_plot_Li_Distinct.png
+van_hove_plot_Li_Self.png
+custom_modules/__init__.py
+custom_modules/samos_analysis.py
+custom_modules/samos_io.py
+custom_modules/samos_plotting.py
+custom_modules/samos_trajectory.py
+custom_modules/samos_utils.py
+outputs/msd_slope 0-10_0-10ps_Li_800_Charged.png
+outputs/msd_slope 5-70_0-100ps_Al_800_Tracer.png
+outputs/msd_slope 5-100_0-150ps_Li_800_Tracer.png
+outputs/MSD_slope 5-200_0-300ps_Tracer_block 500_600K.jpeg
+outputs/van_hove_distinct_Li_0-5ps_600K.png
+outputs/van_hove_distinct_Li_0-140ps_600K.png
+outputs/van_hove_self_Li_0-5ps_600K.png
+outputs/van_hove_self_Li_0-140ps_600K.png
+outputs/vh_0-10ps_Li_800_Distinct.png
+outputs/vh_10-15ps_Li_800_Distinct.png
+outputs/vh_slope 5-100_0-160ps_Al_800_self.png
+outputs/vh_slope 5-100_0-160ps_Li_800_self.png
+outputs/vh_slope 5-100_0-160ps_P_800_self.png
+outputs/vh_slope 5-100_0-160ps_S_800_self.png
+outputs/lammps outputs/van_hove_plot_Li_Distinct.png
+outputs/lammps outputs/van_hove_plot_Li_Self.png
+outputs/lammps outputs/VH_lammps_all800Krelax_distinct.png
+outputs/lammps outputs/VH_lammps_all800Krelax_self.png
+samos_modules/samos_analysis.py
+samos_modules/samos_io.py
+samos_modules/samos_trajectory.py
+samos_modules/samos_utils.py
+samos_modules/__pycache__/samos_trajectory.cpython-313.pyc
+MSD.jpg
+custom_modules/__init__.py
+custom_modules/samos_analysis.py
+custom_modules/samos_io.py
+custom_modules/samos_plotting.py
+custom_modules/samos_trajectory.py
+custom_modules/samos_utils.py
+outputs/msd_slope 0-10_0-10ps_Li_800_Charged.png
+outputs/msd_slope 5-70_0-100ps_Al_800_Tracer.png
+outputs/msd_slope 5-100_0-150ps_Li_800_Tracer.png
+outputs/MSD_slope 5-200_0-300ps_Tracer_block 500_600K.jpeg
+outputs/van_hove_distinct_Li_0-5ps_600K.png
+outputs/van_hove_distinct_Li_0-140ps_600K.png
+outputs/van_hove_self_Li_0-5ps_600K.png
+outputs/van_hove_self_Li_0-140ps_600K.png
+outputs/vh_0-10ps_Li_800_Distinct.png
+outputs/vh_10-15ps_Li_800_Distinct.png
+outputs/vh_slope 5-100_0-160ps_Al_800_self.png
+outputs/vh_slope 5-100_0-160ps_Li_800_self.png
+outputs/vh_slope 5-100_0-160ps_P_800_self.png
+outputs/vh_slope 5-100_0-160ps_S_800_self.png
+samos_modules/samos_analysis.py
+samos_modules/samos_io.py
+samos_modules/samos_trajectory.py
+samos_modules/samos_utils.py
+samos_modules/__pycache__/samos_trajectory.cpython-313.pyc
+target/__pycache__/compute_vaf.cpython-313.pyc
+target/__pycache__/const.cpython-313.pyc
+target/__pycache__/vaf.cpython-313.pyc
+target/__pycache__/vdos.cpython-313.pyc
+test scripts/__init__.py
+test scripts/analysis.py
+test scripts/density.py
+test scripts/io.py
+test scripts/lammps_to_qe.py
+test scripts/plotting.py
+test scripts/trajectory.py
+test scripts/vaf.py
+zeopp-lsmo-master/.gitignore
+zeopp-lsmo-master/.pre-commit-config.yaml
+zeopp-lsmo-master/CHANGELOG.md
+zeopp-lsmo-master/CHECKLIST_B4_RELEASE.txt
+zeopp-lsmo-master/default_bin_bounds.tar
+zeopp-lsmo-master/HELP.txt
+zeopp-lsmo-master/LICENSE
+zeopp-lsmo-master/OVERVIEW.txt
+zeopp-lsmo-master/README.md
+zeopp-lsmo-master/wget.csh
+zeopp-lsmo-master/.github/build.sh
+zeopp-lsmo-master/.github/workflows/ci.yml
+zeopp-lsmo-master/builder_examples/building_blocks/C.xyz
+zeopp-lsmo-master/builder_examples/building_blocks/Cu2.xyz
+zeopp-lsmo-master/builder_examples/building_blocks/linear_nonsym_without_sites.xyz
+zeopp-lsmo-master/builder_examples/building_blocks/linear.xyz
+zeopp-lsmo-master/builder_examples/building_blocks/molecule_without_sites.xyz
+zeopp-lsmo-master/builder_examples/building_blocks/molecule3.xyz
+zeopp-lsmo-master/builder_examples/building_blocks/moleculeC.xyz
+zeopp-lsmo-master/builder_examples/building_blocks/pyr_linker_without_sites.xyz
+zeopp-lsmo-master/builder_examples/building_blocks/qom_linker_without_sites.xyz
+zeopp-lsmo-master/builder_examples/building_blocks/tetrahedral.xyz
+zeopp-lsmo-master/builder_examples/building_blocks/trigonal.xyz
+zeopp-lsmo-master/builder_examples/building_blocks/Zn4O.xyz
+zeopp-lsmo-master/builder_examples/nets/dia-c5.cgd
+zeopp-lsmo-master/builder_examples/nets/dia.cgd
+zeopp-lsmo-master/builder_examples/nets/hcb.cgd
+zeopp-lsmo-master/builder_examples/nets/ntt_simple.cgd
+zeopp-lsmo-master/builder_examples/nets/pts.cgd
+zeopp-lsmo-master/builder_examples/nets/pyr.cgd
+zeopp-lsmo-master/builder_examples/nets/qom.cgd
+zeopp-lsmo-master/builder_examples/nets/rhr.cgd
+zeopp-lsmo-master/builder_examples/nets/tbo.cgd
+zeopp-lsmo-master/cython_wrapper/setup_alt.py
+zeopp-lsmo-master/cython_wrapper/setup.py
+zeopp-lsmo-master/cython_wrapper/zeo/__init__.py
+zeopp-lsmo-master/cython_wrapper/zeo/area_volume.cpp
+zeopp-lsmo-master/cython_wrapper/zeo/area_volume.pxd
+zeopp-lsmo-master/cython_wrapper/zeo/area_volume.pyx
+zeopp-lsmo-master/cython_wrapper/zeo/channel.cpp
+zeopp-lsmo-master/cython_wrapper/zeo/channel.pxd
+zeopp-lsmo-master/cython_wrapper/zeo/channel.pyx
+zeopp-lsmo-master/cython_wrapper/zeo/cluster.cpp
+zeopp-lsmo-master/cython_wrapper/zeo/cluster.pxd
+zeopp-lsmo-master/cython_wrapper/zeo/cluster.pyx
+zeopp-lsmo-master/cython_wrapper/zeo/cycle.cpp
+zeopp-lsmo-master/cython_wrapper/zeo/cycle.pxd
+zeopp-lsmo-master/cython_wrapper/zeo/cycle.pyx
+zeopp-lsmo-master/cython_wrapper/zeo/feature.pxd
+zeopp-lsmo-master/cython_wrapper/zeo/geometry.cpp
+zeopp-lsmo-master/cython_wrapper/zeo/geometry.pxd
+zeopp-lsmo-master/cython_wrapper/zeo/geometry.pyx
+zeopp-lsmo-master/cython_wrapper/zeo/graphstorage.cpp
+zeopp-lsmo-master/cython_wrapper/zeo/graphstorage.pxd
+zeopp-lsmo-master/cython_wrapper/zeo/graphstorage.pyx
+zeopp-lsmo-master/cython_wrapper/zeo/high_accuracy.cpp
+zeopp-lsmo-master/cython_wrapper/zeo/high_accuracy.pxd
+zeopp-lsmo-master/cython_wrapper/zeo/high_accuracy.pyx
+zeopp-lsmo-master/cython_wrapper/zeo/holograms.pxd
+zeopp-lsmo-master/cython_wrapper/zeo/holograms.pyx
+zeopp-lsmo-master/cython_wrapper/zeo/netinfo.cpp
+zeopp-lsmo-master/cython_wrapper/zeo/netinfo.pxd
+zeopp-lsmo-master/cython_wrapper/zeo/netinfo.pyx
+zeopp-lsmo-master/cython_wrapper/zeo/netio.cpp
+zeopp-lsmo-master/cython_wrapper/zeo/netio.pxd
+zeopp-lsmo-master/cython_wrapper/zeo/netio.pyx
+zeopp-lsmo-master/cython_wrapper/zeo/netstorage.cpp
+zeopp-lsmo-master/cython_wrapper/zeo/netstorage.pxd
+zeopp-lsmo-master/cython_wrapper/zeo/netstorage.pyx
+zeopp-lsmo-master/cython_wrapper/zeo/network.pxd
+zeopp-lsmo-master/cython_wrapper/zeo/psd.cpp
+zeopp-lsmo-master/cython_wrapper/zeo/psd.pxd
+zeopp-lsmo-master/cython_wrapper/zeo/psd.pyx
+zeopp-lsmo-master/cython_wrapper/zeo/string_add.pxd
+zeopp-lsmo-master/cython_wrapper/zeo/voronoicell.cpp
+zeopp-lsmo-master/cython_wrapper/zeo/voronoicell.pxd
+zeopp-lsmo-master/cython_wrapper/zeo/voronoicell.pyx
+zeopp-lsmo-master/cython_wrapper/zeo/tests/MgO_vac1.cssr
+zeopp-lsmo-master/cython_wrapper/zeo/tests/MgO.cssr
+zeopp-lsmo-master/cython_wrapper/zeo/tests/MgO.rad
+zeopp-lsmo-master/cython_wrapper/zeo/tests/test_areavol.py
+zeopp-lsmo-master/cython_wrapper/zeo/tests/test_cluster.py
+zeopp-lsmo-master/cython_wrapper/zeo/tests/test_cycle.py
+zeopp-lsmo-master/cython_wrapper/zeo/tests/test_highaccuracy.py
+zeopp-lsmo-master/cython_wrapper/zeo/tests/test_netstorage.py
+zeopp-lsmo-master/Docs/Visualizing_pore_size_distribution_files_in_VisIt.ppt
+zeopp-lsmo-master/Docs/Zeo_tutorial_word.ppt
+zeopp-lsmo-master/documentation/example.mass
+zeopp-lsmo-master/documentation/example.rad
+zeopp-lsmo-master/documentation/README
+zeopp-lsmo-master/documentation/README_rich_test
+zeopp-lsmo-master/nets/dia-c5.cgd
+zeopp-lsmo-master/nets/dia.cgd
+zeopp-lsmo-master/nets/hcb.cgd
+zeopp-lsmo-master/nets/ntt_simple.cgd
+zeopp-lsmo-master/nets/pts.cgd
+zeopp-lsmo-master/nets/pyr.cgd
+zeopp-lsmo-master/nets/qom.cgd
+zeopp-lsmo-master/nets/rhr.cgd
+zeopp-lsmo-master/nets/tbo.cgd
+zeopp-lsmo-master/R/noninteractive_graph_functions.R
+zeopp-lsmo-master/R/noninteractive_graph_shell.R
+zeopp-lsmo-master/R/parameters.R
+zeopp-lsmo-master/R/R_PSD_shell_plot.pdf
+zeopp-lsmo-master/tests/EDI_ref.chan
+zeopp-lsmo-master/tests/EDI_ref.psd_histo
+zeopp-lsmo-master/tests/EDI_ref.res
+zeopp-lsmo-master/tests/EDI_ref.sa
+zeopp-lsmo-master/tests/EDI_ref.vol
+zeopp-lsmo-master/tests/EDI.cssr
+zeopp-lsmo-master/tests/history_1000.cssr
+zeopp-lsmo-master/tests/history_1000.res
+zeopp-lsmo-master/tests/history_1000.sa
+zeopp-lsmo-master/tests/history_1000.vol
+zeopp-lsmo-master/tests/parsers.py
+zeopp-lsmo-master/tests/test_zeopp.py
+zeopp-lsmo-master/tests/ZIF-67_opt_ref.xyz
+zeopp-lsmo-master/tests/ZIF-67_opt.cif
+zeopp-lsmo-master/voro++/config.mk
+zeopp-lsmo-master/voro++/LICENSE
+zeopp-lsmo-master/voro++/Makefile
+zeopp-lsmo-master/voro++/NEWS
+zeopp-lsmo-master/voro++/README
+zeopp-lsmo-master/voro++/examples/Makefile
+zeopp-lsmo-master/voro++/examples/README
+zeopp-lsmo-master/voro++/examples/basic/convex_test.cc
+zeopp-lsmo-master/voro++/examples/basic/import.cc
+zeopp-lsmo-master/voro++/examples/basic/import.pov
+zeopp-lsmo-master/voro++/examples/basic/Makefile
+zeopp-lsmo-master/voro++/examples/basic/pack_ten_cube
+zeopp-lsmo-master/voro++/examples/basic/platonic.cc
+zeopp-lsmo-master/voro++/examples/basic/random_points.cc
+zeopp-lsmo-master/voro++/examples/basic/README
+zeopp-lsmo-master/voro++/examples/basic/single_cell.cc
+zeopp-lsmo-master/voro++/examples/custom/cell_statistics.cc
+zeopp-lsmo-master/voro++/examples/custom/custom_output.cc
+zeopp-lsmo-master/voro++/examples/custom/custom_output.pl
+zeopp-lsmo-master/voro++/examples/custom/custom_output.pov
+zeopp-lsmo-master/voro++/examples/custom/Makefile
+zeopp-lsmo-master/voro++/examples/custom/pack_six_cube
+zeopp-lsmo-master/voro++/examples/custom/pack_six_cube_poly
+zeopp-lsmo-master/voro++/examples/custom/pack_six_cube_poly.pov
+zeopp-lsmo-master/voro++/examples/custom/pack_six_cube.pov
+zeopp-lsmo-master/voro++/examples/custom/radical.cc
+zeopp-lsmo-master/voro++/examples/custom/README
+zeopp-lsmo-master/voro++/examples/degenerate/degenerate.cc
+zeopp-lsmo-master/voro++/examples/degenerate/degenerate.pov
+zeopp-lsmo-master/voro++/examples/degenerate/degenerate2.cc
+zeopp-lsmo-master/voro++/examples/degenerate/degenerate2.pov
+zeopp-lsmo-master/voro++/examples/degenerate/Makefile
+zeopp-lsmo-master/voro++/examples/degenerate/README
+zeopp-lsmo-master/voro++/examples/extra/box_cut.cc
+zeopp-lsmo-master/voro++/examples/extra/cut_region.cc
+zeopp-lsmo-master/voro++/examples/extra/irregular.cc
+zeopp-lsmo-master/voro++/examples/extra/irregular.pov
+zeopp-lsmo-master/voro++/examples/extra/l_shape.cc
+zeopp-lsmo-master/voro++/examples/extra/Makefile
+zeopp-lsmo-master/voro++/examples/extra/pack_irregular
+zeopp-lsmo-master/voro++/examples/extra/README
+zeopp-lsmo-master/voro++/examples/extra/superellipsoid.cc
+zeopp-lsmo-master/voro++/examples/extra/superellipsoid.pov
+zeopp-lsmo-master/voro++/examples/interface/find_voro_cell.cc
+zeopp-lsmo-master/voro++/examples/interface/loops.cc
+zeopp-lsmo-master/voro++/examples/interface/loops.pov
+zeopp-lsmo-master/voro++/examples/interface/Makefile
+zeopp-lsmo-master/voro++/examples/interface/odd_even.cc
+zeopp-lsmo-master/voro++/examples/interface/odd_even.pov
+zeopp-lsmo-master/voro++/examples/interface/pack_six_cube
+zeopp-lsmo-master/voro++/examples/interface/polygons.cc
+zeopp-lsmo-master/voro++/examples/interface/polygons4.pov
+zeopp-lsmo-master/voro++/examples/interface/polygons5.pov
+zeopp-lsmo-master/voro++/examples/interface/polygons6.pov
+zeopp-lsmo-master/voro++/examples/interface/README
+zeopp-lsmo-master/voro++/examples/no_release/cylinder_inv.cc
+zeopp-lsmo-master/voro++/examples/no_release/cylinder_inv.pov
+zeopp-lsmo-master/voro++/examples/no_release/ellipsoid.cc
+zeopp-lsmo-master/voro++/examples/no_release/finite_sys.cc
+zeopp-lsmo-master/voro++/examples/no_release/finite_sys.pov
+zeopp-lsmo-master/voro++/examples/no_release/ghost_test.cc
+zeopp-lsmo-master/voro++/examples/no_release/import_freeman.cc
+zeopp-lsmo-master/voro++/examples/no_release/import_nguyen.cc
+zeopp-lsmo-master/voro++/examples/no_release/import_rahman.cc
+zeopp-lsmo-master/voro++/examples/no_release/liq-900K.dat
+zeopp-lsmo-master/voro++/examples/no_release/lloyd_box.cc
+zeopp-lsmo-master/voro++/examples/no_release/Makefile
+zeopp-lsmo-master/voro++/examples/no_release/minkowski.cc
+zeopp-lsmo-master/voro++/examples/no_release/neigh_test.cc
+zeopp-lsmo-master/voro++/examples/no_release/pack_semicircle
+zeopp-lsmo-master/voro++/examples/no_release/period.cc
+zeopp-lsmo-master/voro++/examples/no_release/polycry.gnuplot
+zeopp-lsmo-master/voro++/examples/no_release/polycrystal_rahman.cc
+zeopp-lsmo-master/voro++/examples/no_release/r_pts_interface.cc
+zeopp-lsmo-master/voro++/examples/no_release/rad_test.cc
+zeopp-lsmo-master/voro++/examples/no_release/rad_test.pl
+zeopp-lsmo-master/voro++/examples/no_release/rad_test.pov
+zeopp-lsmo-master/voro++/examples/no_release/random_points_10.cc
+zeopp-lsmo-master/voro++/examples/no_release/random_points_200.cc
+zeopp-lsmo-master/voro++/examples/no_release/single_cell_2d.cc
+zeopp-lsmo-master/voro++/examples/no_release/sphere_mesh.cc
+zeopp-lsmo-master/voro++/examples/no_release/sphere.cc
+zeopp-lsmo-master/voro++/examples/no_release/split_cell.cc
+zeopp-lsmo-master/voro++/examples/no_release/tri_mesh.cc
+zeopp-lsmo-master/voro++/examples/no_release/voro_lf.cc
+zeopp-lsmo-master/voro++/examples/timing/README
+zeopp-lsmo-master/voro++/examples/timing/timing_test.cc
+zeopp-lsmo-master/voro++/examples/timing/timing_test.pl
+zeopp-lsmo-master/voro++/examples/walls/cylinder.cc
+zeopp-lsmo-master/voro++/examples/walls/cylinder.pov
+zeopp-lsmo-master/voro++/examples/walls/frustum.cc
+zeopp-lsmo-master/voro++/examples/walls/frustum.pov
+zeopp-lsmo-master/voro++/examples/walls/Makefile
+zeopp-lsmo-master/voro++/examples/walls/pack_cylinder
+zeopp-lsmo-master/voro++/examples/walls/pack_torus
+zeopp-lsmo-master/voro++/examples/walls/README
+zeopp-lsmo-master/voro++/examples/walls/tetrahedron.cc
+zeopp-lsmo-master/voro++/examples/walls/tetrahedron.pov
+zeopp-lsmo-master/voro++/examples/walls/torus.cc
+zeopp-lsmo-master/voro++/examples/walls/torus.pov
+zeopp-lsmo-master/voro++/man/voro++.1
+zeopp-lsmo-master/voro++/scripts/network.pl
+zeopp-lsmo-master/voro++/scripts/random.pl
+zeopp-lsmo-master/voro++/scripts/README
+zeopp-lsmo-master/voro++/scripts/sum.pl
+zeopp-lsmo-master/voro++/src/c_loops.cc
+zeopp-lsmo-master/voro++/src/c_loops.hh
+zeopp-lsmo-master/voro++/src/cell.cc
+zeopp-lsmo-master/voro++/src/cell.hh
+zeopp-lsmo-master/voro++/src/cmd_line.cc
+zeopp-lsmo-master/voro++/src/common.cc
+zeopp-lsmo-master/voro++/src/common.hh
+zeopp-lsmo-master/voro++/src/config.hh
+zeopp-lsmo-master/voro++/src/container_prd.cc
+zeopp-lsmo-master/voro++/src/container_prd.hh
+zeopp-lsmo-master/voro++/src/container.cc
+zeopp-lsmo-master/voro++/src/container.hh
+zeopp-lsmo-master/voro++/src/Doxyfile
+zeopp-lsmo-master/voro++/src/Makefile
+zeopp-lsmo-master/voro++/src/Makefile.dep
+zeopp-lsmo-master/voro++/src/pre_container.cc
+zeopp-lsmo-master/voro++/src/pre_container.hh
+zeopp-lsmo-master/voro++/src/rad_option.hh
+zeopp-lsmo-master/voro++/src/README
+zeopp-lsmo-master/voro++/src/unitcell.cc
+zeopp-lsmo-master/voro++/src/unitcell.hh
+zeopp-lsmo-master/voro++/src/v_base_wl.cc
+zeopp-lsmo-master/voro++/src/v_base.cc
+zeopp-lsmo-master/voro++/src/v_base.hh
+zeopp-lsmo-master/voro++/src/v_compute.cc
+zeopp-lsmo-master/voro++/src/v_compute.hh
+zeopp-lsmo-master/voro++/src/voro++.cc
+zeopp-lsmo-master/voro++/src/voro++.hh
+zeopp-lsmo-master/voro++/src/wall.cc
+zeopp-lsmo-master/voro++/src/wall.hh
+zeopp-lsmo-master/voro++/src/worklist_gen.pl
+zeopp-lsmo-master/voro++/src/worklist.hh
+zeopp-lsmo-master/voro++/zeo/cp_test
+zeopp-lsmo-master/voro++/zeo/cp_test.cc
+zeopp-lsmo-master/voro++/zeo/cp_test.gnuplot
+zeopp-lsmo-master/voro++/zeo/images
+zeopp-lsmo-master/voro++/zeo/images.cc
+zeopp-lsmo-master/voro++/zeo/Makefile
+zeopp-lsmo-master/voro++/zeo/network
+zeopp-lsmo-master/voro++/zeo/network.cc
+zeopp-lsmo-master/voro++/zeo/r_table.cc
+zeopp-lsmo-master/voro++/zeo/structure.cif
+zeopp-lsmo-master/voro++/zeo/v_network.cc
+zeopp-lsmo-master/voro++/zeo/v_network.hh
+zeopp-lsmo-master/voro++/zeo/examples/AFX.dom
+zeopp-lsmo-master/voro++/zeo/examples/AFX.nd2
+zeopp-lsmo-master/voro++/zeo/examples/AFX.net
+zeopp-lsmo-master/voro++/zeo/examples/AFX.nt2
+zeopp-lsmo-master/voro++/zeo/examples/AFX.ntd
+zeopp-lsmo-master/voro++/zeo/examples/AFX.out
+zeopp-lsmo-master/voro++/zeo/examples/AFX.par
+zeopp-lsmo-master/voro++/zeo/examples/AFX.v1
+zeopp-lsmo-master/voro++/zeo/examples/BIK.v1
+zeopp-lsmo-master/voro++/zeo/examples/EDI.v1
+zeopp-lsmo-master/voro++/zeo/examples/EMT.v1
+zeopp-lsmo-master/voro++/zeo/examples/HEU.v1
+zeopp-lsmo-master/voro++/zeo/examples/HV.v1
+zeopp-lsmo-master/voro++/zeo/examples/IFR.v1
+zeopp-lsmo-master/voro++/zeo/examples/JBW.v1
+zeopp-lsmo-master/voro++/zeo/examples/P1.v1
+zeopp-lsmo-master/voro++/zeo/examples/P2.v1
+zeopp-lsmo-master/voro++/zeo/examples/P3.v1
+zeopp-lsmo-master/voro++/zeo/examples/P4.v1
+zeopp-lsmo-master/voro++/zeo/examples/test.v1
+zeopp-lsmo-master/voro++/zeo/examples/YUG.v1
+zeopp-lsmo-master/zeo++/area_and_volume.cc
+zeopp-lsmo-master/zeo++/area_and_volume.h
+zeopp-lsmo-master/zeo++/arguments.cc
+zeopp-lsmo-master/zeo++/arguments.h
+zeopp-lsmo-master/zeo++/channel.cc
+zeopp-lsmo-master/zeo++/channel.h
+zeopp-lsmo-master/zeo++/cluster.cc
+zeopp-lsmo-master/zeo++/cluster.h
+zeopp-lsmo-master/zeo++/cycle.cc
+zeopp-lsmo-master/zeo++/cycle.h
+zeopp-lsmo-master/zeo++/diversity_selection_holos.c
+zeopp-lsmo-master/zeo++/feature.cc
+zeopp-lsmo-master/zeo++/feature.h
+zeopp-lsmo-master/zeo++/framework_builder.cc
+zeopp-lsmo-master/zeo++/general.h
+zeopp-lsmo-master/zeo++/geometry.cc
+zeopp-lsmo-master/zeo++/geometry.h
+zeopp-lsmo-master/zeo++/get_holo_similarity.c
+zeopp-lsmo-master/zeo++/gpu_energy.cc
+zeopp-lsmo-master/zeo++/gpu_energy.h
+zeopp-lsmo-master/zeo++/graphstorage.cc
+zeopp-lsmo-master/zeo++/graphstorage.h
+zeopp-lsmo-master/zeo++/grid.cc
+zeopp-lsmo-master/zeo++/grid.h
+zeopp-lsmo-master/zeo++/heap.h
+zeopp-lsmo-master/zeo++/holo_similarity.h
+zeopp-lsmo-master/zeo++/holograms.cc
+zeopp-lsmo-master/zeo++/holograms.h
+zeopp-lsmo-master/zeo++/instructions.cc
+zeopp-lsmo-master/zeo++/instructions.h
+zeopp-lsmo-master/zeo++/main.cc
+zeopp-lsmo-master/zeo++/Makefile
+zeopp-lsmo-master/zeo++/Makefile.dep
+zeopp-lsmo-master/zeo++/material.cc
+zeopp-lsmo-master/zeo++/material.h
+zeopp-lsmo-master/zeo++/mindist.cc
+zeopp-lsmo-master/zeo++/mindist.h
+zeopp-lsmo-master/zeo++/molecule_to_abstract.cc
+zeopp-lsmo-master/zeo++/net.cc
+zeopp-lsmo-master/zeo++/net.h
+zeopp-lsmo-master/zeo++/network.cc
+zeopp-lsmo-master/zeo++/network.h
+zeopp-lsmo-master/zeo++/networkaccessibility.cc
+zeopp-lsmo-master/zeo++/networkaccessibility.h
+zeopp-lsmo-master/zeo++/networkanalysis.cc
+zeopp-lsmo-master/zeo++/networkanalysis.h
+zeopp-lsmo-master/zeo++/networkinfo.cc
+zeopp-lsmo-master/zeo++/networkinfo.h
+zeopp-lsmo-master/zeo++/networkio.cc
+zeopp-lsmo-master/zeo++/networkio.h
+zeopp-lsmo-master/zeo++/networkstorage.cc
+zeopp-lsmo-master/zeo++/networkstorage.h
+zeopp-lsmo-master/zeo++/octree.cpp
+zeopp-lsmo-master/zeo++/octree.hpp
+zeopp-lsmo-master/zeo++/OMS.cc
+zeopp-lsmo-master/zeo++/OMS.h
+zeopp-lsmo-master/zeo++/poreinfo.cc
+zeopp-lsmo-master/zeo++/poreinfo.h
+zeopp-lsmo-master/zeo++/psd.cc
+zeopp-lsmo-master/zeo++/psd.h
+zeopp-lsmo-master/zeo++/ray.cc
+zeopp-lsmo-master/zeo++/ray.h
+zeopp-lsmo-master/zeo++/rmsd.cc
+zeopp-lsmo-master/zeo++/rmsd.h
+zeopp-lsmo-master/zeo++/segment.cc
+zeopp-lsmo-master/zeo++/segment.h
+zeopp-lsmo-master/zeo++/sphere_approx.cc
+zeopp-lsmo-master/zeo++/sphere_approx.h
+zeopp-lsmo-master/zeo++/string_additions.cc
+zeopp-lsmo-master/zeo++/string_additions.h
+zeopp-lsmo-master/zeo++/symbcalc.cc
+zeopp-lsmo-master/zeo++/symbcalc.h
+zeopp-lsmo-master/zeo++/symmetry.cc
+zeopp-lsmo-master/zeo++/symmetry.h
+zeopp-lsmo-master/zeo++/tdpldhistogram.cc
+zeopp-lsmo-master/zeo++/v_network.cc
+zeopp-lsmo-master/zeo++/v_network.h
+zeopp-lsmo-master/zeo++/voronoicell.cc
+zeopp-lsmo-master/zeo++/voronoicell.h
+zeopp-lsmo-master/zeo++/zeo_consts.h
+zeopp-lsmo-master/zeo++/zeojobs.h
+zeopp-lsmo-master/zeovis/README
+zeopp-lsmo-master/zeovis/ZeoVis.tcl
+zeopp-lsmo-master/zeovis/ZeoVisCommands.tcl

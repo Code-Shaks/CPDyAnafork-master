@@ -1,0 +1,970 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>target.utilities &mdash; CPDyAna 01-02-2024 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=18cd0f04"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            CPDyAna
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../target.html">Target Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#main-analysis-driver">Main Analysis Driver</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#cpdyana-combined-molecular-dynamics-analysis-tool">CPDyAna – Combined Molecular Dynamics Analysis Tool</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.CPDyAna.Job"><code class="docutils literal notranslate"><span class="pre">Job()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.CPDyAna.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.CPDyAna.parser"><code class="docutils literal notranslate"><span class="pre">parser()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#key-functions">Key Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#data-processing">Data Processing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#general-data-processing-module-for-cpdyana">General Data Processing Module for CPDyAna</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.data_processing.data_evaluator"><code class="docutils literal notranslate"><span class="pre">data_evaluator()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.data_processing.find_terms"><code class="docutils literal notranslate"><span class="pre">find_terms()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.data_processing.segmenter_func"><code class="docutils literal notranslate"><span class="pre">segmenter_func()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#lammps-data-processing">LAMMPS Data Processing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#lammps-data-processing-module-for-cpdyana">LAMMPS Data Processing Module for CPDyAna</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.data_processing_lammps.calculate_time_window_lammps"><code class="docutils literal notranslate"><span class="pre">calculate_time_window_lammps()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.data_processing_lammps.data_evaluator_lammps"><code class="docutils literal notranslate"><span class="pre">data_evaluator_lammps()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.data_processing_lammps.detect_lammps_format"><code class="docutils literal notranslate"><span class="pre">detect_lammps_format()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.data_processing_lammps.find_terms_lammps"><code class="docutils literal notranslate"><span class="pre">find_terms_lammps()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.data_processing_lammps.is_lammps_simulation"><code class="docutils literal notranslate"><span class="pre">is_lammps_simulation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.data_processing_lammps.segmenter_func_lammps"><code class="docutils literal notranslate"><span class="pre">segmenter_func_lammps()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#input-output-operations">Input/Output Operations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#input-file-reader-module-for-cpdyana">Input File Reader Module for CPDyAna</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.detect_trajectory_format"><code class="docutils literal notranslate"><span class="pre">detect_trajectory_format()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.export_verification_trajectory"><code class="docutils literal notranslate"><span class="pre">export_verification_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.generate_analysis_recommendations"><code class="docutils literal notranslate"><span class="pre">generate_analysis_recommendations()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.has_type_column"><code class="docutils literal notranslate"><span class="pre">has_type_column()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.read_bomd_trajectory"><code class="docutils literal notranslate"><span class="pre">read_bomd_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.read_cel_file"><code class="docutils literal notranslate"><span class="pre">read_cel_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.read_evp_file"><code class="docutils literal notranslate"><span class="pre">read_evp_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.read_ion_file"><code class="docutils literal notranslate"><span class="pre">read_ion_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.read_ion_file_universal"><code class="docutils literal notranslate"><span class="pre">read_ion_file_universal()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.read_lammps_trajectory"><code class="docutils literal notranslate"><span class="pre">read_lammps_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.read_pos_file"><code class="docutils literal notranslate"><span class="pre">read_pos_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.io.get_indices"><code class="docutils literal notranslate"><span class="pre">get_indices()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.io.get_position_indices"><code class="docutils literal notranslate"><span class="pre">get_position_indices()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.io.get_thermo_props"><code class="docutils literal notranslate"><span class="pre">get_thermo_props()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.io.iter_lammps_dump"><code class="docutils literal notranslate"><span class="pre">iter_lammps_dump()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.io.pos_2_absolute"><code class="docutils literal notranslate"><span class="pre">pos_2_absolute()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.io.read_lammps_dump"><code class="docutils literal notranslate"><span class="pre">read_lammps_dump()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.io.read_positions_with_ase"><code class="docutils literal notranslate"><span class="pre">read_positions_with_ase()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.io.read_step_info"><code class="docutils literal notranslate"><span class="pre">read_step_info()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.io.read_xsf"><code class="docutils literal notranslate"><span class="pre">read_xsf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.io.write_grid"><code class="docutils literal notranslate"><span class="pre">write_grid()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.io.write_xsf"><code class="docutils literal notranslate"><span class="pre">write_xsf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#supported-file-types">Supported File Types</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#core-calculations">Core Calculations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#calculations-module-for-cpdyana">Calculations Module for CPDyAna</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.calc_fft"><code class="docutils literal notranslate"><span class="pre">calc_fft()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.calc_msd_tracer"><code class="docutils literal notranslate"><span class="pre">calc_msd_tracer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.calc_ngp_tracer"><code class="docutils literal notranslate"><span class="pre">calc_ngp_tracer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.calculate_msd"><code class="docutils literal notranslate"><span class="pre">calculate_msd()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.calculate_msd_lammps"><code class="docutils literal notranslate"><span class="pre">calculate_msd_lammps()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.calculate_msd_qe"><code class="docutils literal notranslate"><span class="pre">calculate_msd_qe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.calculate_ngp"><code class="docutils literal notranslate"><span class="pre">calculate_ngp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.disp_sum"><code class="docutils literal notranslate"><span class="pre">disp_sum()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.msd_charged"><code class="docutils literal notranslate"><span class="pre">msd_charged()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.msd_tracer"><code class="docutils literal notranslate"><span class="pre">msd_tracer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#analysis-types">Analysis Types</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#correlation-analysis">Correlation Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#correlation-analysis-module-for-cpdyana">Correlation Analysis Module for CPDyAna</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.correrelation_analysis.Van_Hove_distinct"><code class="docutils literal notranslate"><span class="pre">Van_Hove_distinct()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.correrelation_analysis.Van_Hove_self"><code class="docutils literal notranslate"><span class="pre">Van_Hove_self()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#correlation-types">Correlation Types</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#rdf-computation">RDF Computation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_rdf.build_ase_trajectory"><code class="docutils literal notranslate"><span class="pre">build_ase_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_rdf.build_bomd_trajectory"><code class="docutils literal notranslate"><span class="pre">build_bomd_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_rdf.build_lammps_trajectory"><code class="docutils literal notranslate"><span class="pre">build_lammps_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_rdf.compute_rdf"><code class="docutils literal notranslate"><span class="pre">compute_rdf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_rdf.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#vaf-computation">VAF Computation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_vaf.build_bomd_trajectory"><code class="docutils literal notranslate"><span class="pre">build_bomd_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_vaf.build_trajectory"><code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_vaf.compute_vaf"><code class="docutils literal notranslate"><span class="pre">compute_vaf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_vaf.convert_symbols_to_atomic_numbers"><code class="docutils literal notranslate"><span class="pre">convert_symbols_to_atomic_numbers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_vaf.finite_diff_velocities"><code class="docutils literal notranslate"><span class="pre">finite_diff_velocities()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#vdos-analysis">VDOS Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#plotting-and-visualization">Plotting and Visualization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#plotting-and-visualization-module-for-cpdyana">Plotting and Visualization Module for CPDyAna</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.centers_to_edges"><code class="docutils literal notranslate"><span class="pre">centers_to_edges()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.centers_to_edges_time"><code class="docutils literal notranslate"><span class="pre">centers_to_edges_time()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.int_or_float"><code class="docutils literal notranslate"><span class="pre">int_or_float()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.msd_plot"><code class="docutils literal notranslate"><span class="pre">msd_plot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.msd_plot_lammps"><code class="docutils literal notranslate"><span class="pre">msd_plot_lammps()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.msd_plot_qe"><code class="docutils literal notranslate"><span class="pre">msd_plot_qe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.ngp_plot"><code class="docutils literal notranslate"><span class="pre">ngp_plot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.parse_cli_args"><code class="docutils literal notranslate"><span class="pre">parse_cli_args()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.plot_angular_spec"><code class="docutils literal notranslate"><span class="pre">plot_angular_spec()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.plot_power_spectrum"><code class="docutils literal notranslate"><span class="pre">plot_power_spectrum()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.plot_rdf"><code class="docutils literal notranslate"><span class="pre">plot_rdf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.plot_vaf_isotropic"><code class="docutils literal notranslate"><span class="pre">plot_vaf_isotropic()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.van_hove_plot"><code class="docutils literal notranslate"><span class="pre">van_hove_plot()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#probability-density-analysis">Probability Density Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#probability-density-calculation-module-for-cpdyana">Probability Density Calculation Module for CPDyAna</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.build_bomd_trajectory"><code class="docutils literal notranslate"><span class="pre">build_bomd_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.build_lammps_trajectory"><code class="docutils literal notranslate"><span class="pre">build_lammps_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.build_trajectory"><code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.calculate_probability_density"><code class="docutils literal notranslate"><span class="pre">calculate_probability_density()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.convert_symbols_to_atomic_numbers"><code class="docutils literal notranslate"><span class="pre">convert_symbols_to_atomic_numbers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.divide_chunks"><code class="docutils literal notranslate"><span class="pre">divide_chunks()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.parse_mask"><code class="docutils literal notranslate"><span class="pre">parse_mask()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#trajectory-utilities">Trajectory Utilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.trajectory.IncompatibleTrajectoriesException"><code class="docutils literal notranslate"><span class="pre">IncompatibleTrajectoriesException</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory"><code class="docutils literal notranslate"><span class="pre">Trajectory</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.atoms"><code class="docutils literal notranslate"><span class="pre">Trajectory.atoms</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.types"><code class="docutils literal notranslate"><span class="pre">Trajectory.types</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.nat"><code class="docutils literal notranslate"><span class="pre">Trajectory.nat</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.cell"><code class="docutils literal notranslate"><span class="pre">Trajectory.cell</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.nstep"><code class="docutils literal notranslate"><span class="pre">Trajectory.nstep</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.__init__"><code class="docutils literal notranslate"><span class="pre">Trajectory.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#id0"><code class="docutils literal notranslate"><span class="pre">Trajectory.atoms</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.calculate_velocities_from_positions"><code class="docutils literal notranslate"><span class="pre">Trajectory.calculate_velocities_from_positions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#id1"><code class="docutils literal notranslate"><span class="pre">Trajectory.cell</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.from_atoms"><code class="docutils literal notranslate"><span class="pre">Trajectory.from_atoms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_ase_trajectory"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_ase_trajectory()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_atom_types"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_atom_types()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_atoms"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_atoms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_cells"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_cells()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_forces"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_forces()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_indices_of_species"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_indices_of_species()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_positions"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_positions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_step_atoms"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_step_atoms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_stress"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_stress()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_timestep"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_timestep()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_types"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_types()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_velocities"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_velocities()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_volumes"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_volumes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#id2"><code class="docutils literal notranslate"><span class="pre">Trajectory.nat</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.recenter"><code class="docutils literal notranslate"><span class="pre">Trajectory.recenter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.set_atom_types"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_atom_types()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.set_atoms"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_atoms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.set_cells"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_cells()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.set_forces"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_forces()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.set_positions"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_positions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.set_pot_energies"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_pot_energies()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.set_stress"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_stress()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.set_timestep"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_timestep()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.set_types"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_types()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.set_velocities"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_velocities()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#id3"><code class="docutils literal notranslate"><span class="pre">Trajectory.types</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.trajectory.check_trajectory_compatibility"><code class="docutils literal notranslate"><span class="pre">check_trajectory_compatibility()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#general-utilities">General Utilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#utility-module-for-samos-package">Utility Module for SAMOS Package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray"><code class="docutils literal notranslate"><span class="pre">AttributedArray</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray._arrays"><code class="docutils literal notranslate"><span class="pre">AttributedArray._arrays</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray._attrs"><code class="docutils literal notranslate"><span class="pre">AttributedArray._attrs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray._nstep"><code class="docutils literal notranslate"><span class="pre">AttributedArray._nstep</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray.__init__"><code class="docutils literal notranslate"><span class="pre">AttributedArray.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray.get_array"><code class="docutils literal notranslate"><span class="pre">AttributedArray.get_array()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray.get_arraynames"><code class="docutils literal notranslate"><span class="pre">AttributedArray.get_arraynames()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray.get_attr"><code class="docutils literal notranslate"><span class="pre">AttributedArray.get_attr()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray.get_attrs"><code class="docutils literal notranslate"><span class="pre">AttributedArray.get_attrs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray.load_file"><code class="docutils literal notranslate"><span class="pre">AttributedArray.load_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray.nstep"><code class="docutils literal notranslate"><span class="pre">AttributedArray.nstep</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray.remove_array"><code class="docutils literal notranslate"><span class="pre">AttributedArray.remove_array()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray.rescale_array"><code class="docutils literal notranslate"><span class="pre">AttributedArray.rescale_array()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray.save"><code class="docutils literal notranslate"><span class="pre">AttributedArray.save()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray.set_array"><code class="docutils literal notranslate"><span class="pre">AttributedArray.set_array()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray.set_attr"><code class="docutils literal notranslate"><span class="pre">AttributedArray.set_attr()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.utilities.InputError"><code class="docutils literal notranslate"><span class="pre">InputError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.utilities.apply_minimum_image"><code class="docutils literal notranslate"><span class="pre">apply_minimum_image()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.utilities.get_color"><code class="docutils literal notranslate"><span class="pre">get_color()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.utilities.get_terminal_width"><code class="docutils literal notranslate"><span class="pre">get_terminal_width()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#analysis-helpers">Analysis Helpers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.analysis.BaseAnalyzer"><code class="docutils literal notranslate"><span class="pre">BaseAnalyzer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.analysis.BaseAnalyzer.__init__"><code class="docutils literal notranslate"><span class="pre">BaseAnalyzer.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.analysis.BaseAnalyzer.run"><code class="docutils literal notranslate"><span class="pre">BaseAnalyzer.run()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.analysis.BaseAnalyzer.set_trajectory"><code class="docutils literal notranslate"><span class="pre">BaseAnalyzer.set_trajectory()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.analysis.DynamicsAnalyzer"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.analysis.DynamicsAnalyzer.__init__"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.analysis.DynamicsAnalyzer.get_kinetic_energies"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.get_kinetic_energies()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.analysis.DynamicsAnalyzer.get_power_spectrum"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.get_power_spectrum()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.analysis.DynamicsAnalyzer.get_species_of_interest"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.get_species_of_interest()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.analysis.DynamicsAnalyzer.get_vaf"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.get_vaf()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.analysis.DynamicsAnalyzer.set_species_of_interest"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.set_species_of_interest()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.analysis.DynamicsAnalyzer.set_trajectories"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.set_trajectories()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.analysis.DynamicsAnalyzer.set_verbosity"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.set_verbosity()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.analysis.TimeSeries"><code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.analysis.get_gaussian_density"><code class="docutils literal notranslate"><span class="pre">get_gaussian_density()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.analysis.write_xsf_header"><code class="docutils literal notranslate"><span class="pre">write_xsf_header()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#preprocessing">Preprocessing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#utility-modules">Utility Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#module-target.json_serializable">JSON Serialization</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#json-serialization-utilities-for-cpdyana">JSON Serialization Utilities for CPDyAna</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.json_serializable.convert_to_serializable"><code class="docutils literal notranslate"><span class="pre">convert_to_serializable()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#module-target.const">Constants</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#physical-constants-and-unit-conversions-for-cpdyana">Physical Constants and Unit Conversions for CPDyAna</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../usage_Examples.html">Usage Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../usage_Examples.html#command-line-interface-examples">Command-Line Interface Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#mean-square-displacement-msd">Mean Square Displacement (MSD)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#non-gaussian-parameter-ngp">Non-Gaussian Parameter (NGP)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#van-hove-correlation-functions">Van Hove Correlation Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#radial-distribution-functions-rdf">Radial Distribution Functions (RDF)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#ionic-density-mapping">Ionic Density Mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#velocity-autocorrelation-functions-vaf">Velocity Autocorrelation Functions (VAF)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#vibrational-density-of-states-vdos">Vibrational Density of States (VDOS)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage_Examples.html#python-api-examples">Python API Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#direct-function-usage">Direct Function Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#samos-module-integration">SAMOS Module Integration</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage_Examples.html#batch-processing-workflows">Batch Processing Workflows</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#processing-multiple-simulations">Processing Multiple Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#temperature-series-analysis">Temperature Series Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage_Examples.html#advanced-analysis-examples">Advanced Analysis Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#custom-van-hove-analysis">Custom Van Hove Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage_Examples.html#file-format-tips">File Format Tips</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#required-file-structure">Required File Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#performance-optimization">Performance Optimization</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Module Index:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Usage Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules.html#basic-msd-analysis">Basic MSD Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules.html#non-gaussian-parameter-ngp-analysis">Non-Gaussian Parameter (NGP) Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules.html#van-hove-correlation-function">Van Hove Correlation Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules.html#radial-distribution-function-rdf">Radial Distribution Function (RDF)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules.html#velocity-autocorrelation-function-vaf">Velocity Autocorrelation Function (VAF)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules.html#vibrational-density-of-states-vdos">Vibrational Density of States (VDOS)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules.html#ionic-density-mapping">Ionic Density Mapping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules.html#batch-processing-workflows">Batch Processing Workflows</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../modules.html#processing-multiple-simulations">Processing Multiple Simulations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CPDyAna</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">target.utilities</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for target.utilities</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Utility Module for SAMOS Package</span>
+<span class="sd">================================</span>
+
+<span class="sd">This module provides essential utility functions, classes, and constants</span>
+<span class="sd">for the SAMOS (Statistical Analysis of MOlecular Simulations) package.</span>
+<span class="sd">It includes:</span>
+
+<span class="sd">- Base classes for array data handling with attribute storage</span>
+<span class="sd">- Unit conversion constants for molecular dynamics</span>
+<span class="sd">- Color mapping utilities for visualization</span>
+<span class="sd">- IO helpers and terminal display utilities</span>
+
+<span class="sd">The core `AttributedArray` class serves as a foundation for data storage</span>
+<span class="sd">in SAMOS, providing a flexible container for numerical arrays with</span>
+<span class="sd">associated metadata and serialization capabilities.</span>
+
+<span class="sd">Constants:</span>
+<span class="sd">    kB: Boltzmann constant in J/K</span>
+<span class="sd">    kB_ev: Boltzmann constant in eV/K</span>
+<span class="sd">    kB_au: Boltzmann constant in atomic units</span>
+<span class="sd">    amu_kg: Atomic mass unit in kg</span>
+<span class="sd">    bohr_to_ang: Bohr radius to Angstrom conversion factor</span>
+
+<span class="sd">Classes:</span>
+<span class="sd">    AttributedArray: Array container with metadata and serialization</span>
+<span class="sd">    InputError: Custom exception for input validation failures</span>
+
+<span class="sd">Functions:</span>
+<span class="sd">    get_color: Get RGB colors for chemical elements</span>
+<span class="sd">    get_terminal_width: Get current terminal dimensions</span>
+<span class="sd">    </span>
+<span class="sd">Author: SAMOS Development Team</span>
+<span class="sd">Version: 01-02-2024</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">json</span><span class="w"> </span><span class="kn">import</span> <span class="n">dumps</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ase.data.colors</span><span class="w"> </span><span class="kn">import</span> <span class="n">jmol_colors</span><span class="p">,</span> <span class="n">cpk_colors</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ase.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">atomic_numbers</span>
+
+<span class="n">kB</span> <span class="o">=</span> <span class="mf">1.38064852e-23</span>
+<span class="n">kB_ev</span> <span class="o">=</span> <span class="mf">8.6173303e-5</span>
+<span class="n">kB_au</span> <span class="o">=</span> <span class="mf">3.166810800209422e-06</span>
+<span class="n">amu_kg</span> <span class="o">=</span> <span class="mf">1.660539040e-27</span>
+<span class="n">bohr_to_ang</span> <span class="o">=</span> <span class="mf">0.52917721092</span>
+
+
+<div class="viewcode-block" id="AttributedArray">
+<a class="viewcode-back" href="../../target.html#target.utilities.AttributedArray">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AttributedArray</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Flexible array container with attribute storage and serialization.</span>
+<span class="sd">    </span>
+<span class="sd">    This class provides a foundation for storing numerical data arrays with</span>
+<span class="sd">    associated metadata in a serializable format. It forms the base class</span>
+<span class="sd">    for trajectory and analysis data structures in SAMOS.</span>
+<span class="sd">    </span>
+<span class="sd">    The class supports:</span>
+<span class="sd">    - Named array storage with validation</span>
+<span class="sd">    - JSON-serializable attribute storage</span>
+<span class="sd">    - Array rescaling operations</span>
+<span class="sd">    - File-based serialization and loading</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        _arrays (dict): Dictionary of stored arrays</span>
+<span class="sd">        _attrs (dict): Dictionary of JSON-serializable attributes</span>
+<span class="sd">        _nstep (int): Number of steps in time-series data</span>
+<span class="sd">        </span>
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # Create container with initial attributes</span>
+<span class="sd">        &gt;&gt;&gt; data = AttributedArray(temperature=300, timestep=1.0)</span>
+<span class="sd">        &gt;&gt;&gt; </span>
+<span class="sd">        &gt;&gt;&gt; # Add arrays</span>
+<span class="sd">        &gt;&gt;&gt; positions = np.random.random((100, 50, 3))  # 100 steps, 50 atoms, 3D</span>
+<span class="sd">        &gt;&gt;&gt; data.set_array(&#39;positions&#39;, positions, check_nstep=True)</span>
+<span class="sd">        &gt;&gt;&gt; </span>
+<span class="sd">        &gt;&gt;&gt; # Add metadata</span>
+<span class="sd">        &gt;&gt;&gt; data.set_attr(&#39;simulation_type&#39;, &#39;NVT&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; </span>
+<span class="sd">        &gt;&gt;&gt; # Save and load</span>
+<span class="sd">        &gt;&gt;&gt; data.save(&#39;simulation_data.tar.gz&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; loaded_data = AttributedArray.load_file(&#39;simulation_data.tar.gz&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_ATTRIBUTE_FILENAME</span> <span class="o">=</span> <span class="s1">&#39;attributes.json&#39;</span>
+
+<div class="viewcode-block" id="AttributedArray.__init__">
+<a class="viewcode-back" href="../../target.html#target.utilities.AttributedArray.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_arrays</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_attrs</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nstep</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;set_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">))(</span><span class="n">val</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AttributedArray.set_array">
+<a class="viewcode-back" href="../../target.html#target.utilities.AttributedArray.set_array">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_array</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">check_existing</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">check_nstep</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">check_nat</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">wanted_shape_len</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">wanted_shape_1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">wanted_shape_2</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set a named array with validation options.</span>
+<span class="sd">        </span>
+<span class="sd">        This method stores a numpy array with a specified name and performs</span>
+<span class="sd">        optional validation on its shape and compatibility with existing arrays.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): Name to reference the array</span>
+<span class="sd">            array (numpy.ndarray): Array data to store (or convertible to numpy array)</span>
+<span class="sd">            check_existing (bool): If True, raise error if array name already exists</span>
+<span class="sd">            check_nstep (bool): If True, validate first dimension matches other arrays</span>
+<span class="sd">            check_nat (bool/int): If True or int, validate second dimension matches nat</span>
+<span class="sd">            wanted_shape_len (int, optional): Validate array has this number of dimensions</span>
+<span class="sd">            wanted_shape_1 (int, optional): Validate array&#39;s second dimension is this size</span>
+<span class="sd">            wanted_shape_2 (int, optional): Validate array&#39;s third dimension is this size</span>
+<span class="sd">            </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            TypeError: If name is not a string or array has wrong dimensions</span>
+<span class="sd">            ValueError: If array name exists and check_existing=True</span>
+<span class="sd">            ValueError: If array shape doesn&#39;t match existing arrays</span>
+<span class="sd">            IndexError: If array dimensions don&#39;t match wanted_shape parameters</span>
+<span class="sd">            </span>
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; # Store positions array with validation</span>
+<span class="sd">            &gt;&gt;&gt; positions = np.zeros((100, 50, 3))  # 100 steps, 50 atoms, 3D positions</span>
+<span class="sd">            &gt;&gt;&gt; data.set_array(&#39;positions&#39;, positions,</span>
+<span class="sd">            ...                check_nstep=True,</span>
+<span class="sd">            ...                check_nat=50,</span>
+<span class="sd">            ...                wanted_shape_len=3,</span>
+<span class="sd">            ...                wanted_shape_2=3)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># First, I call np.array to ensure it&#39;s a valid array</span>
+        <span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Name has to be a string&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">check_existing</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_arrays</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Name </span><span class="si">{}</span><span class="s1"> already exists&#39;</span><span class="o">.</span><span class="n">formamt</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">wanted_shape_len</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">!=</span> <span class="n">wanted_shape_len</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;array </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> is of wrong type, has to be of &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;dimension </span><span class="si">{</span><span class="n">wanted_shape_len</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">wanted_shape_1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">wanted_shape_1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;1st dimension of array </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> has to &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;be </span><span class="si">{</span><span class="n">wanted_shape_1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">wanted_shape_2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="n">wanted_shape_2</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;2nd dimension of array </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> has &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;to be </span><span class="si">{</span><span class="n">wanted_shape_2</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">check_nstep</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nstep</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_nstep</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nstep</span> <span class="o">!=</span> <span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s1">&#39;Number of steps in array </span><span class="si">{}</span><span class="s1"> (</span><span class="si">{}</span><span class="s1">) is not &#39;</span>
+                    <span class="s1">&#39;compliant with number of steps in previous &#39;</span>
+                    <span class="s1">&#39;arrays (</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                         <span class="bp">self</span><span class="o">.</span><span class="n">_nstep</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">check_nat</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">check_nat</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="s1">&#39;If check_nat is not False, it has to be an integer&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">check_nat</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s1">&#39;Second dimension of array does not &#39;</span>
+                    <span class="s1">&#39;match the number of atoms&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_arrays</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arrayname</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">arrayname</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arrays</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">nstep</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :returns: The number of trajectory steps</span>
+<span class="sd">        :raises: ValueError if no unique number of steps can be determined.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nstep</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Number of steps has not been set&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nstep</span>
+
+<div class="viewcode-block" id="AttributedArray.get_array">
+<a class="viewcode-back" href="../../target.html#target.utilities.AttributedArray.get_array">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve a stored array by name.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): Name of the array to retrieve</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            numpy.ndarray: The requested array</span>
+<span class="sd">            </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError: If no array with the given name exists</span>
+<span class="sd">            </span>
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; # Get stored positions array</span>
+<span class="sd">            &gt;&gt;&gt; try:</span>
+<span class="sd">            ...     positions = data.get_array(&#39;positions&#39;)</span>
+<span class="sd">            ...     print(f&quot;Got positions with shape {positions.shape}&quot;)</span>
+<span class="sd">            ... except KeyError:</span>
+<span class="sd">            ...     print(&quot;Positions not found&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arrays</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+                <span class="s1">&#39;An array with that name ( </span><span class="si">{}</span><span class="s1"> ) has not &#39;</span>
+                <span class="s1">&#39;been set.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="AttributedArray.get_arraynames">
+<a class="viewcode-back" href="../../target.html#target.utilities.AttributedArray.get_arraynames">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_arraynames</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a sorted list of all stored array names.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            list: Sorted list of array names</span>
+<span class="sd">            </span>
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; # List all available arrays</span>
+<span class="sd">            &gt;&gt;&gt; array_names = data.get_arraynames()</span>
+<span class="sd">            &gt;&gt;&gt; print(f&quot;Available arrays: {&#39;, &#39;.join(array_names)}&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_arrays</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="AttributedArray.get_attrs">
+<a class="viewcode-back" href="../../target.html#target.utilities.AttributedArray.get_attrs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_attrs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the complete dictionary of attributes.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: Dictionary of all stored attributes</span>
+<span class="sd">            </span>
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; # Get all metadata</span>
+<span class="sd">            &gt;&gt;&gt; metadata = data.get_attrs()</span>
+<span class="sd">            &gt;&gt;&gt; for key, value in metadata.items():</span>
+<span class="sd">            ...     print(f&quot;{key}: {value}&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attrs</span></div>
+
+
+<div class="viewcode-block" id="AttributedArray.get_attr">
+<a class="viewcode-back" href="../../target.html#target.utilities.AttributedArray.get_attr">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve a stored attribute by key.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            key (str): Name of the attribute to retrieve</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Any: The stored attribute value</span>
+<span class="sd">            </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError: If the attribute doesn&#39;t exist</span>
+<span class="sd">            </span>
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; # Access stored temperature value</span>
+<span class="sd">            &gt;&gt;&gt; try:</span>
+<span class="sd">            ...     temperature = data.get_attr(&#39;temperature&#39;)</span>
+<span class="sd">            ...     print(f&quot;Temperature: {temperature} K&quot;)</span>
+<span class="sd">            ... except KeyError:</span>
+<span class="sd">            ...     print(&quot;Temperature not set&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attrs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="AttributedArray.set_attr">
+<a class="viewcode-back" href="../../target.html#target.utilities.AttributedArray.set_attr">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set a JSON-serializable attribute.</span>
+<span class="sd">        </span>
+<span class="sd">        This method stores metadata as key-value pairs. All values must be</span>
+<span class="sd">        JSON-serializable for compatibility with file storage.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            key (str): Attribute name</span>
+<span class="sd">            value: Attribute value (must be JSON-serializable)</span>
+<span class="sd">            </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            TypeError: If the value cannot be serialized to JSON</span>
+<span class="sd">            </span>
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; # Store simulation parameters</span>
+<span class="sd">            &gt;&gt;&gt; data.set_attr(&#39;temperature&#39;, 300)</span>
+<span class="sd">            &gt;&gt;&gt; data.set_attr(&#39;ensemble&#39;, &#39;NVT&#39;)</span>
+<span class="sd">            &gt;&gt;&gt; data.set_attr(&#39;elements&#39;, [&#39;Li&#39;, &#39;P&#39;, &#39;S&#39;])</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Testing whether this is valid:</span>
+        <span class="n">dumps</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_attrs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="AttributedArray.rescale_array">
+<a class="viewcode-back" href="../../target.html#target.utilities.AttributedArray.rescale_array">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rescale_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arrayname</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Rescale a stored array by a constant factor.</span>
+<span class="sd">        </span>
+<span class="sd">        This method multiplies all values in an array by a given factor,</span>
+<span class="sd">        useful for unit conversions or normalization.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            arrayname (str): Name of the array to rescale</span>
+<span class="sd">            value (float): Scaling factor</span>
+<span class="sd">            </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError: If the array doesn&#39;t exist</span>
+<span class="sd">            </span>
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; # Convert velocities from Å/fs to Å/ps</span>
+<span class="sd">            &gt;&gt;&gt; data.rescale_array(&#39;velocities&#39;, 1000.0)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_arrays</span><span class="p">[</span><span class="n">arrayname</span><span class="p">]</span> <span class="o">*=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AttributedArray.save">
+<a class="viewcode-back" href="../../target.html#target.utilities.AttributedArray.save">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save the AttributedArray instance to a compressed tar file.</span>
+<span class="sd">        </span>
+<span class="sd">        This method serializes both the numerical arrays and attributes</span>
+<span class="sd">        to a single compressed file that can later be loaded with load_file().</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            filename (str): Output filename (typically with .tar.gz extension)</span>
+<span class="sd">            </span>
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; # Save data to file</span>
+<span class="sd">            &gt;&gt;&gt; data.save(&#39;simulation_results.tar.gz&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">tarfile</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">inspect</span><span class="w"> </span><span class="kn">import</span> <span class="n">getmembers</span><span class="p">,</span> <span class="n">ismethod</span>
+
+        <span class="n">temp_folder</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">funcname</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">getmembers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">predicate</span><span class="o">=</span><span class="n">ismethod</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">funcname</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;_save_&#39;</span><span class="p">):</span>
+                <span class="n">func</span><span class="p">(</span><span class="n">temp_folder</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w:gz&#39;</span><span class="p">,</span>
+                          <span class="nb">format</span><span class="o">=</span><span class="n">tarfile</span><span class="o">.</span><span class="n">PAX_FORMAT</span><span class="p">)</span> <span class="k">as</span> <span class="n">tar</span><span class="p">:</span>
+            <span class="n">tar</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">temp_folder</span><span class="p">,</span> <span class="n">arcname</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_save_arrays</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder_name</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="kn">import</span> <span class="n">join</span>
+        <span class="k">for</span> <span class="n">arrayname</span><span class="p">,</span> <span class="n">array</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_arrays</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">folder_name</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.npy&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arrayname</span><span class="p">)),</span> <span class="n">array</span><span class="p">)</span>
+
+<div class="viewcode-block" id="AttributedArray.remove_array">
+<a class="viewcode-back" href="../../target.html#target.utilities.AttributedArray.remove_array">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arrayname</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remove a stored array.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        arrayname (str): Name of the array to remove</span>
+<span class="sd">        </span>
+<span class="sd">    Raises:</span>
+<span class="sd">        KeyError: If the array doesn&#39;t exist</span>
+<span class="sd">        </span>
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # Remove temporary array</span>
+<span class="sd">        &gt;&gt;&gt; data.remove_array(&#39;temp_calculations&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">arrayname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arrays</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">arrayname</span><span class="si">}</span><span class="s2"> is not one of arrays&quot;</span><span class="p">)</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arrays</span><span class="p">[</span><span class="n">arrayname</span><span class="p">]</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_save_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder_name</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="kn">import</span> <span class="n">join</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">folder_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ATTRIBUTE_FILENAME</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_attrs</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+
+<div class="viewcode-block" id="AttributedArray.load_file">
+<a class="viewcode-back" href="../../target.html#target.utilities.AttributedArray.load_file">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load an AttributedArray instance from a saved file.</span>
+<span class="sd">        </span>
+<span class="sd">        This class method recreates an AttributedArray instance from a file</span>
+<span class="sd">        previously created with the save() method.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            filename (str): Path to the saved file (.tar.gz)</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            AttributedArray: A new instance with loaded data</span>
+<span class="sd">            </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: If the file cannot be loaded or has invalid format</span>
+<span class="sd">            </span>
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; # Load data from file</span>
+<span class="sd">            &gt;&gt;&gt; loaded_data = AttributedArray.load_file(&#39;simulation_results.tar.gz&#39;)</span>
+<span class="sd">            &gt;&gt;&gt; print(f&quot;Loaded {len(loaded_data.get_arraynames())} arrays&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">tarfile</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="kn">import</span> <span class="n">join</span>
+        <span class="n">temp_folder</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">()</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r:gz&#39;</span><span class="p">,</span>
+                              <span class="nb">format</span><span class="o">=</span><span class="n">tarfile</span><span class="o">.</span><span class="n">PAX_FORMAT</span><span class="p">)</span> <span class="k">as</span> <span class="n">tar</span><span class="p">:</span>
+                <span class="n">tar</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="n">temp_folder</span><span class="p">)</span>
+
+            <span class="n">files_in_tar</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">temp_folder</span><span class="p">))</span>
+
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">temp_folder</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ATTRIBUTE_FILENAME</span><span class="p">))</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">attributes</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="n">files_in_tar</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_ATTRIBUTE_FILENAME</span><span class="p">)</span>
+            <span class="n">new</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">attributes</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+                <span class="n">new</span><span class="o">.</span><span class="n">set_attr</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ATOMS_FILENAME</span> <span class="ow">in</span> <span class="n">files_in_tar</span><span class="p">:</span>
+                <span class="kn">from</span><span class="w"> </span><span class="nn">ase.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">read</span>
+                <span class="n">new</span><span class="o">.</span><span class="n">set_atoms</span><span class="p">(</span><span class="n">read</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">temp_folder</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ATOMS_FILENAME</span><span class="p">)))</span>
+                <span class="n">files_in_tar</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_ATOMS_FILENAME</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">array_file</span> <span class="ow">in</span> <span class="n">files_in_tar</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">array_file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.npy&#39;</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                        <span class="s1">&#39;Unrecognized file in trajectory export: </span><span class="si">{}</span><span class="s1">&#39;</span>
+                        <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">array_file</span><span class="p">))</span>
+                <span class="n">new</span><span class="o">.</span><span class="n">set_array</span><span class="p">(</span><span class="n">array_file</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;.npy&#39;</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
+                    <span class="n">join</span><span class="p">(</span><span class="n">temp_folder</span><span class="p">,</span> <span class="n">array_file</span><span class="p">),</span> <span class="n">mmap_mode</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">temp_folder</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">e</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">temp_folder</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new</span></div>
+</div>
+
+
+<span class="n">CUSTOM_COLORS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="p">}</span>
+
+<div class="viewcode-block" id="get_color">
+<a class="viewcode-back" href="../../target.html#target.utilities.get_color">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_color</span><span class="p">(</span><span class="n">chemical_symbol</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s1">&#39;jmol&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get RGB color tuple for a chemical element.</span>
+<span class="sd">    </span>
+<span class="sd">    This function returns the standard color for an element based on</span>
+<span class="sd">    common visualization schemes like JMOL or CPK.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        chemical_symbol (str): Chemical symbol (e.g., &#39;H&#39;, &#39;O&#39;, &#39;Fe&#39;)</span>
+<span class="sd">        scheme (str): Color scheme to use:</span>
+<span class="sd">            - &#39;jmol&#39;: JMOL visualization colors (default)</span>
+<span class="sd">            - &#39;cpk&#39;: CPK color convention</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: RGB color tuple with values from 0 to 1, or None if not found</span>
+<span class="sd">        </span>
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the scheme is not recognized</span>
+<span class="sd">        </span>
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # Get oxygen color in JMOL scheme</span>
+<span class="sd">        &gt;&gt;&gt; o_color = get_color(&#39;O&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; print(f&quot;RGB color for oxygen: {o_color}&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; </span>
+<span class="sd">        &gt;&gt;&gt; # Get carbon color in CPK scheme</span>
+<span class="sd">        &gt;&gt;&gt; c_color = get_color(&#39;C&#39;, scheme=&#39;cpk&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">chemical_symbol</span> <span class="ow">in</span> <span class="n">CUSTOM_COLORS</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">CUSTOM_COLORS</span><span class="p">[</span><span class="n">chemical_symbol</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">chemical_symbol</span> <span class="ow">in</span> <span class="n">atomic_numbers</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">scheme</span> <span class="o">==</span> <span class="s1">&#39;jmol&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">jmol_colors</span><span class="p">[</span><span class="n">atomic_numbers</span><span class="p">[</span><span class="n">chemical_symbol</span><span class="p">]]</span>
+        <span class="k">elif</span> <span class="n">scheme</span> <span class="o">==</span> <span class="s1">&#39;cpk&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">cpk_colors</span><span class="p">[</span><span class="n">atomic_numbers</span><span class="p">[</span><span class="n">chemical_symbol</span><span class="p">]]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unknown scheme </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">scheme</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+    
+<div class="viewcode-block" id="InputError">
+<a class="viewcode-back" href="../../target.html#target.utilities.InputError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">InputError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Exception raised when input validation fails.</span>
+<span class="sd">    </span>
+<span class="sd">    This custom exception is used throughout SAMOS to indicate</span>
+<span class="sd">    that user-provided input doesn&#39;t meet validation requirements.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="get_terminal_width">
+<a class="viewcode-back" href="../../target.html#target.utilities.get_terminal_width">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_terminal_width</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the current terminal width and height.</span>
+<span class="sd">    </span>
+<span class="sd">    This function attempts to determine the dimensions of the current</span>
+<span class="sd">    terminal window using various methods, with fallbacks if detection fails.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: (width, height) in characters</span>
+<span class="sd">        </span>
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # Get terminal width for formatting output</span>
+<span class="sd">        &gt;&gt;&gt; width, height = get_terminal_width()</span>
+<span class="sd">        &gt;&gt;&gt; print(f&quot;Terminal is {width} columns wide and {height} rows tall&quot;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">ioctl_GWINSZ</span><span class="p">(</span><span class="n">fd</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">fcntl</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">termios</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">struct</span>
+            <span class="n">cr</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;hh&#39;</span><span class="p">,</span> <span class="n">fcntl</span><span class="o">.</span><span class="n">ioctl</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">termios</span><span class="o">.</span><span class="n">TIOCGWINSZ</span><span class="p">,</span>
+                                                 <span class="s1">&#39;1234&#39;</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">return</span> <span class="n">cr</span>
+    <span class="n">cr</span> <span class="o">=</span> <span class="n">ioctl_GWINSZ</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="n">ioctl_GWINSZ</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="n">ioctl_GWINSZ</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">cr</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">fd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">ctermid</span><span class="p">(),</span> <span class="n">os</span><span class="o">.</span><span class="n">O_RDONLY</span><span class="p">)</span>
+            <span class="n">cr</span> <span class="o">=</span> <span class="n">ioctl_GWINSZ</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">cr</span><span class="p">:</span>
+        <span class="n">cr</span> <span class="o">=</span> <span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;LINES&#39;</span><span class="p">,</span> <span class="mi">25</span><span class="p">),</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;COLUMNS&#39;</span><span class="p">,</span> <span class="mi">80</span><span class="p">))</span>
+
+        <span class="c1"># Use get(key[, default]) instead of a try/catch</span>
+        <span class="c1"># try:</span>
+        <span class="c1">#    cr = (env[&#39;LINES&#39;], env[&#39;COLUMNS&#39;])</span>
+        <span class="c1"># except:</span>
+        <span class="c1">#    cr = (25, 80)</span>
+    <span class="c1"># ~ return int(cr[1]), int(cr[0])</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">cr</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">cr</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="apply_minimum_image">
+<a class="viewcode-back" href="../../target.html#target.utilities.apply_minimum_image">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">apply_minimum_image</span><span class="p">(</span><span class="n">displacement</span><span class="p">,</span> <span class="n">cell</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Apply the minimum image convention (MIC) to a displacement vector.</span>
+<span class="sd">    Parameters:</span>
+<span class="sd">    - displacement: np.ndarray of shape (..., 3), displacement vectors</span>
+<span class="sd">    - cell: np.ndarray of shape (3, 3), simulation cell vectors</span>
+<span class="sd">    Returns:</span>
+<span class="sd">    - np.ndarray of same shape as displacement with MIC applied</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">inv_cell</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">cell</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+    <span class="n">fractional</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">displacement</span><span class="p">,</span> <span class="n">inv_cell</span><span class="p">)</span>
+    <span class="n">fractional</span> <span class="o">-=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">fractional</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">fractional</span><span class="p">,</span> <span class="n">cell</span><span class="o">.</span><span class="n">T</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Vinay Maithani.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

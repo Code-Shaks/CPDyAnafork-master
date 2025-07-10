@@ -6,10 +6,10 @@ CPDyAna is a comprehensive molecular dynamics analysis toolkit for studying diff
 Features
 --------
 
-* **Molecular Dynamics Analysis**: MSD, VAF, RDF calculations
-* **SAMOS Integration**: Advanced trajectory analysis capabilities  
-* **Multiple File Formats**: Support for Quantum ESPRESSO, LAMMPS formats
+* **Molecular Dynamics Analysis**: MSD, VAF, RDF, Ionic Density, NGP, van Hove correlation function, VDOS
+* **Multiple File Formats**: Support for Quantum ESPRESSO, LAMMPS, and more
 * **Visualization**: Built-in plotting and density analysis
+* **Flexible Analysis**: Unified interface for a variety of simulation codes
 
 .. toctree::
    :maxdepth: 2
@@ -22,7 +22,7 @@ Features
    :maxdepth: 2
    :caption: User Guide:
 
-   usage_examples
+   usage_Examples
 
 .. toctree::
    :maxdepth: 1

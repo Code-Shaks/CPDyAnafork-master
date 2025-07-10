@@ -1,0 +1,708 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>target.data_processing_lammps &mdash; CPDyAna 01-02-2024 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=18cd0f04"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            CPDyAna
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../target.html">Target Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#main-analysis-driver">Main Analysis Driver</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#cpdyana-combined-molecular-dynamics-analysis-tool">CPDyAna – Combined Molecular Dynamics Analysis Tool</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.CPDyAna.Job"><code class="docutils literal notranslate"><span class="pre">Job()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.CPDyAna.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.CPDyAna.parser"><code class="docutils literal notranslate"><span class="pre">parser()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#key-functions">Key Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#data-processing">Data Processing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#general-data-processing-module-for-cpdyana">General Data Processing Module for CPDyAna</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.data_processing.data_evaluator"><code class="docutils literal notranslate"><span class="pre">data_evaluator()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.data_processing.find_terms"><code class="docutils literal notranslate"><span class="pre">find_terms()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.data_processing.segmenter_func"><code class="docutils literal notranslate"><span class="pre">segmenter_func()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#lammps-data-processing">LAMMPS Data Processing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#lammps-data-processing-module-for-cpdyana">LAMMPS Data Processing Module for CPDyAna</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.data_processing_lammps.calculate_time_window_lammps"><code class="docutils literal notranslate"><span class="pre">calculate_time_window_lammps()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.data_processing_lammps.data_evaluator_lammps"><code class="docutils literal notranslate"><span class="pre">data_evaluator_lammps()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.data_processing_lammps.detect_lammps_format"><code class="docutils literal notranslate"><span class="pre">detect_lammps_format()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.data_processing_lammps.find_terms_lammps"><code class="docutils literal notranslate"><span class="pre">find_terms_lammps()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.data_processing_lammps.is_lammps_simulation"><code class="docutils literal notranslate"><span class="pre">is_lammps_simulation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.data_processing_lammps.segmenter_func_lammps"><code class="docutils literal notranslate"><span class="pre">segmenter_func_lammps()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#input-output-operations">Input/Output Operations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#input-file-reader-module-for-cpdyana">Input File Reader Module for CPDyAna</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.detect_trajectory_format"><code class="docutils literal notranslate"><span class="pre">detect_trajectory_format()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.export_verification_trajectory"><code class="docutils literal notranslate"><span class="pre">export_verification_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.generate_analysis_recommendations"><code class="docutils literal notranslate"><span class="pre">generate_analysis_recommendations()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.has_type_column"><code class="docutils literal notranslate"><span class="pre">has_type_column()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.read_bomd_trajectory"><code class="docutils literal notranslate"><span class="pre">read_bomd_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.read_cel_file"><code class="docutils literal notranslate"><span class="pre">read_cel_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.read_evp_file"><code class="docutils literal notranslate"><span class="pre">read_evp_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.read_ion_file"><code class="docutils literal notranslate"><span class="pre">read_ion_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.read_ion_file_universal"><code class="docutils literal notranslate"><span class="pre">read_ion_file_universal()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.read_lammps_trajectory"><code class="docutils literal notranslate"><span class="pre">read_lammps_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.input_reader.read_pos_file"><code class="docutils literal notranslate"><span class="pre">read_pos_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.io.get_indices"><code class="docutils literal notranslate"><span class="pre">get_indices()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.io.get_position_indices"><code class="docutils literal notranslate"><span class="pre">get_position_indices()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.io.get_thermo_props"><code class="docutils literal notranslate"><span class="pre">get_thermo_props()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.io.iter_lammps_dump"><code class="docutils literal notranslate"><span class="pre">iter_lammps_dump()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.io.pos_2_absolute"><code class="docutils literal notranslate"><span class="pre">pos_2_absolute()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.io.read_lammps_dump"><code class="docutils literal notranslate"><span class="pre">read_lammps_dump()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.io.read_positions_with_ase"><code class="docutils literal notranslate"><span class="pre">read_positions_with_ase()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.io.read_step_info"><code class="docutils literal notranslate"><span class="pre">read_step_info()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.io.read_xsf"><code class="docutils literal notranslate"><span class="pre">read_xsf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.io.write_grid"><code class="docutils literal notranslate"><span class="pre">write_grid()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.io.write_xsf"><code class="docutils literal notranslate"><span class="pre">write_xsf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#supported-file-types">Supported File Types</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#core-calculations">Core Calculations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#calculations-module-for-cpdyana">Calculations Module for CPDyAna</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.calc_fft"><code class="docutils literal notranslate"><span class="pre">calc_fft()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.calc_msd_tracer"><code class="docutils literal notranslate"><span class="pre">calc_msd_tracer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.calc_ngp_tracer"><code class="docutils literal notranslate"><span class="pre">calc_ngp_tracer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.calculate_msd"><code class="docutils literal notranslate"><span class="pre">calculate_msd()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.calculate_msd_lammps"><code class="docutils literal notranslate"><span class="pre">calculate_msd_lammps()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.calculate_msd_qe"><code class="docutils literal notranslate"><span class="pre">calculate_msd_qe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.calculate_ngp"><code class="docutils literal notranslate"><span class="pre">calculate_ngp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.disp_sum"><code class="docutils literal notranslate"><span class="pre">disp_sum()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.msd_charged"><code class="docutils literal notranslate"><span class="pre">msd_charged()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.calculations.msd_tracer"><code class="docutils literal notranslate"><span class="pre">msd_tracer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#analysis-types">Analysis Types</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#correlation-analysis">Correlation Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#correlation-analysis-module-for-cpdyana">Correlation Analysis Module for CPDyAna</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.correrelation_analysis.Van_Hove_distinct"><code class="docutils literal notranslate"><span class="pre">Van_Hove_distinct()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.correrelation_analysis.Van_Hove_self"><code class="docutils literal notranslate"><span class="pre">Van_Hove_self()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#correlation-types">Correlation Types</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#rdf-computation">RDF Computation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_rdf.build_ase_trajectory"><code class="docutils literal notranslate"><span class="pre">build_ase_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_rdf.build_bomd_trajectory"><code class="docutils literal notranslate"><span class="pre">build_bomd_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_rdf.build_lammps_trajectory"><code class="docutils literal notranslate"><span class="pre">build_lammps_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_rdf.compute_rdf"><code class="docutils literal notranslate"><span class="pre">compute_rdf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_rdf.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#vaf-computation">VAF Computation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_vaf.build_bomd_trajectory"><code class="docutils literal notranslate"><span class="pre">build_bomd_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_vaf.build_trajectory"><code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_vaf.compute_vaf"><code class="docutils literal notranslate"><span class="pre">compute_vaf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_vaf.convert_symbols_to_atomic_numbers"><code class="docutils literal notranslate"><span class="pre">convert_symbols_to_atomic_numbers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.compute_vaf.finite_diff_velocities"><code class="docutils literal notranslate"><span class="pre">finite_diff_velocities()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#vdos-analysis">VDOS Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#plotting-and-visualization">Plotting and Visualization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#plotting-and-visualization-module-for-cpdyana">Plotting and Visualization Module for CPDyAna</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.centers_to_edges"><code class="docutils literal notranslate"><span class="pre">centers_to_edges()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.centers_to_edges_time"><code class="docutils literal notranslate"><span class="pre">centers_to_edges_time()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.int_or_float"><code class="docutils literal notranslate"><span class="pre">int_or_float()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.msd_plot"><code class="docutils literal notranslate"><span class="pre">msd_plot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.msd_plot_lammps"><code class="docutils literal notranslate"><span class="pre">msd_plot_lammps()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.msd_plot_qe"><code class="docutils literal notranslate"><span class="pre">msd_plot_qe()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.ngp_plot"><code class="docutils literal notranslate"><span class="pre">ngp_plot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.parse_cli_args"><code class="docutils literal notranslate"><span class="pre">parse_cli_args()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.plot_angular_spec"><code class="docutils literal notranslate"><span class="pre">plot_angular_spec()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.plot_power_spectrum"><code class="docutils literal notranslate"><span class="pre">plot_power_spectrum()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.plot_rdf"><code class="docutils literal notranslate"><span class="pre">plot_rdf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.plot_vaf_isotropic"><code class="docutils literal notranslate"><span class="pre">plot_vaf_isotropic()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.plotting.van_hove_plot"><code class="docutils literal notranslate"><span class="pre">van_hove_plot()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#probability-density-analysis">Probability Density Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#probability-density-calculation-module-for-cpdyana">Probability Density Calculation Module for CPDyAna</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.build_bomd_trajectory"><code class="docutils literal notranslate"><span class="pre">build_bomd_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.build_lammps_trajectory"><code class="docutils literal notranslate"><span class="pre">build_lammps_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.build_trajectory"><code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.calculate_probability_density"><code class="docutils literal notranslate"><span class="pre">calculate_probability_density()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.convert_symbols_to_atomic_numbers"><code class="docutils literal notranslate"><span class="pre">convert_symbols_to_atomic_numbers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.divide_chunks"><code class="docutils literal notranslate"><span class="pre">divide_chunks()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.probability_density.parse_mask"><code class="docutils literal notranslate"><span class="pre">parse_mask()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#trajectory-utilities">Trajectory Utilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.trajectory.IncompatibleTrajectoriesException"><code class="docutils literal notranslate"><span class="pre">IncompatibleTrajectoriesException</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory"><code class="docutils literal notranslate"><span class="pre">Trajectory</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.atoms"><code class="docutils literal notranslate"><span class="pre">Trajectory.atoms</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.types"><code class="docutils literal notranslate"><span class="pre">Trajectory.types</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.nat"><code class="docutils literal notranslate"><span class="pre">Trajectory.nat</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.cell"><code class="docutils literal notranslate"><span class="pre">Trajectory.cell</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.nstep"><code class="docutils literal notranslate"><span class="pre">Trajectory.nstep</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.__init__"><code class="docutils literal notranslate"><span class="pre">Trajectory.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#id0"><code class="docutils literal notranslate"><span class="pre">Trajectory.atoms</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.calculate_velocities_from_positions"><code class="docutils literal notranslate"><span class="pre">Trajectory.calculate_velocities_from_positions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#id1"><code class="docutils literal notranslate"><span class="pre">Trajectory.cell</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.from_atoms"><code class="docutils literal notranslate"><span class="pre">Trajectory.from_atoms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_ase_trajectory"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_ase_trajectory()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_atom_types"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_atom_types()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_atoms"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_atoms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_cells"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_cells()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_forces"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_forces()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_indices_of_species"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_indices_of_species()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_positions"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_positions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_step_atoms"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_step_atoms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_stress"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_stress()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_timestep"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_timestep()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_types"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_types()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_velocities"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_velocities()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.get_volumes"><code class="docutils literal notranslate"><span class="pre">Trajectory.get_volumes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#id2"><code class="docutils literal notranslate"><span class="pre">Trajectory.nat</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.recenter"><code class="docutils literal notranslate"><span class="pre">Trajectory.recenter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.set_atom_types"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_atom_types()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.set_atoms"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_atoms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.set_cells"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_cells()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.set_forces"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_forces()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.set_positions"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_positions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.set_pot_energies"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_pot_energies()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.set_stress"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_stress()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.set_timestep"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_timestep()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.set_types"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_types()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.trajectory.Trajectory.set_velocities"><code class="docutils literal notranslate"><span class="pre">Trajectory.set_velocities()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#id3"><code class="docutils literal notranslate"><span class="pre">Trajectory.types</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.trajectory.check_trajectory_compatibility"><code class="docutils literal notranslate"><span class="pre">check_trajectory_compatibility()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#general-utilities">General Utilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#utility-module-for-samos-package">Utility Module for SAMOS Package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray"><code class="docutils literal notranslate"><span class="pre">AttributedArray</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray._arrays"><code class="docutils literal notranslate"><span class="pre">AttributedArray._arrays</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray._attrs"><code class="docutils literal notranslate"><span class="pre">AttributedArray._attrs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray._nstep"><code class="docutils literal notranslate"><span class="pre">AttributedArray._nstep</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray.__init__"><code class="docutils literal notranslate"><span class="pre">AttributedArray.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray.get_array"><code class="docutils literal notranslate"><span class="pre">AttributedArray.get_array()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray.get_arraynames"><code class="docutils literal notranslate"><span class="pre">AttributedArray.get_arraynames()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray.get_attr"><code class="docutils literal notranslate"><span class="pre">AttributedArray.get_attr()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray.get_attrs"><code class="docutils literal notranslate"><span class="pre">AttributedArray.get_attrs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray.load_file"><code class="docutils literal notranslate"><span class="pre">AttributedArray.load_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray.nstep"><code class="docutils literal notranslate"><span class="pre">AttributedArray.nstep</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray.remove_array"><code class="docutils literal notranslate"><span class="pre">AttributedArray.remove_array()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray.rescale_array"><code class="docutils literal notranslate"><span class="pre">AttributedArray.rescale_array()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray.save"><code class="docutils literal notranslate"><span class="pre">AttributedArray.save()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray.set_array"><code class="docutils literal notranslate"><span class="pre">AttributedArray.set_array()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.utilities.AttributedArray.set_attr"><code class="docutils literal notranslate"><span class="pre">AttributedArray.set_attr()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.utilities.InputError"><code class="docutils literal notranslate"><span class="pre">InputError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.utilities.apply_minimum_image"><code class="docutils literal notranslate"><span class="pre">apply_minimum_image()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.utilities.get_color"><code class="docutils literal notranslate"><span class="pre">get_color()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.utilities.get_terminal_width"><code class="docutils literal notranslate"><span class="pre">get_terminal_width()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#analysis-helpers">Analysis Helpers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.analysis.BaseAnalyzer"><code class="docutils literal notranslate"><span class="pre">BaseAnalyzer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.analysis.BaseAnalyzer.__init__"><code class="docutils literal notranslate"><span class="pre">BaseAnalyzer.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.analysis.BaseAnalyzer.run"><code class="docutils literal notranslate"><span class="pre">BaseAnalyzer.run()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.analysis.BaseAnalyzer.set_trajectory"><code class="docutils literal notranslate"><span class="pre">BaseAnalyzer.set_trajectory()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.analysis.DynamicsAnalyzer"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.analysis.DynamicsAnalyzer.__init__"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.analysis.DynamicsAnalyzer.get_kinetic_energies"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.get_kinetic_energies()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.analysis.DynamicsAnalyzer.get_power_spectrum"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.get_power_spectrum()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.analysis.DynamicsAnalyzer.get_species_of_interest"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.get_species_of_interest()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.analysis.DynamicsAnalyzer.get_vaf"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.get_vaf()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.analysis.DynamicsAnalyzer.set_species_of_interest"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.set_species_of_interest()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.analysis.DynamicsAnalyzer.set_trajectories"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.set_trajectories()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.analysis.DynamicsAnalyzer.set_verbosity"><code class="docutils literal notranslate"><span class="pre">DynamicsAnalyzer.set_verbosity()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.analysis.TimeSeries"><code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.analysis.get_gaussian_density"><code class="docutils literal notranslate"><span class="pre">get_gaussian_density()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#target.analysis.write_xsf_header"><code class="docutils literal notranslate"><span class="pre">write_xsf_header()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#preprocessing">Preprocessing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../target.html#utility-modules">Utility Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#module-target.json_serializable">JSON Serialization</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#json-serialization-utilities-for-cpdyana">JSON Serialization Utilities for CPDyAna</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#target.json_serializable.convert_to_serializable"><code class="docutils literal notranslate"><span class="pre">convert_to_serializable()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../target.html#module-target.const">Constants</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../target.html#physical-constants-and-unit-conversions-for-cpdyana">Physical Constants and Unit Conversions for CPDyAna</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../usage_Examples.html">Usage Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../usage_Examples.html#command-line-interface-examples">Command-Line Interface Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#mean-square-displacement-msd">Mean Square Displacement (MSD)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#non-gaussian-parameter-ngp">Non-Gaussian Parameter (NGP)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#van-hove-correlation-functions">Van Hove Correlation Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#radial-distribution-functions-rdf">Radial Distribution Functions (RDF)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#ionic-density-mapping">Ionic Density Mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#velocity-autocorrelation-functions-vaf">Velocity Autocorrelation Functions (VAF)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#vibrational-density-of-states-vdos">Vibrational Density of States (VDOS)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage_Examples.html#python-api-examples">Python API Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#direct-function-usage">Direct Function Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#samos-module-integration">SAMOS Module Integration</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage_Examples.html#batch-processing-workflows">Batch Processing Workflows</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#processing-multiple-simulations">Processing Multiple Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#temperature-series-analysis">Temperature Series Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage_Examples.html#advanced-analysis-examples">Advanced Analysis Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#custom-van-hove-analysis">Custom Van Hove Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage_Examples.html#file-format-tips">File Format Tips</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#required-file-structure">Required File Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../usage_Examples.html#performance-optimization">Performance Optimization</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Module Index:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Usage Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules.html#basic-msd-analysis">Basic MSD Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules.html#non-gaussian-parameter-ngp-analysis">Non-Gaussian Parameter (NGP) Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules.html#van-hove-correlation-function">Van Hove Correlation Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules.html#radial-distribution-function-rdf">Radial Distribution Function (RDF)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules.html#velocity-autocorrelation-function-vaf">Velocity Autocorrelation Function (VAF)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules.html#vibrational-density-of-states-vdos">Vibrational Density of States (VDOS)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules.html#ionic-density-mapping">Ionic Density Mapping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules.html#batch-processing-workflows">Batch Processing Workflows</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../modules.html#processing-multiple-simulations">Processing Multiple Simulations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CPDyAna</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">target.data_processing_lammps</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for target.data_processing_lammps</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">LAMMPS Data Processing Module for CPDyAna</span>
+<span class="sd">=========================================</span>
+
+<span class="sd">This module provides specialized functions for processing LAMMPS trajectory data,</span>
+<span class="sd">optimized for the uniform timestep nature of LAMMPS simulations.</span>
+
+<span class="sd">The module includes functions for time window selection, trajectory segmentation,</span>
+<span class="sd">and data evaluation for diffusion analysis, with LAMMPS-specific optimizations.</span>
+
+<span class="sd">Author: CPDyAna Development Team</span>
+<span class="sd">Version: 06-25-2025</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">linregress</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">norm</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<div class="viewcode-block" id="find_terms_lammps">
+<a class="viewcode-back" href="../../target.html#target.data_processing_lammps.find_terms_lammps">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_terms_lammps</span><span class="p">(</span><span class="n">dt_value</span><span class="p">,</span> <span class="n">n_timesteps</span><span class="p">,</span> <span class="n">first_value</span><span class="p">,</span> <span class="n">last_value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find indices in a LAMMPS trajectory corresponding to a time range.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    - dt_value: Timestep value in picoseconds</span>
+<span class="sd">    - n_timesteps: Total number of timesteps</span>
+<span class="sd">    - first_value: Start time for analysis window in picoseconds</span>
+<span class="sd">    - last_value: End time for analysis window in picoseconds</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    - tuple: (first_term, last_term) indices</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># For LAMMPS, time points are uniformly spaced by dt_value</span>
+    <span class="c1"># Calculate indices directly from time values</span>
+    <span class="n">first_term</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">first_value</span> <span class="o">/</span> <span class="n">dt_value</span><span class="p">)),</span> <span class="n">n_timesteps</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">last_term</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">first_term</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">last_value</span> <span class="o">/</span> <span class="n">dt_value</span><span class="p">)),</span> <span class="n">n_timesteps</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">first_term</span><span class="p">,</span> <span class="n">last_term</span></div>
+
+
+<div class="viewcode-block" id="segmenter_func_lammps">
+<a class="viewcode-back" href="../../target.html#target.data_processing_lammps.segmenter_func_lammps">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">segmenter_func_lammps</span><span class="p">(</span><span class="n">first_term</span><span class="p">,</span> <span class="n">last_term</span><span class="p">,</span> <span class="n">pos_full</span><span class="p">,</span> <span class="n">dt_value</span><span class="p">,</span> <span class="n">n_timesteps</span><span class="p">,</span> <span class="n">cell_full</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Segment LAMMPS trajectory data based on specified time range.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    - first_term: Index of first timestep</span>
+<span class="sd">    - last_term: Index of last timestep</span>
+<span class="sd">    - pos_full: Full position array [atoms, frames, xyz]</span>
+<span class="sd">    - dt_value: Timestep value in picoseconds</span>
+<span class="sd">    - n_timesteps: Total number of timesteps</span>
+<span class="sd">    - cell_full: Cell parameter array (optional)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    - tuple: (pos, step_counts, dt, time, cell, ke_elec, cell_temp, ion_temp, tot_energy, enthalpy, tot_energy_ke_ion, tot_energy_ke_ion_ke_elec, vol, pressure)</span>
+<span class="sd">      Segmented data arrays for analysis.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Ensure indices are valid</span>
+    <span class="n">first_term</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">first_term</span><span class="p">,</span> <span class="n">pos_full</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">last_term</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">last_term</span><span class="p">,</span> <span class="n">pos_full</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Extract positions for the specified range</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="n">pos_full</span><span class="p">[:,</span> <span class="n">first_term</span><span class="p">:</span><span class="n">last_term</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">step_counts</span> <span class="o">=</span> <span class="n">pos</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Create uniform dt and time arrays</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">step_counts</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">dt_value</span>
+    <span class="n">time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">step_counts</span><span class="p">)</span> <span class="o">*</span> <span class="n">dt_value</span> <span class="o">+</span> <span class="p">(</span><span class="n">first_term</span> <span class="o">*</span> <span class="n">dt_value</span><span class="p">)</span>
+
+    <span class="c1"># Extract cell parameters if provided</span>
+    <span class="n">cell</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">cell_full</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cell</span> <span class="o">=</span> <span class="n">cell_full</span><span class="p">[</span><span class="n">first_term</span><span class="p">:</span><span class="n">last_term</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Initialize arrays for other properties (not typically available in LAMMPS)</span>
+    <span class="n">ke_elec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">step_counts</span><span class="p">)</span>
+    <span class="n">cell_temp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">step_counts</span><span class="p">)</span>
+    <span class="n">ion_temp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">step_counts</span><span class="p">)</span>
+    <span class="n">tot_energy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">step_counts</span><span class="p">)</span>
+    <span class="n">enthalpy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">step_counts</span><span class="p">)</span>
+    <span class="n">tot_energy_ke_ion</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">step_counts</span><span class="p">)</span>
+    <span class="n">tot_energy_ke_ion_ke_elec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">step_counts</span><span class="p">)</span>
+    <span class="n">vol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">step_counts</span><span class="p">)</span> <span class="k">if</span> <span class="n">cell</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">cell</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cell</span><span class="p">))])</span>
+    <span class="n">pressure</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">step_counts</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">pos</span><span class="p">,</span> <span class="n">step_counts</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">cell</span><span class="p">,</span> <span class="n">ke_elec</span><span class="p">,</span> <span class="n">cell_temp</span><span class="p">,</span> <span class="n">ion_temp</span><span class="p">,</span> <span class="n">tot_energy</span><span class="p">,</span> <span class="n">enthalpy</span><span class="p">,</span> <span class="n">tot_energy_ke_ion</span><span class="p">,</span> <span class="n">tot_energy_ke_ion_ke_elec</span><span class="p">,</span> <span class="n">vol</span><span class="p">,</span> <span class="n">pressure</span></div>
+
+
+<div class="viewcode-block" id="calculate_time_window_lammps">
+<a class="viewcode-back" href="../../target.html#target.data_processing_lammps.calculate_time_window_lammps">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">calculate_time_window_lammps</span><span class="p">(</span><span class="n">dt_value</span><span class="p">,</span> <span class="n">n_timesteps</span><span class="p">,</span> <span class="n">initial_slope_time</span><span class="p">,</span> <span class="n">final_slope_time</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate time window indices for fitting diffusion coefficients in LAMMPS data.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    - dt_value: Timestep value in picoseconds</span>
+<span class="sd">    - n_timesteps: Total number of timesteps</span>
+<span class="sd">    - initial_slope_time: Start time for fitting in picoseconds</span>
+<span class="sd">    - final_slope_time: End time for fitting in picoseconds</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    - tuple: (first_idx, last_idx, time_array)</span>
+<span class="sd">      Indices and time array for the fitting window.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Calculate indices directly from time values</span>
+    <span class="n">first_idx</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">initial_slope_time</span> <span class="o">/</span> <span class="n">dt_value</span><span class="p">)),</span> <span class="n">n_timesteps</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">last_idx</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">first_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">final_slope_time</span> <span class="o">/</span> <span class="n">dt_value</span><span class="p">)),</span> <span class="n">n_timesteps</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Create time array for the window</span>
+    <span class="n">time_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">first_idx</span><span class="p">,</span> <span class="n">last_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">dt_value</span>
+
+    <span class="k">return</span> <span class="n">first_idx</span><span class="p">,</span> <span class="n">last_idx</span><span class="p">,</span> <span class="n">time_array</span></div>
+
+
+<div class="viewcode-block" id="data_evaluator_lammps">
+<a class="viewcode-back" href="../../target.html#target.data_processing_lammps.data_evaluator_lammps">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">data_evaluator_lammps</span><span class="p">(</span><span class="n">diffusivity_direction_choices</span><span class="p">,</span> <span class="n">target_elements</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">total_ion_array</span><span class="p">,</span> <span class="n">steps</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Process LAMMPS position data for diffusion analysis.</span>
+
+<span class="sd">    This function has the same API as the original data_evaluator, but is optimized</span>
+<span class="sd">    for LAMMPS trajectory data processing.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    - diffusivity_direction_choices: List of directions for analysis (e.g., [&quot;XYZ&quot;, &quot;X&quot;])</span>
+<span class="sd">    - target_elements: List of mobile ion elements</span>
+<span class="sd">    - pos: Position array [atoms, frames, xyz]</span>
+<span class="sd">    - total_ion_array: Array of element types</span>
+<span class="sd">    - steps: Number of timesteps</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    - tuple: Arrays needed for diffusion analysis</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">position_data_list</span> <span class="o">=</span> <span class="p">[]</span> 
+    <span class="n">drifted_rectified_structure_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">conductor_indices_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">framework_indices_list</span> <span class="o">=</span> <span class="p">[]</span> 
+    <span class="n">framework_pos_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">mobile_pos_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">pos_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">mobile_drifted_rectified_structure_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">framework_drifted_rectified_structure_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">direction_idx</span><span class="p">,</span> <span class="n">direction</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">diffusivity_direction_choices</span><span class="p">):</span>
+        <span class="c1"># Calculate masks for selected directions</span>
+        <span class="n">dim_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;X&#39;</span> <span class="ow">in</span> <span class="n">direction</span><span class="p">:</span>
+            <span class="n">dim_mask</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="s1">&#39;Y&#39;</span> <span class="ow">in</span> <span class="n">direction</span><span class="p">:</span>
+            <span class="n">dim_mask</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="s1">&#39;Z&#39;</span> <span class="ow">in</span> <span class="n">direction</span><span class="p">:</span>
+            <span class="n">dim_mask</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># Create position data based on selected directions</span>
+        <span class="n">position_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+
+        <span class="c1"># Copy only the required dimensions using the mask</span>
+        <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">dim_mask</span><span class="p">[</span><span class="n">dim</span><span class="p">]:</span>
+                <span class="n">position_data</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">dim</span><span class="p">]</span> <span class="o">=</span> <span class="n">pos</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">dim</span><span class="p">]</span>
+
+        <span class="c1"># Calculate displacements from initial positions</span>
+        <span class="n">disp</span> <span class="o">=</span> <span class="n">position_data</span> <span class="o">-</span> <span class="n">position_data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+
+        <span class="c1"># Identify conductor and framework atoms</span>
+        <span class="n">conductor_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">element</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">total_ion_array</span><span class="p">)</span> <span class="k">if</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">target_elements</span><span class="p">])</span>
+        <span class="n">framework_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">total_ion_array</span><span class="p">))</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">conductor_indices</span><span class="p">])</span>
+
+        <span class="c1"># Extract framework and mobile positions</span>
+        <span class="n">framework_disp</span> <span class="o">=</span> <span class="n">disp</span><span class="p">[</span><span class="n">framework_indices</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">framework_indices</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+        <span class="n">framework_pos</span> <span class="o">=</span> <span class="n">position_data</span><span class="p">[</span><span class="n">framework_indices</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">framework_indices</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+        <span class="n">mobile_pos</span> <span class="o">=</span> <span class="n">position_data</span><span class="p">[</span><span class="n">conductor_indices</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">conductor_indices</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+
+        <span class="c1"># Calculate drift correction</span>
+        <span class="n">drift</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">framework_disp</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">framework_indices</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">steps</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+        <span class="n">corrected_displacements</span> <span class="o">=</span> <span class="n">disp</span> <span class="o">-</span> <span class="n">drift</span>
+
+        <span class="c1"># Calculate drift-corrected positions</span>
+        <span class="n">drifted_rectified_structure</span> <span class="o">=</span> <span class="n">position_data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+</span> <span class="n">corrected_displacements</span>
+
+        <span class="c1"># Extract mobile and framework drift-corrected positions</span>
+        <span class="n">mobile_drifted_rectified_structure</span> <span class="o">=</span> <span class="n">drifted_rectified_structure</span><span class="p">[</span><span class="n">conductor_indices</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">conductor_indices</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+        <span class="n">framework_drifted_rectified_structure</span> <span class="o">=</span> <span class="n">drifted_rectified_structure</span><span class="p">[</span><span class="n">framework_indices</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">framework_indices</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+
+        <span class="c1"># Append results to lists</span>
+        <span class="n">position_data_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">position_data</span><span class="p">)</span>
+        <span class="n">drifted_rectified_structure_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">drifted_rectified_structure</span><span class="p">)</span>
+        <span class="n">conductor_indices_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">conductor_indices</span><span class="p">)</span>
+        <span class="n">framework_indices_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">framework_indices</span><span class="p">)</span>
+        <span class="n">framework_pos_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">framework_pos</span><span class="p">)</span>
+        <span class="n">mobile_pos_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mobile_pos</span><span class="p">)</span>
+        <span class="n">pos_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+        <span class="n">mobile_drifted_rectified_structure_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mobile_drifted_rectified_structure</span><span class="p">)</span>
+        <span class="n">framework_drifted_rectified_structure_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">framework_drifted_rectified_structure</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">position_data_list</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">drifted_rectified_structure_list</span><span class="p">),</span> 
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">conductor_indices_list</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">framework_indices_list</span><span class="p">),</span> 
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">framework_pos_list</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mobile_pos_list</span><span class="p">),</span> 
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mobile_drifted_rectified_structure_list</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">framework_drifted_rectified_structure_list</span><span class="p">))</span></div>
+
+
+<span class="c1"># def data_evaluator_lammps(diffusivity_direction_choices, target_elements, frame_generator, total_ion_array):</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     Process LAMMPS position data for diffusion analysis using a frame generator.</span>
+
+<span class="c1">#     Parameters:</span>
+<span class="c1">#     - diffusivity_direction_choices: List of directions for analysis (e.g., [&quot;XYZ&quot;, &quot;X&quot;])</span>
+<span class="c1">#     - target_elements: List of mobile ion elements</span>
+<span class="c1">#     - frame_generator: Generator yielding frames with &#39;positions&#39; (n_atoms, 3)</span>
+<span class="c1">#     - total_ion_array: Array of element types</span>
+
+<span class="c1">#     Returns:</span>
+<span class="c1">#     - tuple: Arrays needed for diffusion analysis</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     positions = []</span>
+<span class="c1">#     for frame in frame_generator:</span>
+<span class="c1">#         positions.append(frame[&quot;positions&quot;])</span>
+<span class="c1">#     pos = np.stack(positions, axis=1)  # shape: (n_atoms, n_frames, 3)</span>
+<span class="c1">#     steps = pos.shape[1]</span>
+
+<span class="c1">#     # Use the same logic as data_evaluator_lammps</span>
+<span class="c1">#     position_data_list = [] </span>
+<span class="c1">#     drifted_rectified_structure_list = []</span>
+<span class="c1">#     conductor_indices_list = []</span>
+<span class="c1">#     framework_indices_list = [] </span>
+<span class="c1">#     framework_pos_list = []</span>
+<span class="c1">#     mobile_pos_list = []</span>
+<span class="c1">#     pos_list = []</span>
+<span class="c1">#     mobile_drifted_rectified_structure_list = []</span>
+<span class="c1">#     framework_drifted_rectified_structure_list = []</span>
+
+<span class="c1">#     for direction_idx, direction in enumerate(diffusivity_direction_choices):</span>
+<span class="c1">#         dim_mask = np.zeros(3, dtype=bool)</span>
+<span class="c1">#         if &#39;X&#39; in direction:</span>
+<span class="c1">#             dim_mask[0] = True</span>
+<span class="c1">#         if &#39;Y&#39; in direction:</span>
+<span class="c1">#             dim_mask[1] = True</span>
+<span class="c1">#         if &#39;Z&#39; in direction:</span>
+<span class="c1">#             dim_mask[2] = True</span>
+
+<span class="c1">#         position_data = np.zeros_like(pos)</span>
+<span class="c1">#         for dim in range(3):</span>
+<span class="c1">#             if dim_mask[dim]:</span>
+<span class="c1">#                 position_data[:, :, dim] = pos[:, :, dim]</span>
+
+<span class="c1">#         disp = position_data - position_data[:, 0:1, :]</span>
+
+<span class="c1">#         conductor_indices = np.array([i for i, element in enumerate(total_ion_array) if element in target_elements])</span>
+<span class="c1">#         framework_indices = np.array([i for i in range(len(total_ion_array)) if i not in conductor_indices])</span>
+
+<span class="c1">#         framework_disp = disp[framework_indices] if len(framework_indices) &gt; 0 else np.zeros((0, steps, 3))</span>
+<span class="c1">#         framework_pos = position_data[framework_indices] if len(framework_indices) &gt; 0 else np.zeros((0, steps, 3))</span>
+<span class="c1">#         mobile_pos = position_data[conductor_indices] if len(conductor_indices) &gt; 0 else np.zeros((0, steps, 3))</span>
+
+<span class="c1">#         drift = np.mean(framework_disp, axis=0) if len(framework_indices) &gt; 0 else np.zeros((steps, 3))</span>
+<span class="c1">#         corrected_displacements = disp - drift</span>
+
+<span class="c1">#         drifted_rectified_structure = position_data[:, 0:1, :] + corrected_displacements</span>
+
+<span class="c1">#         mobile_drifted_rectified_structure = drifted_rectified_structure[conductor_indices] if len(conductor_indices) &gt; 0 else np.zeros((0, steps, 3))</span>
+<span class="c1">#         framework_drifted_rectified_structure = drifted_rectified_structure[framework_indices] if len(framework_indices) &gt; 0 else np.zeros((0, steps, 3))</span>
+
+<span class="c1">#         position_data_list.append(position_data)</span>
+<span class="c1">#         drifted_rectified_structure_list.append(drifted_rectified_structure)</span>
+<span class="c1">#         conductor_indices_list.append(conductor_indices)</span>
+<span class="c1">#         framework_indices_list.append(framework_indices)</span>
+<span class="c1">#         framework_pos_list.append(framework_pos)</span>
+<span class="c1">#         mobile_pos_list.append(mobile_pos)</span>
+<span class="c1">#         pos_list.append(pos)</span>
+<span class="c1">#         mobile_drifted_rectified_structure_list.append(mobile_drifted_rectified_structure)</span>
+<span class="c1">#         framework_drifted_rectified_structure_list.append(framework_drifted_rectified_structure)</span>
+
+<span class="c1">#     return (np.array(position_data_list), np.array(drifted_rectified_structure_list), </span>
+<span class="c1">#             np.array(conductor_indices_list), np.array(framework_indices_list), </span>
+<span class="c1">#             np.array(framework_pos_list), np.array(mobile_pos_list), </span>
+<span class="c1">#             np.array(mobile_drifted_rectified_structure_list), np.array(framework_drifted_rectified_structure_list))</span>
+
+<div class="viewcode-block" id="detect_lammps_format">
+<a class="viewcode-back" href="../../target.html#target.data_processing_lammps.detect_lammps_format">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">detect_lammps_format</span><span class="p">(</span><span class="n">dt_array</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Detect if the given dt_array is from a LAMMPS trajectory.</span>
+
+<span class="sd">    LAMMPS trajectories have uniform timesteps, while QE trajectories have varying timesteps.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    - dt_array: Array of timestep values</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    - bool: True if LAMMPS format detected, False otherwise</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dt_array</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="c1"># Check if all timesteps are equal (within numerical precision)</span>
+    <span class="n">dt_value</span> <span class="o">=</span> <span class="n">dt_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">dt_array</span><span class="p">,</span> <span class="n">dt_value</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="is_lammps_simulation">
+<a class="viewcode-back" href="../../target.html#target.data_processing_lammps.is_lammps_simulation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_lammps_simulation</span><span class="p">(</span><span class="n">data_dict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if the provided data is from a LAMMPS simulation.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    - data_dict: Dictionary containing simulation data</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    - bool: True if LAMMPS data detected, False otherwise</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Check for common LAMMPS identifiers</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">data_dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="c1"># Find any key that contains dt_dict</span>
+    <span class="n">dt_found</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="s1">&#39;dt_dict&#39;</span> <span class="ow">in</span> <span class="n">data_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+            <span class="n">dt_array</span> <span class="o">=</span> <span class="n">data_dict</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;dt_dict&#39;</span><span class="p">]</span>
+            <span class="n">dt_found</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="c1"># Check if dt values are uniform (LAMMPS characteristic)</span>
+            <span class="k">if</span> <span class="n">dt_array</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">dt_array</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">dt_array</span><span class="p">,</span> <span class="n">dt_array</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">False</span> <span class="k">if</span> <span class="n">dt_found</span> <span class="k">else</span> <span class="kc">None</span>  <span class="c1"># None if can&#39;t determine</span></div>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Vinay Maithani.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

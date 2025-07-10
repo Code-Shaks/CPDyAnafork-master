@@ -39,7 +39,7 @@ import pandas as pd
 import os
 import glob
 
-from target.io import read_lammps_dump
+from target.io import read_lammps_dump, iter_lammps_dump
 
 from ase import Atoms
 from ase.io import read, write
@@ -239,6 +239,92 @@ def has_type_column(lammps_file):
                 return 'type' in header
     return False
 
+# def iter_lammps_trajectory(lammps_file, elements=None, timestep=None,
+#                            Conv_factor=1.0, element_mapping=None,
+#                            yield_summary=False):
+#     """
+#     Generator version of read_lammps_trajectory: yields one frame at a time as a dict,
+#     including per-frame thermodynamic data (volume, etc.).
+#     If yield_summary=True, yields a summary dict at the end with all arrays.
+#     """
+#     types_list = None
+#     if element_mapping:
+#         max_type = max(element_mapping)
+#         types_list = [element_mapping[i] for i in range(1, max_type+1)]
+#     elif elements:
+#         types_list = elements
+
+#     # Prepare accumulators for summary
+#     positions_list = []
+#     cells_list = []
+#     volumes_list = []
+#     timesteps_list = []
+#     symbols = None
+
+#     print(f"\n=== LAZY LAMMPS TRAJECTORY PROCESSING WITH SAMOS ===")
+#     print(f"Reading LAMMPS file: {lammps_file}")
+#     print(f"Element types provided: {elements}")
+#     print(f"Timestep: {timestep} ps")
+#     print(f"Element mapping provided: {element_mapping}")
+
+#     for frame in iter_lammps_dump(
+#         filename=lammps_file,
+#         elements=elements,
+#         types=types_list,
+#         timestep=timestep * 1000 if timestep else None,
+#         f_conv=Conv_factor,
+#         quiet=False
+#     ):
+#         positions = frame["positions"]
+#         cell = frame["cell"]
+#         symbols = frame["symbols"]
+#         vol = np.linalg.det(cell)
+#         tstep = frame.get("timestep", None)
+
+#         # Accumulate for summary
+#         positions_list.append(positions)
+#         cells_list.append(cell)
+#         volumes_list.append(vol)
+#         timesteps_list.append(tstep)
+
+#         # Per-frame thermodynamic data (can be expanded as needed)
+#         frame["volume"] = vol
+#         frame["cell_temp"] = 300.0  # Default
+#         frame["ion_temp"] = 300.0   # Default
+#         frame["pressure"] = 0.0     # Default
+#         frame["tot_energy"] = 0.0   # Default
+#         frame["enthalpy"] = 0.0     # Default
+
+#         yield frame
+
+#     if yield_summary:
+#         # After all frames, yield a summary dict
+#         positions_arr = np.array(positions_list)  # (n_frames, n_atoms, 3)
+#         cells_arr = np.array(cells_list)          # (n_frames, 3, 3)
+#         n_frames = len(positions_list)
+#         n_atoms = positions_arr.shape[1] if n_frames > 0 else 0
+#         pos_full = np.transpose(positions_arr, (1, 0, 2))  # (atoms, frames, xyz)
+#         cell_param_full = cells_arr.reshape(n_frames, 9)
+#         dt_full = np.array([timestep] * (n_frames - 1)) if timestep else np.ones(n_frames - 1)
+#         t_full = np.concatenate(([0], np.cumsum(dt_full)))
+#         vol_full = np.array(volumes_list)
+#         inp_array = symbols if symbols is not None else ['H'] * n_atoms
+
+#         print("\n=== CREATING ENHANCED TRAJECTORY ARRAYS ===")
+#         print(f"pos_full shape: {pos_full.shape} (atoms, frames, xyz)")
+#         print(f"cell_param_full shape: {cell_param_full.shape} (frames, 9_params)")
+#         print(f"Volume range: {vol_full.min():.2f} to {vol_full.max():.2f} Å³")
+#         summary = {
+#             "pos_full": pos_full,
+#             "n_frames": n_frames,
+#             "dt_full": dt_full,
+#             "t_full": t_full,
+#             "cell_param_full": cell_param_full,
+#             "volumes": vol_full,
+#             "inp_array": inp_array,
+#         }
+#         yield summary
+
 def read_lammps_trajectory(lammps_file, elements=None, timestep=None,
                            thermo_file=None, Conv_factor=1.0, element_mapping=None,
                            export_verification=False, show_recommendations=False):
@@ -372,6 +458,71 @@ def read_lammps_trajectory(lammps_file, elements=None, timestep=None,
     volumes = [np.linalg.det(cell) for cell in cells]
     print(f"\n=== ENHANCED PROCESSING COMPLETE ===")
     return (pos_full, n_frames, dt_full, t_full, cell_param_full, thermo_data, volumes, inp_array)
+
+# def iter_bomd_trajectory(bomd_file, elements=None):
+#     """
+#     Generator version of read_bomd_trajectory: yields one frame at a time as a dict,
+#     including per-frame thermodynamic data (volume, etc.).
+#     """
+#     bohr_to_ang = 0.529177
+#     with open(bomd_file, 'r') as f:
+#         lines = f.readlines()
+#     idx = 0
+#     n_lines = len(lines)
+#     # Auto-detect n_atoms
+#     while idx < n_lines:
+#         if lines[idx].strip().startswith("TIME"):
+#             idx0 = idx
+#             break
+#         idx += 1
+#     idx += 1  # Move to cell
+#     cell_lines = lines[idx:idx+3]
+#     idx += 3
+#     # Count atom lines
+#     atom_start = idx
+#     while idx < n_lines and not lines[idx].strip().startswith("TIME"):
+#         idx += 1
+#     n_atoms = idx - atom_start
+#     idx = 0
+#     while idx < n_lines:
+#         if not lines[idx].strip().startswith("TIME"):
+#             idx += 1
+#             continue
+#         header = lines[idx].strip().split()
+#         time_ps = float(header[0].replace("TIME(ps)", "")) if "TIME" in header[0] else float(header[1])
+#         step_idx = int(header[1]) if "TIME" in header[0] else int(header[2])
+#         energy_ry = float(header[2]) if "TIME" in header[0] else float(header[3])
+#         idx += 1
+#         cell = []
+#         for _ in range(3):
+#             cell.append([float(x) * bohr_to_ang for x in lines[idx].split()])
+#             idx += 1
+#         frame_pos = []
+#         for _ in range(n_atoms):
+#             frame_pos.append([float(x) * bohr_to_ang for x in lines[idx].split()])
+#             idx += 1
+#         # Assign elements
+#         if elements and len(elements) == n_atoms:
+#             inp_array = elements
+#         else:
+#             inp_array = ['H'] * n_atoms
+
+#         cell_np = np.array(cell)
+#         vol = np.linalg.det(cell_np)
+#         # Add per-frame thermodynamic data (default values for temperature, pressure, etc.)
+#         yield {
+#             "positions": np.array(frame_pos),
+#             "cell": cell_np,
+#             "timestep": time_ps,
+#             "energy_ry": energy_ry,
+#             "symbols": inp_array,
+#             "volume": vol,
+#             "cell_temp": 300.0,   # Default temperature
+#             "ion_temp": 300.0,    # Default temperature
+#             "pressure": 0.0,      # Default pressure
+#             "tot_energy": 0.0,    # Default total energy
+#             "enthalpy": 0.0       # Default enthalpy
+#         }
 
 def read_bomd_trajectory(bomd_file, elements=None, timestep=None, export_verification=False):
     """
