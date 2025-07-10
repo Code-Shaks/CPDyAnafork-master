@@ -51,7 +51,7 @@ def msd_plot_lammps(data_path, Plot_data, First_time, Last_time, save_path=None)
     # Set up figure with Seaborn styling
     plt.figure(figsize=(10, 6))
     sns.set(style="whitegrid", font_scale=1.2)
-    palette = sns.color_palette("viridis", len(Plot_data))
+    palette = sns.color_palette("tab10", len(Plot_data))
     
     # Find common elements across plot data for labeling
     common_parts_set = set(Plot_data[0])
@@ -166,7 +166,7 @@ def msd_plot_qe(data_path, Plot_data, First_time, Last_time, save_path=None):
     # Set up figure with Seaborn styling
     plt.figure(figsize=(10, 6))
     sns.set(style="whitegrid", font_scale=1.2)
-    palette = sns.color_palette("viridis", len(Plot_data))
+    palette = sns.color_palette("tab10", len(Plot_data))
     
     # Find common elements across plot data
     common_parts_set = set(Plot_data[0])
@@ -337,7 +337,7 @@ def van_hove_plot(data_path, Plot_data, save_path=None, figsize=(10, 8)):
             
             # Create heatmap
             heatmap = plt.pcolormesh(x_edges, y_edges, van_hove.T, 
-                                   cmap="viridis", shading="auto", 
+                                   cmap="tab10", shading="auto", 
                                    vmin=np.min(van_hove), vmax=vmax)
             
             # Enhance appearance
@@ -389,7 +389,7 @@ def ngp_plot(data_source, plot_data, first_time, last_time, save_path="NGP.jpg")
     # Set up figure with Seaborn styling
     plt.figure(figsize=(10, 8))
     sns.set(style="whitegrid", font_scale=1.2)
-    palette = sns.color_palette("viridis", len(plot_data))
+    palette = sns.color_palette("tab10", len(plot_data))
     
     # Plot each data series
     for idx, (temp, ele, direction) in enumerate(plot_data):
@@ -494,7 +494,7 @@ def plot_vaf_isotropic(data_obj, axis=None, hide_legend=False, target_species=No
     max_integral = 0
     
     # Generate color palette
-    palette = sns.color_palette("viridis", len(target_species))
+    palette = sns.color_palette("tab10", len(target_species))
     
     # Plot each species
     for idx, element in enumerate(target_species):
@@ -543,9 +543,9 @@ def plot_vaf_isotropic(data_obj, axis=None, hide_legend=False, target_species=No
     
     # Add legends if not hidden
     if not hide_legend:
-        axis.legend(loc='upper left', frameon=True, edgecolor='black', fontsize=12, bbox_to_anchor=(1.1, 1))
-        integral_axis.legend(loc='upper right', frameon=True, edgecolor='black', fontsize=12, bbox_to_anchor=(1.1, 0.5))
-    
+        axis.legend(loc='upper left', frameon=True, edgecolor='black', fontsize=12)
+        integral_axis.legend(loc='upper right', frameon=True, edgecolor='black', fontsize=12)
+
     # Clean up appearance
     sns.despine(ax=axis, right=True, left=False)
     sns.despine(ax=integral_axis, left=True, right=False)
@@ -592,7 +592,7 @@ def plot_power_spectrum(data_obj, axis=None, display=False, signal_alpha=0.1, fi
     axis.set_title('Vibrational Density of States', fontsize=16)
     
     # Generate color palette
-    palette = sns.color_palette("viridis", len(target_elements))
+    palette = sns.color_palette("tab10", len(target_elements))
     
     # Plot each element
     for idx, element in enumerate(target_elements):
@@ -672,7 +672,7 @@ def plot_rdf(data_obj, axis=None, secondary_axis=None, hide_legend=False, target
     
     # Generate color mapping for consistent colors by first element
     unique_first_elements = sorted(set([pair[0] for pair in pair_list]))
-    palette = sns.color_palette("viridis", len(unique_first_elements))
+    palette = sns.color_palette("tab10", len(unique_first_elements))
     color_map = {elem: palette[i] for i, elem in enumerate(unique_first_elements)}
     
     # For returning line handles
@@ -770,7 +770,7 @@ def plot_angular_spec(data_obj, axis=None, hide_legend=False, display=False, hid
     triplet_list = properties['species_pairs']  # Triplets stored as species_pairs
     
     # Generate color palette
-    palette = sns.color_palette("viridis", len(triplet_list))
+    palette = sns.color_palette("tab10", len(triplet_list))
     line_handles = []
     
     # Plot each triplet
@@ -848,8 +848,8 @@ def parse_cli_args():
                            help="Figure dimensions (width height) in inches.")
     vh_parser.add_argument("--plot-data", action="append", nargs="+", required=True,
                            help="Data to plot, format: --plot-data TEMP ELEMENT TYPE")
-    vh_parser.add_argument("--colormap", default="viridis",
-                           help="Matplotlib colormap for heatmap (e.g., viridis, plasma, jet)")
+    vh_parser.add_argument("--colormap", default="tab10",
+                           help="Matplotlib colormap for heatmap (e.g., tab10, plasma, jet)")
 
     # NGP Subcommand
     ngp_parser = subparsers.add_parser("ngp", help="Generate Non-Gaussian Parameter plots.")
