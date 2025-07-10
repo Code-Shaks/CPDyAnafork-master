@@ -1,35 +1,10 @@
 # Velocity Autocorrelation Function
-## Sample command line arugument for computing vaf for Li Al P S
+## Sample command line arugument for computing vaf.
 
 ### CL Argument: 
 ```sh
-CPDyAna vaf --data-dir . --element Li Al P S --t-start-fit-ps 5 --stepsize-t 1 --stepsize-tau 10 --t-end-fit-ps 100
+CPDyAna vaf --data-dir "./data" --element Li Al P S --t-start-fit-ps 5 --stepsize-t 1 --stepsize-tau 10 --t-end-fit-ps 100
 ```
-
-### Sample output
-```terminal
-Starting VAF analysis for elements: Li, Al, P, S
-Processing 1 file sets...
-Processing file set 1/1: LiAlPS
-Built 220747 frames with velocities.
-
-    ! Calculating VAF for atomic species Li in trajectory 0
-      Structure contains 22 atoms of type Li
-      I will calculate 4 block(s)
-Saving VAF plot to: ..\vaf_LiAlPS_Li_vaf_upto_100psframes.png
-
-    ! Calculating VAF for atomic species Al in trajectory 0
-      Structure contains 2 atoms of type Al
-      I will calculate 4 block(s)
-Saving VAF plot to: ..\vaf_LiAlPS_Al_vaf_upto_100psframes.png
-
-    ! Calculating VAF for atomic species P in trajectory 0
-      Structure contains 4 atoms of type P
-      I will calculate 4 block(s)
-Saving VAF plot to: ..\CPDyAnafork-master\vaf_LiAlPS_P_vaf_upto_100psframes.png
-
-    ! Calculating VAF for atomic species S in trajectory 0
-      Structure contains 24 atoms of type S
-      I will calculate 4 block(s)
-Saving VAF plot to: ..\CPDyAnafork-master\vaf_LiAlPS_S_vaf_upto_100psframes.png
+```sh
+CPDyAna vaf --data-dir "./data" --lammps-elements Li La Ti O --element-mapping 1:Li 2:La 3:Ti 4:O --lammps-timestep 1 --element Li --t-end-fit-ps 1000
 ```

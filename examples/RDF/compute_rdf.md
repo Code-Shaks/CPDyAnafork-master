@@ -5,13 +5,6 @@
 ```sh
 CPDyAna rdf --data-dir . xlim 0 10
 ```
-
-### Sample output
-```terminal
-Starting RDF analysis...
-Central atoms: Li, Al, P, S
-Processing 1 file sets...
-Processing file set 1/1: LiAlPS
-  → RDF plots created with prefix: rdf_plot_LiAlPS
-RDF analysis completed for 1 file sets.
+```sh
+CPDyAna rdf --data-dir "./data" --lammps-elements Ti La Li O --element-mapping 1:Li 2:La 3:Ti 4:O --lammps-timestep 1 --central-atom Li La Ti O --pair-atoms Li La Ti O
 ```

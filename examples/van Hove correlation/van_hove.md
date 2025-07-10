@@ -3,12 +3,8 @@
 
 ### CL Argument: 
 ```sh
-CPDyAna vh --data-dir . -T 600 -e Li --correlation Self Distinct --initial-time 0 --final-time 100                                                                             
+CPDyAna vh --data-dir "./data" -T 600 -e Li --correlation Self Distinct --initial-time 0 --final-time 100                                                                             
 ```
-
-### Sample output
-```terminal
-Saving results to OUTPUT.json...
-Generating Van Hove plot with 2 correlation functions...
-Van Hove plot saved to: van_hove_plot.png
+```sh
+CPDyAna vh --data-dir "./data" --lammps-elements Li La Ti O --element-mapping 1:Li 2:La 3:Ti 4:O --lammps-timestep 1 --export-verification -T 800 --initial-time 1 --final-time 10 --step-skip 1 --ngrid 10001 --sigma 0.01
 ```

@@ -4,23 +4,7 @@
 ### CL Argument
 
 ```sh
-CPDyAna ionic-density --data-dir . --element Li
+CPDyAna ionic-density --data-dir "./data" --element Li
 ```
 
-### Sample Output
 
-```terminal
-Starting ionic density analysis for element: Li
-Processing 1 file sets...
-Processing file set 1/1: LiAlPS
-Trajectory built: 220747 frames from 0 to 220746 (stride=1)
-Calculating probability density for Li (sigma=0.3, n_sigma=4.0, density=0.2)
-(get_gaussian_density) indices: [ 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22]
-Grid dimensions 43 x 44 x 70
-Box dimensions  8.458552527390488 x 8.777313887263547 x 13.810488391722012
-xsf file:  LiAlPS_density.xsf
-(get_gaussian_density) We do not show these atoms in the xsf file: [ 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22]
-==============================Density written to LiAlPS_density.xsf
-  → Density file created: LiAlPS_density.xsf
-Ionic density analysis completed. Generated 1 density files.
-```
