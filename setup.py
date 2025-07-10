@@ -8,7 +8,9 @@ setup(
         'numpy>=1.23.5',
         'matplotlib>=3.5.0',
         'scipy>=1.8.0',
-        'pandas>=1.3.0'
+        'pandas>=1.3.0',
+        'pymatgen>=2024.10.3',
+        'pymatgen-analysis-diffusion>=2024.6.25.1'
     ],
     author='CNL Lab',
     author_email='abc1@gmail.com',
