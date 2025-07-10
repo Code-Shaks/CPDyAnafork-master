@@ -31,7 +31,6 @@ import glob
 from ase import Atoms
 from target.trajectory import Trajectory
 from target.analysis import DynamicsAnalyzer
-from samos_modules.samos_plotting import plot_power_spectrum
 from target.plotting import plot_power_spectrum
 
 # Import input_reader for trajectory parsing
