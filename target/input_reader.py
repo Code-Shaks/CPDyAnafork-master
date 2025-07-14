@@ -91,7 +91,7 @@ def detect_trajectory_format(data_dir):
         return format_info
     
     # BOMD .trj or .trajectory files
-    bomd_patterns = ['*.trj', '*.trajectory']
+    bomd_patterns = ['*.trj', '*.trajectory', '*.mdtrj']
     for pattern in bomd_patterns:
         bomd_files = sorted(glob.glob(os.path.join(data_dir, pattern)))
         if bomd_files:
@@ -524,92 +524,181 @@ def read_lammps_trajectory(lammps_file, elements=None, timestep=None,
 #             "enthalpy": 0.0       # Default enthalpy
 #         }
 
-def read_bomd_trajectory(bomd_file, elements=None, timestep=None, export_verification=False):
+# def read_bomd_trajectory(bomd_file, elements=None, timestep=None, export_verification=False):
+#     """
+#     Read BOMD trajectory file (.trj, .mdtrj, .trajectory) in Quantum ESPRESSO format (no TIME header).
+#     Args:
+#         bomd_file (str): Path to BOMD trajectory file.
+#         elements (list): List of element symbols (length = n_atoms).
+#         timestep (float): Optional, time step in ps.
+#         export_verification (bool): Export verification trajectory.
+#     Returns:
+#         tuple: (positions, n_frames, dt_full, t_full, cell_param_full, thermo_data, volumes, inp_array)
+#     """
+#     bohr_to_ang = 0.529177
+#     positions = []
+#     cells = []
+#     times = []
+#     energies = []
+#     with open(bomd_file, 'r') as f:
+#         lines = [line for line in f if line.strip() != '']
+#     # Detect n_atoms from first frame
+#     n_lines = len(lines)
+#     # Each frame: 1 header + 3 cell + N atoms
+#     # Find n_atoms by reading first frame
+#     header_idx = 0
+#     cell_start = header_idx + 1
+#     atom_start = cell_start + 3
+#     # Find next header (should be at atom_start + n_atoms)
+#     # Assume all frames have same number of atoms
+#     # Find first header line of next frame
+#     for i in range(atom_start + 1, n_lines):
+#         parts = lines[i].split()
+#         if len(parts) == 3:
+#             try:
+#                 float(parts[0]); float(parts[1]); float(parts[2])
+#                 n_atoms = i - atom_start
+#                 break
+#             except Exception:
+#                 continue
+#     else:
+#         # If only one frame, use all remaining lines
+#         n_atoms = n_lines - atom_start
+#     frame_len = 1 + 3 + n_atoms
+#     n_frames = n_lines // frame_len
+#     # Now parse all frames
+#     for fidx in range(n_frames):
+#         base = fidx * frame_len
+#         header = lines[base].split()
+#         time_ps = float(header[0])
+#         # temp = float(header[1])  # Not used
+#         energy_ry = float(header[2])
+#         times.append(time_ps)
+#         energies.append(energy_ry)
+#         # Cell
+#         cell = []
+#         for i in range(3):
+#             cell.append([float(x) for x in lines[base + 1 + i].split()])
+#         cells.append(np.array(cell))
+#         # Positions
+#         frame_pos = []
+#         for i in range(n_atoms):
+#             frame_pos.append([float(x) for x in lines[base + 4 + i].split()])
+#         positions.append(frame_pos)
+#     positions = np.array(positions) * bohr_to_ang  # (frames, atoms, 3)
+#     positions = np.transpose(positions, (1, 0, 2))  # (atoms, frames, 3)
+#     cells = np.array(cells) * bohr_to_ang  # (frames, 3, 3)
+#     cell_param_full = cells.reshape(cells.shape[0], 9)
+#     n_frames = positions.shape[1]
+#     dt_full = np.diff(times) if len(times) > 1 else np.ones(n_frames-1)
+#     t_full = np.array(times)
+#     volumes = [np.linalg.det(c) for c in cells]
+#     thermo_data = {'total_energy_ry': np.array(energies)}
+#     # Element assignment
+#     if elements and len(elements) == n_atoms:
+#         inp_array = elements
+#     else:
+#         inp_array = ['H'] * n_atoms
+#     print(f"Element assignment for BOMD: {inp_array}")
+#     print(f"Unique elements: {set(inp_array)}")
+#     # Optional verification export
+#     if export_verification:
+#         export_verification_trajectory(positions, cells, inp_array, t_full)
+#     return (positions, n_frames, dt_full, t_full, cell_param_full, thermo_data, volumes, inp_array)
+
+def read_bomd_files(bomd_in_file, bomd_mdtrj_file, Conv_factor=0.529177249):
     """
-    Read BOMD trajectory file (.trj or .trajectory) and convert to CPDyAna format.
+    Read BOMD input and trajectory files to form trajectory arrays.
 
     Args:
-        bomd_file (str): Path to BOMD trajectory file.
-        elements (list): List of element symbols (length = n_atoms).
-        timestep (float): Optional, time step in ps.
-        export_verification (bool): Export verification trajectory.
+        bomd_in_file (str): Path to the BOMD input file (e.g., bomd.in).
+        bomd_mdtrj_file (str): Path to the BOMD trajectory file (e.g., bomd.mdtrj).
+        Conv_factor (float): Conversion factor from Bohr to Angstrom (default: 0.529177249).
 
     Returns:
-        tuple: (positions, n_frames, dt_full, t_full, cell_param_full, thermo_data, volumes, inp_array)
-            positions (np.ndarray): (atoms, frames, 3)
-            n_frames (int): Number of frames
-            dt_full (np.ndarray): (frames-1,) time differences
-            t_full (np.ndarray): (frames,) time values
-            cell_param_full (np.ndarray): (frames, 9)
-            thermo_data (dict): Thermodynamic data
-            volumes (list): Cell volumes
-            inp_array (list): element symbols per atom
+        tuple: (pos_full, n_frames, dt_full, t_full, cell_param_full, thermo_data, volumes, inp_array)
+            - pos_full: (n_atoms, n_frames, 3) array of atomic positions in Angstrom.
+            - n_frames: int, number of frames.
+            - dt_full: (n_frames-1,) array of time differences in ps.
+            - t_full: (n_frames,) array of times in ps.
+            - cell_param_full: (n_frames, 9) array of flattened lattice vectors in Angstrom.
+            - thermo_data: dict with {'total_energy_ry': (n_frames,)} containing energies in Rydberg.
+            - volumes: (n_frames,) array of cell volumes in Angstrom^3.
+            - inp_array: list of atom symbols in the order of the trajectory.
     """
-    bohr_to_ang = 0.529177
-    positions = []
-    cells = []
-    times = []
-    energies = []
-    with open(bomd_file, 'r') as f:
+    # Read atom symbols from bomd.in
+    with open(bomd_in_file, 'r') as f:
         lines = f.readlines()
-    idx = 0
-    n_lines = len(lines)
-    # Auto-detect n_atoms
-    # Find first header, then next 3 lines (cell), then count until next header
-    while idx < n_lines:
-        if lines[idx].strip().startswith("TIME"):
-            idx0 = idx
-            break
-        idx += 1
-    idx += 1  # Move to cell
-    cell_lines = lines[idx:idx+3]
-    idx += 3
-    # Count atom lines
-    atom_start = idx
-    while idx < n_lines and not lines[idx].strip().startswith("TIME"):
-        idx += 1
-    n_atoms = idx - atom_start
-    # Now parse all frames
-    idx = 0
-    while idx < n_lines:
-        if not lines[idx].strip().startswith("TIME"):
-            idx += 1
+    atomic_positions = False
+    inp_array = []
+    for line in lines:
+        line = line.strip()
+        if 'ATOMIC_POSITIONS' in line:
+            atomic_positions = True
             continue
-        header = lines[idx].strip().split()
-        time_ps = float(header[0].replace("TIME(ps)", "")) if "TIME" in header[0] else float(header[1])
-        step_idx = int(header[1]) if "TIME" in header[0] else int(header[2])
-        energy_ry = float(header[2]) if "TIME" in header[0] else float(header[3])
-        times.append(time_ps)
-        energies.append(energy_ry)
-        idx += 1
+        if atomic_positions and line:
+            if not line[0].isalpha():
+                break  # Stop at the end of ATOMIC_POSITIONS block
+            inp_array.append(line.split()[0])
+    n_atoms = len(inp_array)
+    if n_atoms == 0:
+        raise ValueError("No atoms found in bomd.in ATOMIC_POSITIONS section")
+
+    # Read bomd.mdtrj
+    with open(bomd_mdtrj_file, 'r') as f:
+        lines = [line.strip() for line in f.readlines() if line.strip()]
+    
+    frame_size = 1 + 3 + n_atoms  # Header + 3 cell lines + n_atoms position lines
+    if len(lines) % frame_size != 0:
+        raise ValueError(f"Inconsistent number of lines in {bomd_mdtrj_file}. Expected multiple of {frame_size}, got {len(lines)}")
+    
+    n_frames = len(lines) // frame_size
+    pos_full = []
+    cell_param_full = []
+    t_full = []
+    energies = []
+
+    for i in range(n_frames):
+        base = i * frame_size
+        
+        # Parse header line: time (ps), step, energy (Ry)
+        header = lines[base].split()
+        if len(header) != 3:
+            raise ValueError(f"Invalid header format at line {base+1} in {bomd_mdtrj_file}")
+        t_full.append(float(header[0]))
+        energies.append(float(header[2]))
+        
+        # Parse lattice vectors (3 lines)
         cell = []
-        for _ in range(3):
-            cell.append([float(x) * bohr_to_ang for x in lines[idx].split()])
-            idx += 1
-        cells.append(np.array(cell))
-        frame_pos = []
-        for _ in range(n_atoms):
-            frame_pos.append([float(x) * bohr_to_ang for x in lines[idx].split()])
-            idx += 1
-        positions.append(frame_pos)
-    positions = np.array(positions)  # (frames, atoms, 3)
-    positions = np.transpose(positions, (1, 0, 2))  # (atoms, frames, 3)
-    cells = np.array(cells)  # (frames, 3, 3)
-    cell_param_full = cells.reshape(cells.shape[0], 9)
-    n_frames = positions.shape[1]
-    dt_full = np.diff(times) if len(times) > 1 else np.ones(n_frames-1)
-    t_full = np.array(times)
-    volumes = [np.linalg.det(c) for c in cells]
-    thermo_data = {'total_energy_ry': np.array(energies)}
-    # Element assignment
-    if elements and len(elements) == n_atoms:
-        inp_array = elements
-    else:
-        inp_array = ['H'] * n_atoms
-    # Optional verification export
-    if export_verification:
-        export_verification_trajectory(positions, cells, inp_array, t_full)
-    return (positions, n_frames, dt_full, t_full, cell_param_full, thermo_data, volumes, inp_array)
+        for j in range(3):
+            cell_line = lines[base + 1 + j].split()
+            if len(cell_line) != 3:
+                raise ValueError(f"Invalid cell vector format at line {base+2+j} in {bomd_mdtrj_file}")
+            cell.append([float(x) for x in cell_line])
+        cell = np.array(cell) * Conv_factor  # Convert to Angstrom
+        cell_param_full.append(cell.flatten())
+        
+        # Parse atomic positions (n_atoms lines)
+        pos = []
+        for j in range(n_atoms):
+            pos_line = lines[base + 4 + j].split()
+            if len(pos_line) != 3:
+                raise ValueError(f"Invalid position format at line {base+5+j} in {bomd_mdtrj_file}")
+            pos.append([float(x) for x in pos_line])
+        pos = np.array(pos) * Conv_factor  # Convert to Angstrom
+        pos_full.append(pos)
+    
+    # Convert lists to numpy arrays
+    pos_full = np.array(pos_full)  # Shape: (n_frames, n_atoms, 3)
+    pos_full = np.transpose(pos_full, (1, 0, 2))  # Shape: (n_atoms, n_frames, 3)
+    cell_param_full = np.array(cell_param_full)  # Shape: (n_frames, 9)
+    t_full = np.array(t_full)  # Shape: (n_frames,)
+    energies = np.array(energies)  # Shape: (n_frames,)
+    dt_full = np.diff(t_full)  # Shape: (n_frames-1,)
+    volumes = np.array([np.linalg.det(cell.reshape(3, 3)) for cell in cell_param_full])  # Shape: (n_frames,)
+    thermo_data = {'total_energy_ry': energies}
+
+    return pos_full, n_frames, dt_full, t_full, cell_param_full, thermo_data, volumes, inp_array
 
 def read_ion_file_universal(ion_file_or_elements):
     """

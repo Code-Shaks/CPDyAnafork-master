@@ -191,25 +191,32 @@ def build_trajectory(in_file, pos_file, cel_file,
     print(f"Built {len(frames)} frames with velocities.")
     return frames
 
-def build_bomd_trajectory(trj_file, elements=None, num_frames=0, stride=1):
+def build_bomd_trajectory(trj_file, in_file=None, elements=None, num_frames=0, stride=1):
     """
-    Build a trajectory as a list of ASE Atoms objects with velocities from BOMD .trj file.
+    Build a trajectory as a list of ASE Atoms objects with velocities from BOMD .mdtrj file.
 
     Args:
-        trj_file (str): Path to BOMD .trj trajectory file.
-        elements (list): List of element symbols (order must match .trj).
+        trj_file (str): Path to BOMD .mdtrj trajectory file.
+        in_file (str): Path to BOMD .in input file (for atom order).
+        elements (list): List of element symbols (order must match .mdtrj, optional).
         num_frames (int): Number of frames to use (0=all).
         stride (int): Stride for frames.
 
     Returns:
         list: List of ASE Atoms objects with velocities.
     """
-    # Use CPDyAna's input_reader to parse BOMD .trj file
-    pos_full, n_frames, dt_full, t_full, cell_param_full, thermo_data, volumes, inp_array = inp.read_bomd_trajectory(
-        trj_file,
-        elements=elements,
-        timestep=None,
-        export_verification=False
+    import os
+    # Auto-detect .in file if not provided
+    if in_file is None:
+        trj_dir = os.path.dirname(trj_file)
+        in_files = [f for f in os.listdir(trj_dir) if f.endswith('.in')]
+        if not in_files:
+            raise FileNotFoundError("No BOMD .in file found in the trajectory directory.")
+        in_file = os.path.join(trj_dir, in_files[0])
+
+    # Use CPDyAna's input_reader to parse BOMD .mdtrj file
+    pos_full, n_frames, dt_full, t_full, cell_param_full, thermo_data, volumes, inp_array = inp.read_bomd_files(
+        in_file, trj_file
     )
     # Determine frame indices
     if num_frames > 0:
@@ -334,6 +341,7 @@ def main():
     parser.add_argument('--lammps-timestep', type=float, help="LAMMPS timestep in picoseconds")
     parser.add_argument('--bomd-trj', help="BOMD trajectory file (.trj)")
     parser.add_argument('--bomd-elements', nargs='+', help="Element symbols for BOMD atom order (e.g., Li O Ti)")
+    parser.add_argument('--bomd-in', help="BOMD input file (.in) for atom order")
     parser.add_argument('--elements', nargs='+', required=True, help="Atom symbol(s) for VDOS (e.g. Li Na)")
     parser.add_argument('--start', type=float, default=0.0, help="Time (ps) to start analysis")
     parser.add_argument('--nframes', type=int, default=0, help="Number of frames (0=all)")
@@ -343,12 +351,22 @@ def main():
     args = parser.parse_args()
 
     # --- BOMD branch ---
+        # --- BOMD branch ---
     if args.bomd_trj:
         # Use BOMD elements if provided, else fallback to None
         bomd_elements = args.bomd_elements if args.bomd_elements else None
+        in_file = args.bomd_in
+        if not in_file:
+            trj_dir = os.path.dirname(args.bomd_trj)
+            in_files = [f for f in os.listdir(trj_dir) if f.endswith('.in')]
+            if in_files:
+                in_file = os.path.join(trj_dir, in_files[0])
+            else:
+                raise RuntimeError("No BOMD .in file found for VDOS analysis.")
         frames = build_bomd_trajectory(
             args.bomd_trj,
-            elements=bomd_elements,
+            in_file=in_file,
+            # elements=bomd_elements,
             num_frames=args.nframes,
             stride=args.stride
         )

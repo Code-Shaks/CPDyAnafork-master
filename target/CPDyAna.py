@@ -82,7 +82,6 @@ def Job(temperature, diffusing_elements, diffusivity_direction_choices,
         initial_time, final_time, initial_slope_time, final_slope_time,
         block, rmax, step_skip, sigma, ngrid, mode=None,
         lammps_elements=None, lammps_timestep=None, element_mapping=None,
-        bomd_elements=None, bomd_timestep=None,
         export_verification=False, show_recommendations=True, lammps_units="metal"):
 # def Job(temperature, diffusing_elements, diffusivity_direction_choices,
 #         diffusivity_choices, correlation, data_dir, Conv_factor,
@@ -342,23 +341,66 @@ def Job(temperature, diffusing_elements, diffusivity_direction_choices,
             # Set dt_value for unified calculation
             dt_value = dt_full[0] if len(dt_full) > 0 else 1.0
         
+        # elif format_info['format'] == 'bomd':
+        #     bomd_file = format_info['bomd_files'][temp_count]
+        #     (pos_full, n_frames, dt_full, t_full, cell_param_full,
+        #     thermo_data, volumes, inp_array) = inp.read_bomd_trajectory(
+        #         bomd_file,
+        #         elements=bomd_elements,
+        #         timestep=bomd_timestep,
+        #         export_verification=export_verification
+        #     )
+            # # Provide dummy arrays for missing thermodynamic data
+            # ke_elec_full = np.zeros(n_frames)
+            # cell_temp_full = np.full(n_frames, temp)
+            # ion_temp_full = np.full(n_frames, temp)
+            # tot_energy_full = thermo_data.get('total_energy_ry', np.zeros(n_frames))
+            # enthalpy_full = np.zeros(n_frames)
+            # tot_energy_ke_ion_full = np.zeros(n_frames)
+            # tot_energy_ke_ion_ke_elec_full = np.zeros(n_frames)
+            # vol_full = np.array(volumes)
+            # pressure_full = np.zeros(n_frames)
+            # # Use QE-like segmentation for BOMD
+            # First_term, Last_term = dp.find_terms(t_full.tolist(), initial_time, final_time)
+            # (pos, steps, dt, t, cell_param, ke_elec, cell_temp, ion_temp, tot_energy,
+            # enthalpy, tot_energy_ke_ion, tot_energy_ke_ion_ke_elec, vol, pressure) = dp.segmenter_func(
+            #     First_term, Last_term, pos_full, dt_full, t_full, cell_param_full,
+            #     ke_elec_full=ke_elec_full, cell_temp_full=cell_temp_full, ion_temp_full=ion_temp_full,
+            #     tot_energy_full=tot_energy_full, enthalpy_full=enthalpy_full, tot_energy_ke_ion_full=tot_energy_ke_ion_full,
+            #     tot_energy_ke_ion_ke_elec_full=tot_energy_ke_ion_ke_elec_full, vol_full=vol_full, pressure_full=pressure_full
+            # )
+            
         elif format_info['format'] == 'bomd':
             bomd_file = format_info['bomd_files'][temp_count]
+            # --- NEW: Use read_bomd_files instead of inp.read_bomd_trajectory ---
+            # Try to find the .in file in the same directory
+            in_files = [f for f in os.listdir(data_dir) if f.endswith('.in')]
+            if not in_files:
+                raise ValueError("No .in file found in BOMD data directory")
+            in_file = os.path.join(data_dir, in_files[0])
+            # Call your new function
             (pos_full, n_frames, dt_full, t_full, cell_param_full,
-             thermo_data, volumes, inp_array) = inp.read_bomd_trajectory(
-                bomd_file,
-                elements=bomd_elements,
-                timestep=bomd_timestep,
-                export_verification=export_verification
+             thermo_data, volumes, inp_array) = inp.read_bomd_files(
+                in_file, bomd_file, Conv_factor=Conv_factor
             )
+            # Provide dummy arrays for missing thermodynamic data if needed
+            ke_elec_full = np.zeros(n_frames)
+            cell_temp_full = np.full(n_frames, temp)
+            ion_temp_full = np.full(n_frames, temp)
+            tot_energy_full = thermo_data.get('total_energy_ry', np.zeros(n_frames))
+            enthalpy_full = np.zeros(n_frames)
+            tot_energy_ke_ion_full = np.zeros(n_frames)
+            tot_energy_ke_ion_ke_elec_full = np.zeros(n_frames)
+            vol_full = np.array(volumes)
+            pressure_full = np.zeros(n_frames)
             # Use QE-like segmentation for BOMD
             First_term, Last_term = dp.find_terms(t_full.tolist(), initial_time, final_time)
             (pos, steps, dt, t, cell_param, ke_elec, cell_temp, ion_temp, tot_energy,
-             enthalpy, tot_energy_ke_ion, tot_energy_ke_ion_ke_elec, vol, pressure) = dp.segmenter_func(
+            enthalpy, tot_energy_ke_ion, tot_energy_ke_ion_ke_elec, vol, pressure) = dp.segmenter_func(
                 First_term, Last_term, pos_full, dt_full, t_full, cell_param_full,
-                ke_elec_full=None, cell_temp_full=None, ion_temp_full=None,
-                tot_energy_full=None, enthalpy_full=None, tot_energy_ke_ion_full=None,
-                tot_energy_ke_ion_ke_elec_full=None, vol_full=volumes, pressure_full=None
+                ke_elec_full=ke_elec_full, cell_temp_full=cell_temp_full, ion_temp_full=ion_temp_full,
+                tot_energy_full=tot_energy_full, enthalpy_full=enthalpy_full, tot_energy_ke_ion_full=tot_energy_ke_ion_full,
+                tot_energy_ke_ion_ke_elec_full=tot_energy_ke_ion_ke_elec_full, vol_full=vol_full, pressure_full=pressure_full
             )
         
         elif format_info['format'] == 'xsf':
@@ -434,12 +476,12 @@ def Job(temperature, diffusing_elements, diffusivity_direction_choices,
             
             # Calculate Mean Square Displacement using UNIFIED method
             if mode == "msd":
-                print(f"=== UNIFIED MSD CALCULATION FOR {ele} ===")
                 msd_data_dict = cal.calculate_msd([ele], diffusivity_direction_choices, diffusivity_choices,
                                                   pos_full, conduct_rectified_structure_array,
                                                   conduct_ions_array, t, Last_term, initial_slope_time,
                                                   final_slope_time, block, 
                                                   is_lammps=(format_info['format'] == 'lammps'),
+                                                  is_bomd=(format_info['format'] == 'bomd'),
                                                   dt_value=dt_value, lammps_units=lammps_units,
                                                   atom_types=inp_array, cell_param_full=cell_param_full)
             
@@ -447,21 +489,61 @@ def Job(temperature, diffusing_elements, diffusivity_direction_choices,
             ngp_data_dict = {}
             evaluated_corr_dict = {}
             
-            # if mode == "ngp":
-            #     ngp_data_dict = cal.calculate_ngp([ele], diffusivity_direction_choices,
-            #                                       pos_full, conduct_rectified_structure_array,
-            #                                       conduct_ions_array, dt, initial_time, final_time)
             if mode == "ngp":
-                # --- FIX: Construct dt as a time array for LAMMPS ---
                 if format_info['format'] == 'lammps':
                     num_frames = conduct_rectified_structure_array.shape[2]
                     timestep = dt_value  # dt_value is set above from dt_full[0] or lammps_timestep
                     dt_ngp = np.arange(num_frames) * timestep
+                elif format_info['format'] == 'bomd':
+                    num_frames = conduct_rectified_structure_array.shape[2]
+                    # Use the actual time array (t_full) if available and matches frame count
+                    if t_full is not None and len(t_full) == num_frames:
+                        dt_ngp = t_full
+                        print(f"BOMD: Using actual time array from trajectory. Time range: {dt_ngp[0]:.4f} to {dt_ngp[-1]:.4f} ps")
+                    else:
+                        # Parse dt from bomd.in
+                        timestep_ps = None
+                        in_files = [f for f in os.listdir(data_dir) if f.endswith('.in')]
+                        if in_files:
+                            with open(os.path.join(data_dir, in_files[0]), 'r') as f:
+                                for line in f:
+                                    if 'dt' in line and '=' in line:
+                                        try:
+                                            dt_au = float(line.split('=')[1].split(',')[0].strip())
+                                            timestep_ps = dt_au * 0.0241888435 * 1e-3  # a.u. to ps
+                                            print(f"BOMD: Found dt={dt_au} a.u. in .in file, timestep={timestep_ps:.8f} ps")
+                                            break
+                                        except Exception:
+                                            continue
+                        # Try to infer stride from the .mdtrj file time array if available
+                        if t_full is not None and len(t_full) > 1:
+                            stride_ps = t_full[1] - t_full[0]
+                            if timestep_ps is not None and abs(stride_ps - timestep_ps) > 1e-6:
+                                # Likely output stride > 1
+                                n_stride = round(stride_ps / timestep_ps)
+                                timestep_ps = stride_ps  # Use actual output interval
+                                print(f"BOMD: Detected output stride of {n_stride}, using timestep={timestep_ps:.8f} ps")
+                        if timestep_ps is None:
+                            timestep_ps = 0.001  # fallback to 1 fs
+                        dt_ngp = np.arange(num_frames) * timestep_ps
+                        print(f"BOMD: Estimated timestep {timestep_ps:.8f} ps, time range: {dt_ngp[0]:.4f} to {dt_ngp[-1]:.4f} ps")
                 else:
                     dt_ngp = dt  # For QE, dt is already correct
+                    
                 ngp_data_dict = cal.calculate_ngp([ele], diffusivity_direction_choices,
-                                                  pos_full, conduct_rectified_structure_array,
-                                                  conduct_ions_array, dt_ngp, initial_time, final_time)
+                                                pos_full, conduct_rectified_structure_array,
+                                                conduct_ions_array, dt_ngp, initial_time, final_time)
+            # if mode == "ngp":
+            #     # --- FIX: Construct dt as a time array for LAMMPS ---
+            #     if format_info['format'] == 'lammps':
+            #         num_frames = conduct_rectified_structure_array.shape[2]
+            #         timestep = dt_value  # dt_value is set above from dt_full[0] or lammps_timestep
+            #         dt_ngp = np.arange(num_frames) * timestep
+            #     else:
+            #         dt_ngp = dt  # For QE, dt is already correct
+            #     ngp_data_dict = cal.calculate_ngp([ele], diffusivity_direction_choices,
+            #                                       pos_full, conduct_rectified_structure_array,
+            #                                       conduct_ions_array, dt_ngp, initial_time, final_time)
             
             # Van Hove correlation functions (unchanged)
             if mode == "vh":
@@ -522,9 +604,13 @@ def Job(temperature, diffusing_elements, diffusivity_direction_choices,
 
             # Store processed data in dictionaries with (temperature, element) keys
             temp_input_dict[(temp, ele)] = {'evaluated_data': ele_dict, 'evaluated_corr': evaluated_corr_dict}
-            temp_output_dict[(temp, ele)] = {'dt_dict': dt, 'msd_data': msd_data_dict, 'ngp_data': ngp_data_dict,
-                                             'evaluated_corr': evaluated_corr_dict}
-    
+            temp_output_dict[(temp, ele)] = {
+                # 'dt_dict': dt,
+                'dt_dict': t.tolist(),
+                'msd_data': msd_data_dict,
+                'ngp_data': ngp_data_dict,
+                'evaluated_corr': evaluated_corr_dict
+            }
     return temp_input_dict, temp_output_dict
 
 def parser():
@@ -687,8 +773,8 @@ def parser():
         )
         sp.add_argument(
             "--step-skip",
-            type=int, default=5,
-            help="Number of trajectory steps to skip between analysis frames (default: 5)"
+            type=int, default=10,
+            help="Number of trajectory steps to skip between analysis frames (default: 10)"
         )
         sp.add_argument(
             "--sigma",
@@ -707,14 +793,6 @@ def parser():
         )
 
     # MSD-specific plotting arguments
-    msd.add_argument(
-        "--bomd-elements", nargs="+",
-        help="Element symbols for BOMD atom order (e.g., Li O Ti)"
-    )
-    msd.add_argument(
-        "--bomd-timestep", type=float,
-        help="BOMD timestep in picoseconds"
-    )
     msd.add_argument(
         "--plot-data",
         action="append", nargs="+",
@@ -739,14 +817,6 @@ def parser():
 
     # Van Hove-specific plotting arguments
     vh.add_argument(
-        "--bomd-elements", nargs="+",
-        help="Element symbols for BOMD atom order (e.g., Li O Ti)"
-    )
-    vh.add_argument(
-        "--bomd-timestep", type=float,
-        help="BOMD timestep in picoseconds"
-    )
-    vh.add_argument(
         "--plot-data",
         action="append", nargs="+",
         default=None,
@@ -764,14 +834,6 @@ def parser():
         help="File path to save Van Hove plot (default: 'van_hove_plot.png')"
     )
     # Non-Gaussian Parameter analysis arguments
-    ngp.add_argument(
-        "--bomd-elements", nargs="+",
-        help="Element symbols for BOMD atom order (e.g., Li O Ti)"
-    )
-    ngp.add_argument(
-        "--bomd-timestep", type=float,
-        help="BOMD timestep in picoseconds"
-    )
     ngp.add_argument(
         "--plot-data",
         action="append", nargs="+",
@@ -1053,42 +1115,15 @@ def main():
     Returns:
         None
     """
-    
     a = parser()
     format_info = inp.detect_trajectory_format(a.data_dir)
-    if format_info['format'] == 'bomd':
-        bomd_elements = getattr(a, 'bomd_elements', None)
-        bomd_timestep = getattr(a, 'bomd_timestep', None)
-        Temp_inp_data, Temp_out_data = Job(
-            a.temperature, a.diffusing_elements, a.diffusivity_direction_choices,
-            a.diffusivity_choices, a.correlation, a.data_dir,
-            a.Conv_factor, a.initial_time, a.final_time, a.initial_slope_time,
-            a.final_slope_time, a.block, a.rmax, a.step_skip, a.sigma, a.ngrid,
-            a.mode,
-            lammps_elements=None,
-            lammps_timestep=None,
-            element_mapping=None,
-            bomd_elements=bomd_elements,
-            bomd_timestep=bomd_timestep,
-            export_verification=getattr(a, 'export_verification', False),
-            show_recommendations=getattr(a, 'show_recommendations', False),
-            lammps_units=getattr(a, 'lammps_units', 'metal')
-        )
-        # Save results to JSON if requested
-        if hasattr(a, 'json_output') and a.json_output:
-            print(f"Saving results to {a.json_output}...")
-            Temp_out_data_serializable = js.convert_to_serializable(Temp_out_data)
-            with open(a.json_output, 'w') as output_file:
-                json.dump(Temp_out_data_serializable, output_file, indent=2)
-        return
 
     if a.mode in ("msd", "vh", "ngp"):
-        format_info = inp.detect_trajectory_format(a.data_dir)
         if format_info['format'] is None:
             sys.exit("ERROR: No recognized trajectory files found in data directory")
         print(f"Detected trajectory format: {format_info['format']}")
 
-        # Process element mapping for LAMMPS - FIXED
+        # Process element mapping for LAMMPS
         element_map = {}
         if hasattr(a, 'element_mapping') and a.element_mapping:
             for mapping in a.element_mapping:
@@ -1099,20 +1134,37 @@ def main():
                 except ValueError:
                     print(f"Warning: Invalid element mapping '{mapping}', skipping")
 
-        # Pass enhanced options to Job function
-        Temp_inp_data, Temp_out_data = Job(
-            a.temperature, a.diffusing_elements, a.diffusivity_direction_choices,
-            a.diffusivity_choices, a.correlation, a.data_dir,
-            a.Conv_factor, a.initial_time, a.final_time, a.initial_slope_time,
-            a.final_slope_time, a.block, a.rmax, a.step_skip, a.sigma, a.ngrid,
-            a.mode, 
-            lammps_elements=a.lammps_elements, 
-            lammps_timestep=a.lammps_timestep,
-            element_mapping=element_map,
-            export_verification=getattr(a, 'export_verification', False),
-            show_recommendations=getattr(a, 'show_recommendations', False),
-            lammps_units=getattr(a, 'lammps_units', 'metal')
-        )
+        # Unified Job() call for all formats
+        if format_info['format'] == 'bomd':
+            bomd_elements = getattr(a, 'bomd_elements', None)
+            bomd_timestep = getattr(a, 'bomd_timestep', None)
+            Temp_inp_data, Temp_out_data = Job(
+                a.temperature, a.diffusing_elements, a.diffusivity_direction_choices,
+                a.diffusivity_choices, a.correlation, a.data_dir,
+                a.Conv_factor, a.initial_time, a.final_time, a.initial_slope_time,
+                a.final_slope_time, a.block, a.rmax, a.step_skip, a.sigma, a.ngrid,
+                a.mode,
+                lammps_elements=None,
+                lammps_timestep=None,
+                element_mapping=None,
+                export_verification=getattr(a, 'export_verification', False),
+                show_recommendations=getattr(a, 'show_recommendations', False),
+                lammps_units=getattr(a, 'lammps_units', 'metal')
+            )
+        else:
+            Temp_inp_data, Temp_out_data = Job(
+                a.temperature, a.diffusing_elements, a.diffusivity_direction_choices,
+                a.diffusivity_choices, a.correlation, a.data_dir,
+                a.Conv_factor, a.initial_time, a.final_time, a.initial_slope_time,
+                a.final_slope_time, a.block, a.rmax, a.step_skip, a.sigma, a.ngrid,
+                a.mode, 
+                lammps_elements=a.lammps_elements, 
+                lammps_timestep=a.lammps_timestep,
+                element_mapping=element_map,
+                export_verification=getattr(a, 'export_verification', False),
+                show_recommendations=getattr(a, 'show_recommendations', False),
+                lammps_units=getattr(a, 'lammps_units', 'metal')
+            )
 
         # Save results to JSON file for persistence and data sharing
         if a.json_output:
@@ -1125,10 +1177,23 @@ def main():
             data_source = Temp_out_data
 
         # Generate MSD plots
+        # if a.mode == "msd":
+        #     if a.plot_data is None:
+        #         Plot_data_tracer = []
+        #         for (temp, ele) in [(t, e) for t in a.temperature for e in a.diffusing_elements]:
+        #             for direction in a.diffusivity_direction_choices:
+        #                 for diff_type in a.diffusivity_choices:
+        #                     Plot_data_tracer.append([temp, ele, diff_type, direction])
+        #         pdata = Plot_data_tracer
+        #     else:
+        #         pdata = [[float(x[0]), x[1], x[2], x[3]] for x in a.plot_data]
+        #     print(f"Generating MSD plot with {len(pdata)} data series...")
+        #     format_info = inp.detect_trajectory_format(a.data_dir)
+        #     is_lammps = format_info['format'] == 'lammps'
+        #     p.msd_plot(data_source, pdata, a.first_time, a.last_time, save_path=a.save_path, is_lammps=is_lammps)
+        #     print(f"MSD plot saved to: {a.save_path}")
         if a.mode == "msd":
-            # Determine which data to plot
             if a.plot_data is None:
-                # Plot all combinations if not specified
                 Plot_data_tracer = []
                 for (temp, ele) in [(t, e) for t in a.temperature for e in a.diffusing_elements]:
                     for direction in a.diffusivity_direction_choices:
@@ -1136,13 +1201,14 @@ def main():
                             Plot_data_tracer.append([temp, ele, diff_type, direction])
                 pdata = Plot_data_tracer
             else:
-                # Use user-specified plot data
                 pdata = [[float(x[0]), x[1], x[2], x[3]] for x in a.plot_data]
             print(f"Generating MSD plot with {len(pdata)} data series...")
-            # p.msd_plot(data_source, pdata, a.first_time, a.last_time, save_path=a.save_path)
             format_info = inp.detect_trajectory_format(a.data_dir)
             is_lammps = format_info['format'] == 'lammps'
-            p.msd_plot(data_source, pdata, a.first_time, a.last_time, save_path=a.save_path, is_lammps=is_lammps)
+            is_bomd = format_info['format'] == 'bomd'
+            is_qe = format_info['format'] == 'quantum_espresso'
+            p.msd_plot(data_source, pdata, a.first_time, a.last_time, save_path=a.save_path, 
+                    is_lammps=is_lammps, is_bomd=is_bomd, is_qe=is_qe)
             print(f"MSD plot saved to: {a.save_path}")
         elif a.mode == "ngp":
             if a.plot_data is None:
@@ -1154,9 +1220,7 @@ def main():
             print(f"Generating NGP plot with {len(pdata)} data series...")
             p.ngp_plot(data_source, pdata, a.first_time, a.last_time, save_path=a.save_path)
             print(f"NGP plot saved to: {a.save_path}")
-        # Generate Van Hove correlation plots
         elif a.mode == "vh":
-            # Determine which correlation data to plot
             if a.plot_data is None:
                 pdata = []
                 for (T, ele), blob in Temp_out_data.items():
@@ -1165,25 +1229,50 @@ def main():
             else:
                 pdata = [[float(x[0]), x[1], x[2]] for x in a.plot_data]
             print(f"Generating Van Hove plot with {len(pdata)} correlation functions...")
+            # p.van_hove_plot(
+            #     data_source,
+            #     pdata,
+            #     save_path=a.save_path,
+            #     figsize=tuple(a.figsize)
+            # )
+            dt_vh = None
+            for (T, ele), blob in Temp_out_data.items():
+                try:
+                    dt_arr = np.array(blob['dt_dict'])
+                    if len(dt_arr) > 1:
+                        dt_vh = dt_arr[1] - dt_arr[0]
+                        break
+                except Exception:
+                    continue
+            if dt_vh is None:
+                dt_vh = 0.01  # fallback
             p.van_hove_plot(
                 data_source,
                 pdata,
                 save_path=a.save_path,
-                figsize=tuple(a.figsize)
+                figsize=tuple(a.figsize),
+                first_time=a.initial_time,
+                last_time=a.final_time,
+                step_skip=a.step_skip,
+                dt=dt_vh
             )
+            # p.van_hove_plot(
+            #     data_source,
+            #     pdata,
+            #     save_path=a.save_path,
+            #     figsize=tuple(a.figsize),
+            #     first_time=a.initial_time,
+            #     last_time=a.final_time
+            # )
             print(f"Van Hove plot saved to: {a.save_path}")
 
     # Handle ionic density mapping
     elif a.mode == "ionic-density":
-    # 1. Detect trajectory format
         format_info = inp.detect_trajectory_format(a.data_dir)
         if format_info['format'] == 'lammps':
-            # 1. Detect format
             fmt = inp.detect_trajectory_format(a.data_dir)
             if fmt['format'] != 'lammps':
                 sys.exit("ERROR: Only LAMMPS trajectories supported for ionic-density")
-
-            # 2. Locate file
             lf = fmt.get('lammps_files', [])
             if not lf:
                 lf = glob.glob(os.path.join(a.data_dir, "*.lammpstrj"))
@@ -1192,8 +1281,6 @@ def main():
             lfile = os.path.abspath(lf[0])
             base = os.path.splitext(os.path.basename(lfile))[0]
             out = f"{base}_density.xsf"
-
-            # 3. Build command
             cmd = [
                 sys.executable, "-m", "target.probability_density",
                 "--lammps-file", lfile,
@@ -1205,21 +1292,18 @@ def main():
                 "--step-skip", str(a.step_skip),
                 "--num-frames", str(a.num_frames),
             ]
-            # New options
             if a.lammps_elements:
                 cmd += ["--lammps-elements"] + a.lammps_elements
             if a.element_mapping:
                 cmd += ["--element-mapping"] + a.element_mapping
             if a.lammps_timestep is not None:
                 cmd += ["--lammps-timestep", str(a.lammps_timestep)]
-            # Optional
             if a.mask:
                 cmd += ["--mask", a.mask]
             if a.recenter:
                 cmd += ["--recenter"]
             if a.bbox:
                 cmd += ["--bbox", a.bbox]
-
             print(f"Processing LAMMPS file for ionic density: {base}")
             try:
                 subprocess.run(cmd, check=True, text=True,
@@ -1227,8 +1311,45 @@ def main():
                 print(f"→ Density file created: {out}")
             except subprocess.CalledProcessError as e:
                 print(f"→ Processing failed: {e}")
+        elif format_info['format'] == 'bomd':
+            # --- BOMD support for ionic density ---
+            bomd_files = format_info.get('bomd_files', [])
+            if not bomd_files:
+                sys.exit("ERROR: No BOMD .mdtrj file found for ionic density analysis")
+            bomd_trj = os.path.abspath(bomd_files[0])
+            in_files = [f for f in os.listdir(a.data_dir) if f.endswith('.in')]
+            if not in_files:
+                sys.exit("ERROR: No .in file found for BOMD ionic density analysis")
+            # Use BOMD elements if provided, else None
+            bomd_elements = getattr(a, "bomd_elements", None)
+            output_file = a.output if hasattr(a, "output") else "density.xsf"
+            cmd = [
+                sys.executable, "-m", "target.probability_density",
+                "--bomd-trj", bomd_trj,
+                "--output", output_file,
+                "--element", a.element,
+                "--sigma", str(a.sigma),
+                "--n-sigma", str(a.n_sigma),
+                "--density", str(a.density),
+                "--step-skip", str(getattr(a, "step_skip", 1)),
+                "--num-frames", str(getattr(a, "num_frames", 0))
+            ]
+            if bomd_elements:
+                cmd += ["--bomd-elements"] + bomd_elements
+            if getattr(a, "mask", None):
+                cmd += ["--mask", a.mask]
+            if getattr(a, "recenter", False):
+                cmd += ["--recenter"]
+            if getattr(a, "bbox", None):
+                cmd += ["--bbox", a.bbox]
+            print(f"Processing BOMD file for ionic density: {os.path.basename(bomd_trj)}")
+            try:
+                subprocess.run(cmd, check=True, text=True,
+                               cwd=os.path.dirname(os.path.abspath(__file__)))
+                print(f"Density file created: {output_file}")
+            except subprocess.CalledProcessError as e:
+                print(f"Processing failed: {e}")
         else:
-            # Existing QE logic (unchanged)
             pos_files = sorted(glob.glob(os.path.join(a.data_dir, "*.pos")))
             ion_files = sorted(glob.glob(os.path.join(a.data_dir, "*.in")))
             cel_files = sorted(glob.glob(os.path.join(a.data_dir, "*.cel")))
@@ -1289,7 +1410,6 @@ def main():
                     continue
             print(f"Ionic density analysis completed. Generated {len(results)} density files.")
 
-    # Handle Radial Distribution Function analysis
     elif a.mode == "rdf":
         format_info = inp.detect_trajectory_format(a.data_dir)
         if format_info['format'] == 'lammps':
@@ -1315,7 +1435,6 @@ def main():
                 "--xlim", str(a.xlim[0]), str(a.xlim[1]),
                 "--num-frames", str(a.num_frames)
             ]
-            # Pass LAMMPS-specific arguments
             if a.lammps_elements:
                 cmd += ["--lammps-elements"] + a.lammps_elements
             if a.element_mapping:
@@ -1329,7 +1448,40 @@ def main():
                 print(f"→ RDF plots created with prefix: {output_prefix}")
             except subprocess.CalledProcessError as e:
                 print(f"→ Failed to process LAMMPS RDF: {e}")
-        # Discover and validate input files
+        elif format_info['format'] == 'bomd':
+            # --- BOMD support for RDF ---
+            bomd_files = format_info.get('bomd_files', [])
+            if not bomd_files:
+                sys.exit("ERROR: No BOMD .mdtrj file found for RDF analysis")
+            bomd_trj = os.path.abspath(bomd_files[0])
+            in_files = [f for f in os.listdir(a.data_dir) if f.endswith('.in')]
+            if not in_files:
+                sys.exit("ERROR: No .in file found for BOMD RDF analysis")
+            in_file = os.path.join(a.data_dir, in_files[0])
+            output_prefix = "rdf_plot_bomd"
+            cmd = [
+                sys.executable, "-m", "target.compute_rdf",
+                "--bomd-trj", bomd_trj,
+                "--bomd-in", in_file,
+                "--output-prefix", output_prefix,
+                "--central-atoms"
+            ] + a.central_atom
+            if a.pair_atoms:
+                cmd += ["--pair-atoms"] + a.pair_atoms
+            cmd += [
+                "--ngrid", str(a.ngrid),
+                "--rmax", str(a.rmax),
+                "--sigma", str(a.sigma),
+                "--xlim", str(a.xlim[0]), str(a.xlim[1]),
+                "--num-frames", str(a.num_frames)
+            ]
+            print(f"Processing BOMD file for RDF: {os.path.basename(bomd_trj)}")
+            try:
+                subprocess.run(cmd, check=True, text=True,
+                               cwd=os.path.dirname(os.path.abspath(__file__)))
+                print(f"RDF plots created with prefix: {output_prefix}")
+            except subprocess.CalledProcessError as e:
+                print(f"Failed to process BOMD RDF: {e}")
         else:
             pos_files = sorted(glob.glob(os.path.join(a.data_dir, "*.pos")))
             ion_files = sorted(glob.glob(os.path.join(a.data_dir, "*.in")))
@@ -1346,20 +1498,17 @@ def main():
             print(f"Central atoms: {', '.join(a.central_atom)}")
             print(f"Processing {len(pos_files)} file sets...")
             results = {}
-            # Process each file set for RDF calculation
             for i, (pos_file, ion_file, cel_file) in enumerate(zip(pos_files, ion_files, cel_files)):
                 try:
                     base_name = os.path.splitext(os.path.basename(pos_file))[0]
                     output_prefix = f"rdf_plot_{base_name}"
                     print(f"Processing file set {i+1}/{len(pos_files)}: {base_name}")
-                    # Build ASE trajectory from input files
                     extracted_frames = rdf.build_ase_trajectory(
                         ion_file, pos_file, cel_file,
                         time_after_start=getattr(a, "time_after_start", 60),
                         num_frames=getattr(a, "num_frames", 100),
                         time_interval=getattr(a, "time_interval", 0.00193511)
                     )
-                    # Compute RDF with user-specified parameters
                     rdf.compute_rdf(
                         extracted_frames,
                         output_prefix=output_prefix,
@@ -1377,16 +1526,11 @@ def main():
                     print(f" → Failed to process {base_name}: {e}")
                     continue
 
-    # Handle Velocity Autocorrelation Function analysis
     elif a.mode == "vaf":
-        # --- Auto-detect file type in data-dir ---
         files = os.listdir(a.data_dir)
         files_lower = [f.lower() for f in files]
-        # QE detection
         is_qe = any(f.endswith('.pos') for f in files_lower) and any(f.endswith('.cel') for f in files_lower)
-        # LAMMPS detection
         is_lammps = any(f.endswith('.dump') or f.endswith('.lammpstrj') or f.endswith('.extxyz') for f in files_lower)
-
         if is_qe:
             pos_files = sorted(glob.glob(os.path.join(a.data_dir, "*.pos")))
             ion_files = sorted(glob.glob(os.path.join(a.data_dir, "*.in")))
@@ -1431,9 +1575,7 @@ def main():
                     print(f" → Unexpected error in VAF analysis for {base_name}: {e}")
                     continue
             print(f"VAF analysis completed for {len(results)} file sets.")
-
         elif is_lammps:
-            # Find LAMMPS file
             lammps_file = None
             for ext in ('*.dump', '*.lammpstrj', '*.extxyz'):
                 found = glob.glob(os.path.join(a.data_dir, ext))
@@ -1472,19 +1614,49 @@ def main():
                 print(f" → VAF analysis completed for LAMMPS file: {base_name}")
             except subprocess.CalledProcessError as e:
                 print(f" → VAF analysis failed for LAMMPS: {e}")
+        elif format_info['format'] == 'bomd':
+            bomd_files = format_info.get('bomd_files', [])
+            if not bomd_files:
+                sys.exit("ERROR: No BOMD .mdtrj file found for VAF analysis")
+            bomd_trj = os.path.abspath(bomd_files[0])
+            in_files = [f for f in os.listdir(a.data_dir) if f.endswith('.in')]
+            if not in_files:
+                sys.exit("ERROR: No .in file found for BOMD VAF analysis")
+            in_file = os.path.join(a.data_dir, in_files[0])
+            base_name = os.path.splitext(os.path.basename(bomd_trj))[0]
+            cmd = [
+                sys.executable, os.path.join(os.path.dirname(__file__), "compute_vaf.py"),
+                "--bomd-trj", bomd_trj,
+                "--bomd-in", in_file,
+                "--element"
+            ] + a.element
+            cmd += [
+                "--start", str(a.start),
+                "--nframes", str(a.nframes),
+                "--stride", str(a.stride),
+                "--blocks", str(a.blocks),
+                "--out-prefix", f"{a.out_prefix}_{base_name}",
+                "--t-end-fit-ps", str(a.t_end_fit_ps),
+                "--time-interval", str(a.time_interval),
+                "--t-start-fit-ps", str(a.t_start_fit_ps),
+                "--stepsize-t", str(a.stepsize_t),
+                "--stepsize-tau", str(a.stepsize_tau)
+            ]
+            print(f"Processing BOMD file for VAF: {base_name}")
+            try:
+                subprocess.run(cmd, check=True)
+                print(f" → VAF analysis completed for BOMD file: {base_name}")
+            except subprocess.CalledProcessError as e:
+                print(f" → VAF analysis failed for BOMD: {e}")
+            return
         else:
             sys.exit("ERROR: Could not detect QE or LAMMPS trajectory files in data-dir.")
 
-    # Handle Vibrational Density of States analysis
     elif a.mode == "vdos":
-        # --- Auto-detect file type in data-dir ---
         files = os.listdir(a.data_dir)
         files_lower = [f.lower() for f in files]
-        # QE detection
         is_qe = any(f.endswith('.pos') for f in files_lower) and any(f.endswith('.cel') for f in files_lower)
-        # LAMMPS detection
         is_lammps = any(f.endswith('.dump') or f.endswith('.lammpstrj') or f.endswith('.extxyz') for f in files_lower)
-
         if is_qe:
             pos_files = sorted(glob.glob(os.path.join(a.data_dir, "*.pos")))
             ion_files = sorted(glob.glob(os.path.join(a.data_dir, "*.in")))
@@ -1498,11 +1670,9 @@ def main():
                 return
             print(f"Starting VDOS analysis for elements: {', '.join(a.elements)}")
             print(f"Processing {len(pos_files)} file sets...")
-            # Process each file set for VDOS calculation
             for i, (pos_file, ion_file, cel_file) in enumerate(zip(pos_files, ion_files, cel_files)):
                 base_name = os.path.splitext(os.path.basename(pos_file))[0]
                 evp_file = evp_files[i] if i < len(evp_files) else None
-                # Build subprocess command for VDOS analysis
                 cmd = [
                     sys.executable, os.path.join(os.path.dirname(__file__), "vdos.py"),
                     "--in_file", ion_file,
@@ -1515,7 +1685,6 @@ def main():
                     "--time_interval", str(a.time_interval),
                     "--elements"
                 ] + a.elements
-                # Add EVP file if available
                 if evp_file:
                     cmd += ["--evp_file", evp_file]
                 print(f"Processing file set {i+1}/{len(pos_files)}: {base_name}")
@@ -1526,9 +1695,7 @@ def main():
                     print(f" → VDOS analysis failed for {base_name}: {e}")
                     continue
             print("VDOS analysis completed.")
-
         elif is_lammps:
-            # Find LAMMPS file
             lammps_file = None
             for ext in ('*.dump', '*.lammpstrj', '*.extxyz'):
                 found = glob.glob(os.path.join(a.data_dir, ext))
@@ -1549,7 +1716,6 @@ def main():
                 "--time_interval", str(a.time_interval),
                 "--elements"
             ] + a.elements
-            # Pass LAMMPS-specific arguments
             if a.lammps_elements:
                 cmd += ["--lammps-elements"] + a.lammps_elements
             if a.element_mapping:
@@ -1559,10 +1725,55 @@ def main():
             print(f"Processing LAMMPS file for VDOS: {base_name}")
             try:
                 subprocess.run(cmd, check=True)
-                print(f" → VDOS analysis completed for LAMMPS file: {base_name}")
+                print(f"VDOS analysis completed for LAMMPS file: {base_name}")
             except subprocess.CalledProcessError as e:
-                print(f" → VDOS analysis failed for LAMMPS: {e}")
+                print(f"VDOS analysis failed for LAMMPS: {e}")
             print("VDOS analysis completed.")
+        elif a.mode == "vdos":
+            files = os.listdir(a.data_dir)
+            files_lower = [f.lower() for f in files]
+            is_qe = any(f.endswith('.pos') for f in files_lower) and any(f.endswith('.cel') for f in files_lower)
+            is_lammps = any(f.endswith('.dump') or f.endswith('.lammpstrj') or f.endswith('.extxyz') for f in files_lower)
+            if is_qe:
+                # ...existing QE code...
+                return
+            elif is_lammps:
+                # ...existing LAMMPS code...
+                return
+            elif format_info['format'] == 'bomd':
+                bomd_files = format_info.get('bomd_files', [])
+                if not bomd_files:
+                    print("ERROR: No BOMD trajectory file found in data-dir for VDOS analysis")
+                    return
+                bomd_trj = os.path.abspath(bomd_files[0])
+                in_files = [f for f in os.listdir(a.data_dir) if f.endswith('.in')]
+                if not in_files:
+                    print("ERROR: No .in file found for BOMD VDOS analysis")
+                    return
+                in_file = os.path.join(a.data_dir, in_files[0])
+                base_name = os.path.splitext(os.path.basename(bomd_trj))[0]
+                cmd = [
+                    sys.executable, os.path.join(os.path.dirname(__file__), "vdos.py"),
+                    "--bomd-trj", bomd_trj
+                ]
+                if hasattr(a, "bomd_elements") and a.bomd_elements:
+                    cmd += ["--bomd-elements"] + a.bomd_elements
+                cmd += [
+                    "--elements"
+                ] + a.elements
+                cmd += [
+                    "--out_prefix", f"{a.out_prefix}_{base_name}",
+                    "--nframes", str(a.nframes),
+                    "--stride", str(a.stride),
+                    "--time_interval", str(a.time_interval)
+                ]
+                print(f"Processing BOMD file for VDOS: {base_name}")
+                try:
+                    subprocess.run(cmd, check=True)
+                    print(f" → VDOS analysis completed for BOMD file: {base_name}")
+                except subprocess.CalledProcessError as e:
+                    print(f" → VDOS analysis failed for BOMD: {e}")
+                return
         else:
             print("ERROR: Could not detect QE or LAMMPS trajectory files in data-dir.")
         return

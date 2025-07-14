@@ -135,31 +135,41 @@ def build_lammps_trajectory(lammps_file, stride=1, max_frames=None):
     print(f"LAMMPS trajectory built: {len(atoms_list)} frames (stride={stride})")
     return atoms_list
 
-def build_bomd_trajectory(trj_file, elements=None, num_frames=0, stride=1):
+def build_bomd_trajectory(trj_file, in_file=None, elements=None, num_frames=0, stride=1):
     """
-    Build a trajectory from a BOMD .trj file using CPDyAna's input_reader.
+    Build a trajectory from a BOMD .mdtrj file using CPDyAna's input_reader.
 
     Args:
-        trj_file (str): Path to BOMD .trj trajectory file.
-        elements (list): List of element symbols (order must match .trj).
+        trj_file (str): Path to BOMD .mdtrj trajectory file.
+        in_file (str): Path to BOMD .in input file (for atom order).
+        elements (list): List of element symbols (order must match .mdtrj, optional).
         num_frames (int): Number of frames to extract (0 for all).
         stride (int): Stride for frame extraction.
 
     Returns:
         list: List of ASE Atoms objects.
     """
-    # Use input_reader to parse BOMD .trj file
-    pos_full, n_frames, dt_full, t_full, cell_param_full, thermo_data, volumes, inp_array = inp.read_bomd_trajectory(
-        trj_file,
-        elements=elements,
-        timestep=None,
-        export_verification=False
+    import os
+
+    # Auto-detect .in file if not provided
+    if in_file is None:
+        trj_dir = os.path.dirname(trj_file)
+        in_files = [f for f in os.listdir(trj_dir) if f.endswith('.in')]
+        if not in_files:
+            raise FileNotFoundError("No BOMD .in file found in the trajectory directory.")
+        in_file = os.path.join(trj_dir, in_files[0])
+
+    # Read BOMD trajectory and atom order
+    pos_full, n_frames, dt_full, t_full, cell_param_full, thermo_data, volumes, inp_array = inp.read_bomd_files(
+        in_file, trj_file
     )
+
     # Determine frame indices
     if num_frames > 0:
         frame_indices = list(range(0, min(num_frames, n_frames), stride))
     else:
         frame_indices = list(range(0, n_frames, stride))
+
     # Prepare positions and cells
     pos_arr = np.transpose(pos_full, (1, 0, 2))  # (frames, atoms, 3)
     cell_arr = cell_param_full.reshape(-1, 3, 3)  # (frames, 3, 3)
@@ -250,11 +260,12 @@ def main():
     Returns:
         None
     """
+    import os
     parser = argparse.ArgumentParser(
         description="Ionic Density Calculator (QE, LAMMPS, or BOMD)"
     )
     # QE-style inputs
-    parser.add_argument('--in-file',    help='Input .in file for QE trajectory')
+    parser.add_argument('--in-file',    help='Input .in file for QE/BOMD trajectory')
     parser.add_argument('--pos-file',   help='Input .pos file for QE trajectory')
     parser.add_argument('--cel-file',   help='Input .cel file for QE trajectory')
     parser.add_argument('--lammps-file', nargs='?', help='LAMMPS dump file (.lammpstrj)')
@@ -264,7 +275,7 @@ def main():
                         help='LAMMPS type-to-element map (e.g., 1:Li 2:La 3:Ti 4:O)')
     parser.add_argument('--lammps-timestep', type=float,
                         help='LAMMPS timestep (ps)')
-    parser.add_argument('--bomd-trj', help='BOMD trajectory file (.trj)')
+    parser.add_argument('--bomd-trj', help='BOMD trajectory file (.mdtrj)')
     parser.add_argument('--bomd-elements', nargs='+', help='Element symbols for BOMD atom order (e.g., Li O Ti)')
     parser.add_argument('--element',    default='Li', help='Species for density calc')
     parser.add_argument('--sigma',      type=float, default=0.3, help='Gaussian σ (Å)')
@@ -278,12 +289,17 @@ def main():
     parser.add_argument('--output',     default='density.xsf', help='Output XSF file')
     args = parser.parse_args()
 
+    atoms_list = None
+
     # --- BOMD branch ---
     if args.bomd_trj:
         # Use BOMD elements if provided, else fallback to None
         bomd_elements = args.bomd_elements if args.bomd_elements else None
+        # Try to find .in file if not provided
+        in_file = args.in_file if args.in_file else None
         atoms_list = build_bomd_trajectory(
             args.bomd_trj,
+            in_file=in_file,
             elements=bomd_elements,
             num_frames=args.num_frames,
             stride=args.step_skip
@@ -291,21 +307,18 @@ def main():
 
     # --- LAMMPS branch ---
     elif args.lammps_file:
-        # Build mapping dict
         mapping = {}
         if args.element_mapping:
             for m in args.element_mapping:
                 tid, sym = m.split(':')
                 mapping[int(tid)] = sym
 
-        # Read LAMMPS trajectory using input_reader
         pos_full, n_frames, dt_full, t_full, cell_full, thermo, volumes, types = inp.read_lammps_trajectory(
             args.lammps_file,
             elements=args.lammps_elements,
             timestep=args.lammps_timestep,
             element_mapping=mapping
         )
-        # Assemble ASE Atoms list
         atoms_list = []
         for i in range(n_frames):
             cell = cell_full[i].reshape(3,3)
@@ -338,7 +351,6 @@ def main():
     if args.recenter:
         params['recenter'] = True
     if args.bbox:
-        # parse bbox string into [[xmin,xmax],[ymin,ymax],[zmin,zmax]]
         vals = list(map(float, args.bbox.split(',')))
         params['bbox'] = np.array(vals).reshape(3,2)
     get_gaussian_density(traj, **params)

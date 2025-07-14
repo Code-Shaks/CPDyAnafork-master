@@ -130,48 +130,52 @@ def build_ase_trajectory(
     return frames
 
 def build_bomd_trajectory(
-    trj_file, cell_file=None, num_frames=100, stride=1
+    trj_file, in_file=None, num_frames=0, stride=1
 ):
     """
-    Build ASE trajectory frames from BOMD (.trj) output files.
+    Build ASE trajectory frames from BOMD (.mdtrj) output files using input_reader.read_bomd_files.
 
     Args:
-        trj_file (str): Path to the BOMD .trj trajectory file.
-        cell_file (str, optional): Path to a file containing cell parameters per frame (optional).
-        num_frames (int): Number of frames to extract.
+        trj_file (str): Path to the BOMD .mdtrj trajectory file.
+        in_file (str): Path to the BOMD .in input file (for atom order).
+        num_frames (int): Number of frames to extract (0 for all).
         stride (int): Stride for frame extraction.
 
     Returns:
         list: List of ASE Atoms objects representing the trajectory frames.
     """
+    import os
+    from ase import Atoms
     from . import input_reader as inp
+    import numpy as np
 
-    # Use CPDyAna's BOMD reader to get positions, cells, and elements
-    pos_full, n_frames, dt_full, t_full, cell_param_full, thermo_data, volumes, inp_array = inp.read_bomd_trajectory(
-        trj_file,
-        elements=None,
-        timestep=None,
-        export_verification=False
+    # Auto-detect .in file if not provided
+    if in_file is None:
+        trj_dir = os.path.dirname(trj_file)
+        in_files = [f for f in os.listdir(trj_dir) if f.endswith('.in')]
+        if not in_files:
+            raise FileNotFoundError("No BOMD .in file found in the trajectory directory.")
+        in_file = os.path.join(trj_dir, in_files[0])
+
+    # Read BOMD trajectory and atom order
+    pos_full, n_frames, dt_full, t_full, cell_param_full, thermo_data, volumes, inp_array = inp.read_bomd_files(
+        in_file, trj_file
     )
 
-    # Limit frames if requested
+    # Determine frame indices
     if num_frames > 0:
         frame_indices = list(range(0, min(num_frames, n_frames), stride))
     else:
         frame_indices = list(range(0, n_frames, stride))
 
+    # Prepare positions and cells
+    pos_arr = np.transpose(pos_full, (1, 0, 2))  # (frames, atoms, 3)
+    cell_arr = cell_param_full.reshape(-1, 3, 3)  # (frames, 3, 3)
     atoms_list = []
     for i in frame_indices:
-        symbols = [str(s) for s in inp_array]
-        positions = pos_full[:, i, :]
-        if cell_param_full is not None:
-            cell = cell_param_full[i].reshape((3, 3))
-        else:
-            cell = None
-        atoms = Atoms(symbols=symbols, positions=positions, cell=cell, pbc=True)
+        atoms = Atoms(symbols=inp_array, positions=pos_arr[i], cell=cell_arr[i], pbc=True)
         atoms_list.append(atoms)
-
-    print(f"Built {len(atoms_list)} ASE Atoms frames from BOMD trajectory.")
+    print(f"BOMD trajectory built: {len(atoms_list)} frames (stride={stride})")
     return atoms_list
 
 def compute_rdf(
@@ -355,7 +359,8 @@ def main():
     parser.add_argument('--stride', type=int, default=1, help='Stride for reading frames (LAMMPS only)')
     # BOMD-specific arguments
     parser.add_argument('--bomd-trj', help='BOMD trajectory file (.trj)')
-    parser.add_argument('--bomd-cell', help='BOMD cell file (optional, text file with 3x3 cell per frame)')
+    # parser.add_argument('--bomd-cell', help='BOMD cell file (optional, text file with 3x3 cell per frame)')
+    parser.add_argument('--bomd-in', help='BOMD input file (.in) for atom order')
     # Common RDF arguments
     parser.add_argument('--output-prefix', default='rdf_plot', help='Prefix for output plot filename')
     parser.add_argument('--central-atoms', nargs='+', default=['Li'],
@@ -409,21 +414,27 @@ def main():
     
     #  --- BOMD branch ---
     if args.bomd_trj:
+        import os
         if not os.path.exists(args.bomd_trj):
-            print(f"Error: BOMD .trj file not found: {args.bomd_trj}")
+            print(f"Error: BOMD .mdtrj file not found: {args.bomd_trj}")
             sys.exit(1)
-        if args.bomd_cell and not os.path.exists(args.bomd_cell):
-            print(f"Warning: BOMD cell file not found: {args.bomd_cell}. Proceeding without cell update.")
+        # Try to find .in file if not provided
+        in_file = args.bomd_in
+        if not in_file:
+            trj_dir = os.path.dirname(args.bomd_trj)
+            in_files = [f for f in os.listdir(trj_dir) if f.endswith('.in')]
+            if not in_files:
+                print("Error: No BOMD .in file found in the trajectory directory.")
+                sys.exit(1)
+            in_file = os.path.join(trj_dir, in_files[0])
 
-        # Build trajectory from BOMD .trj (+ optional cell)
         frames = build_bomd_trajectory(
             args.bomd_trj,
-            cell_file=args.bomd_cell,
+            in_file=in_file,
             num_frames=args.num_frames,
             stride=args.stride
         )
 
-        # Compute RDF and plot
         compute_rdf(
             frames,
             output_prefix=args.output_prefix,

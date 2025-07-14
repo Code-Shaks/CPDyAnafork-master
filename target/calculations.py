@@ -320,10 +320,92 @@ def calculate_msd_qe(elements, diffusivity_direction_choices, diffusivity_choice
                 result_dict[element].setdefault(key_diff_err, []).append(diffusivity_sem)
     return result_dict
 
+def calculate_msd_bomd(elements, diffusivity_direction_choices, diffusivity_choices,
+                           pos_full, conduct_rectified_structure_array, conduct_ions_array,
+                           t, Last_term, initial_slope_time, final_slope_time, block,
+                           atom_types=None, cell_param_full=None):
+    """
+    Calculate MSD and diffusivity for BOMD trajectory data using FFT-based MSD logic.
+    Args and returns are the same as calculate_msd_bomd.
+    """
+    result_dict = {}
+    for ele in range(len(elements)):
+        element = elements[ele]
+        result_dict[element] = {}
+        for direction_idx, direction in enumerate(diffusivity_direction_choices):
+            d = {'XYZ': 3, 'XY': 2, 'YZ': 2, 'ZX': 2, 'X': 1, 'Y': 1, 'Z': 1}[direction]
+            suffix = '' if direction == 'XYZ' else f'_{direction}'
+            posit = conduct_rectified_structure_array[direction_idx, :, :, :]  # (n_atoms, n_frames, 3)
+            n_atoms, n_frames, _ = posit.shape
+
+            for diff_type_idx, diff_type in enumerate(diffusivity_choices):
+                key_msd = f"{diff_type}_msd_array{suffix}"
+                key_diff = f"{diff_type}_diffusivity{suffix}"
+                key_sem = f"{diff_type}_slope_sem{suffix}"
+                key_diff_err = f"{diff_type}_diffusivity_error{suffix}"
+                key_time = f"{diff_type}_time_array{suffix}"
+
+                # --- FFT-based MSD calculation (same as QE/LAMMPS) ---
+                msd_ions = []
+                for i in range(n_atoms):
+                    traj = posit[i, :, :]  # (n_frames, 3)
+                    msd_i, _ = calc_msd_tracer(traj, np.arange(1, n_frames, 1))
+                    msd_ions.append(msd_i)
+                msd_array = np.mean(msd_ions, axis=0)
+                time_array = t[1:len(msd_array)+1]
+
+                # Linear regression for diffusivity (match QE logic)
+                first_idx = np.searchsorted(time_array, initial_slope_time, side='left')
+                last_idx = np.searchsorted(time_array, final_slope_time, side='right') - 1
+                if first_idx <= last_idx:
+                    slope, _, _, _, std_err = linregress(time_array[first_idx:last_idx + 1], msd_array[first_idx:last_idx + 1])
+                    diffusivity = (slope * 1e-4) / (2 * d)
+                else:
+                    diffusivity = np.nan
+                    std_err = np.nan
+
+                # Block analysis for error estimation (same as QE)
+                M = block
+                B = n_frames // M
+                slope_blocks = []
+                for b in range(B):
+                    t_start = b * M
+                    t_end = (b + 1) * M
+                    if t_end > n_frames:
+                        break
+                    msd_ions_block = []
+                    for i in range(n_atoms):
+                        traj = posit[i, t_start:t_end, :]
+                        msd_i, _ = calc_msd_tracer(traj, np.arange(1, M, 1))
+                        msd_ions_block.append(msd_i)
+                    msd_block = np.mean(msd_ions_block, axis=0)
+                    dt_block = time_array[t_start:t_end-1] - time_array[t_start]
+                    if len(dt_block) >= 2:
+                        slope_block, _, _, _, _ = linregress(dt_block, msd_block)
+                        slope_blocks.append(slope_block)
+                if len(slope_blocks) > 1:
+                    slope_mean = np.mean(slope_blocks)
+                    slope_std = np.std(slope_blocks)
+                    slope_sem = slope_std / np.sqrt(len(slope_blocks) - 1)
+                    diffusivity_block_mean = (slope_mean * 1e-4) / (2 * d)
+                    diffusivity_sem = (slope_sem * 1e-4) / (2 * d)
+                else:
+                    diffusivity_block_mean = np.nan
+                    diffusivity_sem = np.nan
+                    slope_sem = np.nan
+
+                # Store results with matching keys
+                result_dict[element].setdefault(key_msd, []).append(msd_array)
+                result_dict[element].setdefault(key_time, []).append(time_array)
+                result_dict[element].setdefault(key_diff, []).append(diffusivity)
+                result_dict[element].setdefault(key_sem, []).append(slope_sem if 'slope_sem' in locals() else np.nan)
+                result_dict[element].setdefault(key_diff_err, []).append(diffusivity_sem)
+    return result_dict
+
 def calculate_msd(elements, diffusivity_direction_choices, diffusivity_choices,
                   pos_full, conduct_rectified_structure_array, conduct_ions_array,
                   t, Last_term, initial_slope_time, final_slope_time, block,
-                  is_lammps=False, dt_value=1.0, lammps_units="metal", atom_types=None, cell_param_full=None):
+                  is_lammps=False, is_bomd=False, dt_value=1.0, lammps_units="metal", atom_types=None, cell_param_full=None):
     """
     Main orchestrator for MSD and diffusivity calculations.
 
@@ -351,6 +433,13 @@ def calculate_msd(elements, diffusivity_direction_choices, diffusivity_choices,
             pos_full, conduct_rectified_structure_array, conduct_ions_array,
             t, Last_term, initial_slope_time, final_slope_time, block,
             dt_value=dt_value, lammps_units=lammps_units, atom_types=atom_types, cell_param_full=cell_param_full
+        )
+    elif is_bomd:
+        return calculate_msd_bomd(
+            elements, diffusivity_direction_choices, diffusivity_choices,
+            pos_full, conduct_rectified_structure_array, conduct_ions_array,
+            t, Last_term, initial_slope_time, final_slope_time, block,
+            atom_types=atom_types, cell_param_full=cell_param_full
         )
     else:
         return calculate_msd_qe(
@@ -441,6 +530,7 @@ def calculate_ngp(diffusing_elements, diffusivity_direction_choices, pos_full,
             key_ngp = f"NGP_array{suffix}"
             result_dict[element].setdefault(key_ngp, []).append(ngp_array)
             result_dict[element].setdefault('time_lags' + suffix, []).append(time_lags[mask])
+            # result_dict[element].setdefault('time_lags' + suffix, []).append(lag_times_selected)
 
     return result_dict
 

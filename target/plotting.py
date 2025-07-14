@@ -227,7 +227,108 @@ def msd_plot_qe(data_path, Plot_data, First_time, Last_time, save_path=None):
     plt.show()
     plt.close()
 
-def msd_plot(data_path, Plot_data, First_time, Last_time, save_path=None, is_lammps=False):
+def msd_plot_bomd(data_path, Plot_data, First_time, Last_time, save_path=None):
+    """
+    Create MSD plots for BOMD data using dt_dict and msd_data keys.
+
+    Args:
+        data_path (str): Path to JSON file with MSD data.
+        Plot_data (list): List of plot specifications (TEMP, ELEMENT, DATA_TYPE, DIRECTION).
+        First_time (float): Start time for plotting window (ps).
+        Last_time (float): End time for plotting window (ps).
+        save_path (str, optional): File path to save the plot.
+
+    Returns:
+        None. Displays and optionally saves the plot.
+    """
+    import json
+    import numpy as np
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+
+    # Load data
+    with open(data_path, 'r') as file:
+        data = json.load(file)
+
+    plt.figure(figsize=(10, 6))
+    sns.set(style="whitegrid", font_scale=1.2)
+    palette = sns.color_palette("tab10", len(Plot_data))
+
+    for idx, info in enumerate(Plot_data):
+        Temp = f"({info[0]}, '{info[1]}')"
+        Element = str(info[1])
+        msd_type = info[2]
+        direction = info[3]
+        suffix = '' if direction == "XYZ" else f"_{direction}"
+
+        try:
+            dt = np.array(data[Temp]['dt_dict'])
+            msd_blob = data[Temp]['msd_data'][Element]
+            msd_array_key = f"{msd_type}_msd_array{suffix}"
+            time_array_key = f"{msd_type}_time_array{suffix}"
+            diffusivity_key = f"{msd_type}_diffusivity{suffix}"
+            diffusivity_error_key = f"{msd_type}_diffusivity_error{suffix}"
+            slope_sem_key = f"{msd_type}_slope_sem{suffix}"
+
+            # Use Tracer_time_array if present, else dt_dict
+            if time_array_key in msd_blob:
+                time_array = np.array(msd_blob[time_array_key][0])
+            else:
+                time_array = dt
+
+            msd_mean = np.array(msd_blob[msd_array_key][0])
+            msd_sem = np.array([msd_blob.get(slope_sem_key, [0])[0] * x for x in time_array])
+            D = msd_blob.get(diffusivity_key, [np.nan])[0]
+            D_err = msd_blob.get(diffusivity_error_key, [np.nan])[0]
+
+            # Apply time window
+            First = np.searchsorted(time_array, First_time, side='left')
+            Last = np.searchsorted(time_array, Last_time, side='right') - 1
+
+            # Label
+            label = f"{Element} {direction}: D = {D:.2e} ± {D_err:.2e} cm²/s"
+
+            # Plot
+            sns.lineplot(x=time_array[First:Last+1], y=msd_mean[First:Last+1], label=label, color=palette[idx], linewidth=2)
+            plt.fill_between(time_array[First:Last+1], msd_mean[First:Last+1] - msd_sem[First:Last+1],
+                             msd_mean[First:Last+1] + msd_sem[First:Last+1], color=palette[idx], alpha=0.2)
+        except Exception as e:
+            print(f"Warning: Could not plot {Element} {direction}: {e}")
+            continue
+
+    plt.xlabel('Time (ps)', fontweight='bold', fontsize=14)
+    plt.ylabel(r'MSD [$\mathrm{\AA^2}$]', fontweight='bold', fontsize=14)
+    plt.title('Mean Square Displacement (BOMD)', fontsize=16)
+    sns.despine()
+    plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0, fontsize=10)
+    plt.tight_layout()
+    if save_path:
+        print(f"Saving to {save_path}")
+        plt.savefig(save_path, dpi=300, bbox_inches='tight')
+    plt.show()
+    plt.close()
+
+# def msd_plot(data_path, Plot_data, First_time, Last_time, save_path=None, is_lammps=False):
+#     """
+#     Dispatcher function for MSD plotting based on data source.
+
+#     Args:
+#         data_path (str): Path to JSON file with MSD data.
+#         Plot_data (list): List of plot specifications.
+#         First_time (float): Start time for plotting window (ps).
+#         Last_time (float): End time for plotting window (ps).
+#         save_path (str, optional): File path to save the plot.
+#         is_lammps (bool): If True, use LAMMPS plotting; else QE.
+
+#     Returns:
+#         None.
+#     """
+#     if is_lammps:
+#         msd_plot_lammps(data_path, Plot_data, First_time, Last_time, save_path)
+#     else:
+#         msd_plot_qe(data_path, Plot_data, First_time, Last_time, save_path)
+
+def msd_plot(data_path, Plot_data, First_time, Last_time, save_path=None, is_lammps=False, is_bomd=False, is_qe=False):
     """
     Dispatcher function for MSD plotting based on data source.
 
@@ -237,27 +338,30 @@ def msd_plot(data_path, Plot_data, First_time, Last_time, save_path=None, is_lam
         First_time (float): Start time for plotting window (ps).
         Last_time (float): End time for plotting window (ps).
         save_path (str, optional): File path to save the plot.
-        is_lammps (bool): If True, use LAMMPS plotting; else QE.
+        is_lammps (bool): If True, use LAMMPS plotting.
+        is_bomd (bool): If True, use BOMD plotting.
+        is_qe (bool): If True, use QE plotting.
 
     Returns:
         None.
     """
     if is_lammps:
         msd_plot_lammps(data_path, Plot_data, First_time, Last_time, save_path)
-    else:
+    elif is_bomd:
+        msd_plot_bomd(data_path, Plot_data, First_time, Last_time, save_path)
+    elif is_qe:
         msd_plot_qe(data_path, Plot_data, First_time, Last_time, save_path)
 
 def centers_to_edges_time(centers):
     """
     Convert bin centers to bin edges for time axis plotting,
     ensuring the first edge is always at 0.
-
-    Args:
-        centers (np.ndarray): Array of bin centers.
-
-    Returns:
-        np.ndarray: Array of bin edges.
+    Handles single-bin case robustly.
     """
+    centers = np.asarray(centers)
+    if len(centers) == 1:
+        width = 1.0  # or any small value
+        return np.array([centers[0] - width/2, centers[0] + width/2])
     edges = np.zeros(len(centers) + 1)
     edges[1:-1] = (centers[:-1] + centers[1:]) / 2
     edges[0] = 0  # Force first edge to be 0 for time axis
@@ -267,20 +371,52 @@ def centers_to_edges_time(centers):
 def centers_to_edges(centers):
     """
     Convert bin centers to bin edges for general plotting.
-
-    Args:
-        centers (np.ndarray): Array of bin centers.
-
-    Returns:
-        np.ndarray: Array of bin edges.
+    Handles single-bin case robustly.
     """
+    centers = np.asarray(centers)
+    if len(centers) == 1:
+        width = 1.0  # or any small value
+        return np.array([centers[0] - width/2, centers[0] + width/2])
     edges = np.zeros(len(centers) + 1)
     edges[1:-1] = (centers[:-1] + centers[1:]) / 2
     edges[0] = centers[0] - (centers[1] - centers[0]) / 2
     edges[-1] = centers[-1] + (centers[-1] - centers[-2]) / 2
     return edges
 
-def van_hove_plot(data_path, Plot_data, save_path=None, figsize=(10, 8)):
+# def centers_to_edges_time(centers):
+#     """
+#     Convert bin centers to bin edges for time axis plotting,
+#     ensuring the first edge is always at 0.
+
+#     Args:
+#         centers (np.ndarray): Array of bin centers.
+
+#     Returns:
+#         np.ndarray: Array of bin edges.
+#     """
+#     edges = np.zeros(len(centers) + 1)
+#     edges[1:-1] = (centers[:-1] + centers[1:]) / 2
+#     edges[0] = 0  # Force first edge to be 0 for time axis
+#     edges[-1] = centers[-1] + (centers[-1] - centers[-2]) / 2
+#     return edges
+
+# def centers_to_edges(centers):
+#     """
+#     Convert bin centers to bin edges for general plotting.
+
+#     Args:
+#         centers (np.ndarray): Array of bin centers.
+
+#     Returns:
+#         np.ndarray: Array of bin edges.
+#     """
+#     edges = np.zeros(len(centers) + 1)
+#     edges[1:-1] = (centers[:-1] + centers[1:]) / 2
+#     edges[0] = centers[0] - (centers[1] - centers[0]) / 2
+#     edges[-1] = centers[-1] + (centers[-1] - centers[-2]) / 2
+#     return edges
+
+def van_hove_plot(data_path, Plot_data, save_path=None, figsize=(10, 8), first_time=None, last_time=None, step_skip=10, dt=1.0):
     """
     Create enhanced Van Hove correlation function plots using Seaborn styling.
 
@@ -330,16 +466,31 @@ def van_hove_plot(data_path, Plot_data, save_path=None, figsize=(10, 8)):
             sns.set_theme(style="ticks")
             
             # Prepare axes
-            x = np.arange(reduced_nt) * 10  # step_skip=10, dt=1.0
+            # x = np.arange(reduced_nt) * 10  # step_skip=10, dt=1.0
+            dt_dict = np.array(data[data_key].get('dt_dict', []))
+            step_skip_used = 10  # or get from your analysis parameters or JSON
+            if len(dt_dict) > 0:
+                max_it = (len(dt_dict) - 1) // step_skip_used + 1
+                x = np.array([dt_dict[it * step_skip_used] - dt_dict[0] for it in range(min(reduced_nt, max_it))])
+                van_hove = van_hove[:len(x), :]
+            else:
+                x = np.arange(reduced_nt) * step_skip_used * 1.0  # fallback
+            if last_time is not None:
+                mask = x <= last_time
+                x = x[mask]
+                van_hove = van_hove[:len(x), :]
+            else:
+                # fallback: plot all
+                mask = slice(None)
             y = dist_array
             x_edges = centers_to_edges_time(x)
             y_edges = centers_to_edges(y)
             
             # Create heatmap
             heatmap = plt.pcolormesh(x_edges, y_edges, van_hove.T, 
-                                   cmap="tab10", shading="auto", 
+                                   cmap="viridis", shading="auto", 
                                    vmin=np.min(van_hove), vmax=vmax)
-            
+           
             # Enhance appearance
             plt.xlabel("Time (ps)", fontweight='bold', fontsize=14)
             plt.ylabel(r"$r$ ($\AA$)", fontweight='bold', fontsize=14)
@@ -506,9 +657,28 @@ def plot_vaf_isotropic(data_obj, axis=None, hide_legend=False, target_species=No
         int_avg = data_obj.get_array(f'vaf_integral_isotropic_{element}_mean')
         int_err = data_obj.get_array(f'vaf_integral_isotropic_{element}_sem')
         
+        # Get diffusion coefficient for legend
+        attrs = data_obj.get_attrs()
+        D = None
+        D_err = None
+        if element in attrs and "diffusion_mean_cm2_s" in attrs[element]:
+            D = attrs[element]["diffusion_mean_cm2_s"]
+            D_err = attrs[element].get("diffusion_sem_cm2_s", None)
+            if D_err is not None:
+                label_vaf = f'VAF ({element})'
+                label_int = (r"$D^{\mathrm{VAF}}_{%s} = (%.2e \pm %.2e)\,\mathrm{cm}^2/\mathrm{s}$"
+                             % (element, D, D_err))
+            else:
+                label_vaf = f'VAF ({element})'
+                label_int = (r"$D^{\mathrm{VAF}}_{%s} = %.2e\,\mathrm{cm}^2/\mathrm{s}$"
+                             % (element, D))
+        else:
+            label_vaf = f'VAF ({element})'
+            label_int = f'Integral ({element})'
+        
         # Plot main VAF
         sns.lineplot(x=time_points, y=vaf_avg, ax=axis, color=color, 
-                   linewidth=2.5, label=f'VAF ({element})', zorder=10)
+                   linewidth=2.5, label=label_vaf, zorder=10)
         axis.fill_between(time_points, vaf_avg - vaf_err, vaf_avg + vaf_err,
                         facecolor=color, alpha=0.2, edgecolor='none', zorder=5)
         
@@ -528,9 +698,9 @@ def plot_vaf_isotropic(data_obj, axis=None, hide_legend=False, target_species=No
                 sns.lineplot(x=time_points, y=traj_int[block], ax=integral_axis, color=color,
                            alpha=0.05, linestyle='-.', linewidth=0.5, zorder=1, legend=False)
         
-        # Plot integral VAF
+        # Plot integral VAF with diffusion coefficient in label
         sns.lineplot(x=time_points, y=int_avg, ax=integral_axis, color=color, 
-                   linewidth=2.5, linestyle='-.', label=f'Integral ({element})', zorder=10)
+                   linewidth=2.5, linestyle='-.', label=label_int, zorder=10)
         integral_axis.fill_between(time_points, int_avg - int_err, int_avg + int_err,
                                  facecolor=color, alpha=0.2, edgecolor='none', zorder=5)
     
@@ -543,8 +713,32 @@ def plot_vaf_isotropic(data_obj, axis=None, hide_legend=False, target_species=No
     
     # Add legends if not hidden
     if not hide_legend:
-        axis.legend(loc='upper left', frameon=True, edgecolor='black', fontsize=12)
-        integral_axis.legend(loc='upper right', frameon=True, edgecolor='black', fontsize=12)
+        handles1, labels1 = axis.get_legend_handles_labels()
+        handles2, labels2 = integral_axis.get_legend_handles_labels()
+        # Combine and remove duplicates while preserving order
+        seen = set()
+        handles_labels = []
+        for h, l in zip(handles1 + handles2, labels1 + labels2):
+            if l not in seen:
+                handles_labels.append((h, l))
+                seen.add(l)
+        handles, labels = zip(*handles_labels)
+        axis.legend(
+            handles, labels,
+            loc='upper left',
+            frameon=True,
+            edgecolor='black',
+            fontsize=9,           # smaller font
+            bbox_to_anchor=(0.01, 0.99),  # slightly inside the plot
+            borderaxespad=0.2,
+            labelspacing=0.4,
+            handlelength=1.5,
+            handletextpad=0.5,
+            borderpad=0.5,
+            fancybox=True
+        )
+        # Remove the integral axis legend
+        integral_axis.legend_.remove() if integral_axis.legend_ else None
 
     # Clean up appearance
     sns.despine(ax=axis, right=True, left=False)
